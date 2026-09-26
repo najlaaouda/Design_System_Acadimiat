@@ -1,0 +1,1465 @@
+/* =============================================================================
+   Acadimiat Design System — Tokens
+   نظام تصميم أكاديميات — طبقة التوكنز
+   =============================================================================
+
+   هذا الملف هو المصدر الوحيد للحقيقة لكل قرار بصري في لوحة التحكم.
+   لا يجوز كتابة أي قيمة لون / مسافة / خط / نصف قطر / ظل مباشرة داخل مكوّن.
+
+   البنية ثلاث طبقات، ولا يقفز المكوّن فوق الطبقة الدلالية:
+
+     Primitive  →  Semantic  →  Component
+     (لوحة خام)     (معنى)        (استخدام)
+
+   البادئة --ds- محجوزة لهذا النظام ولا تتقاطع مع الطبقات القديمة
+   (--primary من القالب المُشترى، --bs-* من Bootstrap، --p-* من panel-style).
+
+   سلالم الألوان مولّدة رياضيًا في فضاء OKLCH لضمان تدرّج متساوٍ إدراكيًا،
+   وكل خطوة مدقّقة بنسبة التباين مقابل الأبيض.
+   المرجع: Design-System/DESIGN.md
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   الطبقة 1 — PRIMITIVES
+   قيم خام. لا تُستخدم مباشرة داخل المكونات؛ استخدم الطبقة الدلالية.
+   الرقم بعد كل لون = نسبة التباين مقابل الأبيض #FFFFFF
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand — بنفسجي أكاديميات. المرساة #702EA4 (الهوية السائدة في اللوحة) */
+  --ds-brand-50:  #F8F3FF;  /* 1.09 */
+  --ds-brand-100: #F0E4FF;  /* 1.22 */
+  --ds-brand-200: #E4CEFE;  /* 1.44 */
+  --ds-brand-300: #D8B5FE;  /* 1.76 */
+  --ds-brand-400: #C68FFE;  /* 2.40 */
+  --ds-brand-500: #B36BF5;  /* 3.31 */
+  --ds-brand-600: #9D4CE0;  /* 4.62 — أفتح درجة تصلح لنص عادي على أبيض */
+  --ds-brand-700: #8538C2;  /* 6.28 */
+  --ds-brand-800: #6E2BA1;  /* 8.32 — الدرجة التفاعلية الأساسية (تعادل #702EA4 الحالي) */
+  --ds-brand-900: #5C2488;  /* 10.18 */
+  --ds-brand-950: #391456;  /* 14.91 */
+
+  /* Accent — مساند للعلامة. المرساة #912C97 (قيمة --p-secondary-color الحالية) */
+  --ds-accent-50:  #FCF2FC;
+  --ds-accent-100: #F7E2F8;
+  --ds-accent-200: #F1CBF1;
+  --ds-accent-300: #E9B0EB;
+  --ds-accent-400: #DB8ADF;
+  --ds-accent-500: #CA66D0;
+  --ds-accent-600: #B448BA;  /* 4.59 */
+  --ds-accent-700: #99359F;  /* 6.24 */
+  --ds-accent-800: #7E2884;  /* 8.32 */
+  --ds-accent-900: #6B216F;
+  --ds-accent-950: #431345;
+
+  /* Neutral — رمادي بميل خفيف لدرجة العلامة، للتماسك البصري */
+  --ds-neutral-0:   #FFFFFF;
+  --ds-neutral-50:  #F5F5F7;  /* 1.09 */
+  --ds-neutral-100: #EAE9ED;  /* 1.21 */
+  --ds-neutral-200: #D9D8DE;  /* 1.42 */
+  --ds-neutral-300: #C7C5CE;  /* 1.71 */
+  --ds-neutral-400: #AEAAB7;  /* 2.27 */
+  --ds-neutral-500: #9591A1;  /* 3.07 */
+  --ds-neutral-600: #7E7A8A;  /* 4.17 — لا يصلح لنص عادي. حدود وأيقونات معطّلة فقط */
+  --ds-neutral-700: #686573;  /* 5.68 — أفتح رمادي مسموح للنص */
+  --ds-neutral-800: #55525E;  /* 7.62 */
+  --ds-neutral-900: #47454F;  /* 9.41 */
+  --ds-neutral-950: #2B2A30;  /* 14.22 — النص الأساسي */
+
+  /* Success — أخضر. المرساة #309255 (اللون الأخضر الحالي في المنتج) */
+  --ds-success-50:  #F0F8F2;
+  --ds-success-100: #DEEFE2;
+  --ds-success-200: #C4E2CB;
+  --ds-success-300: #A6D4B2;
+  --ds-success-400: #7CBF8F;
+  --ds-success-500: #53A96F;
+  --ds-success-600: #309255;  /* 3.91 — اللون الحالي. يرسب في AA لنص أبيض فوقه */
+  --ds-success-700: #1C7A43;  /* 5.37 — يُستخدم للتعبئة الصلبة بدلًا منه */
+  --ds-success-800: #126535;
+  --ds-success-900: #0F552C;
+  --ds-success-950: #083419;
+
+  /* Danger — أحمر. المرساة #DC3545 (قيمة --bs-danger الحالية) */
+  --ds-danger-50:  #FFF2F1;
+  --ds-danger-100: #FFE2E1;
+  --ds-danger-200: #FECAC8;
+  --ds-danger-300: #FEAFAC;
+  --ds-danger-400: #FE8282;
+  --ds-danger-500: #F1585F;
+  --ds-danger-600: #DB3444;  /* 4.58 */
+  --ds-danger-700: #BC1E33;  /* 6.23 */
+  --ds-danger-800: #9C1327;
+  --ds-danger-900: #841020;
+  --ds-danger-950: #530812;
+
+  /* Warning — كهرماني. بديل #FFC107 الذي يستحيل وضع نص مقروء فوقه */
+  /* 25 — أفتح من 50 بنصف المسافة إلى الأبيض. لخلفية شريط الملاحظات وحده
+     (قرار المنتج 2026-09-13: «أخفّ من هيك»): الملاحظة قاعدة هادئة لا تنبيه. */
+  --ds-warning-25:  #FEF8F5;
+  --ds-warning-50:  #FDF3EE;
+  --ds-warning-100: #FAE5DA;
+  --ds-warning-200: #F5D0BD;
+  --ds-warning-300: #F0B99C;
+  --ds-warning-400: #E5976D;
+  --ds-warning-500: #D57842;
+  --ds-warning-600: #BF5D1B;  /* 4.38 */
+  --ds-warning-700: #A34902;  /* 5.98 */
+  --ds-warning-800: #863C04;
+  --ds-warning-900: #723100;
+  --ds-warning-950: #471D01;
+
+  /* Info — أزرق */
+  --ds-info-50:  #EFF6FF;
+  --ds-info-100: #DCEBFF;
+  --ds-info-200: #C1DCFE;
+  --ds-info-300: #A1CAFE;
+  --ds-info-400: #71B0FE;
+  --ds-info-500: #4295F7;
+  --ds-info-600: #197BE4;  /* 4.20 */
+  --ds-info-700: #0865C2;  /* 5.75 */
+  --ds-info-800: #0152A1;
+  --ds-info-900: #024588;
+  --ds-info-950: #002A57;
+}
+
+/* -----------------------------------------------------------------------------
+   الطبقة 1 — المقاييس غير اللونية
+   -------------------------------------------------------------------------- */
+:root {
+  /* الخط — Readex Pro محمّل في index.html بأوزان 300–700 ويدعم العربية */
+  --ds-font-family: 'Readex Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ds-font-family-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Consolas, monospace;
+
+  /* أحجام الخط — أساس 14px مناسب لكثافة لوحة تحكم SaaS */
+  --ds-font-size-2xs: 0.625rem;  /* 10px — شارات دقيقة فقط */
+  --ds-font-size-xs:  0.75rem;   /* 12px */
+  --ds-font-size-md:  0.875rem;  /* 14px — الأساس */
+  --ds-font-size-lg:  1rem;      /* 16px */
+  --ds-font-size-xl:  1.125rem;  /* 18px */
+  --ds-font-size-2xl: 1.25rem;   /* 20px */
+  --ds-font-size-3xl: 1.5rem;    /* 24px */
+  --ds-font-size-4xl: 1.875rem;  /* 30px */
+
+  /* ارتفاع السطر — العربية تحتاج تنفّسًا أكبر من اللاتينية */
+  --ds-line-height-tight:   1.3;
+  --ds-line-height-snug:    1.45;
+  --ds-line-height-normal:  1.6;
+  --ds-line-height-relaxed: 1.75;
+
+  --ds-font-weight-regular:  400;
+  --ds-font-weight-medium:   500;
+  --ds-font-weight-semibold: 600;
+  --ds-font-weight-bold:     700;
+
+  /* المسافات — أساس 4px على شبكة 8px */
+  --ds-space-0:  0;
+  --ds-space-1:  0.25rem;  /* 4  */
+  --ds-space-2:  0.5rem;   /* 8  */
+  --ds-space-3:  0.75rem;  /* 12 — نصف خطوة مبرّرة: الفجوة بين التسمية والحقل */
+  --ds-space-4:  1rem;     /* 16 */
+  --ds-space-5:  1.25rem;  /* 20 */
+  --ds-space-6:  1.5rem;   /* 24 */
+  --ds-space-8:  2rem;     /* 32 */
+  --ds-space-10: 2.5rem;   /* 40 */
+  --ds-space-12: 3rem;     /* 48 */
+  --ds-space-16: 4rem;     /* 64 */
+
+  /* أنصاف الأقطار */
+  --ds-radius-xs:   4px;
+  --ds-radius-sm:   6px;
+  --ds-radius-md:   8px;   /* حاويات صغيرة: تنبيه، توست، هيكل تحميل */
+  --ds-radius-lg:   12px;  /* بطاقات وحوارات وعناصر التحكم */
+  --ds-radius-xl:   16px;
+  --ds-radius-2xl:  20px;
+  --ds-radius-pill: 9999px;
+
+  /* دلالي — استدارة كل عناصر التحكم التفاعلية (زر، حقل، قائمة).
+     مصدر واحد: تغييره هنا يوحّد الزر والحقل معًا ولا يمس البطاقات. */
+  --ds-radius-control: var(--ds-radius-lg);
+
+  /* ── الجدول ────────────────────────────────────────────────────────────
+     كلها مشتقة من الطبقة الدلالية أعلاه — لا قيمة خام إلا مقاسات ثلاثة
+     تُكتب لأنها قياس لا اشتقاق. لا تحتاج نسخة داكنة: الاشتقاق يتبع
+     إعادة تعريف الدلالي في كتلة الوضع الداكن تلقائيًا. */
+
+  /* صف الإجمالي — فوق الصفوف لا تحتها، فيبقى مرئيًا مع الرأس الملتصق. */
+  --ds-table-total-bg:     var(--ds-color-surface-selected);
+  --ds-table-total-fg:     var(--ds-color-text-brand);
+  --ds-table-total-border: var(--ds-brand-200);
+  --ds-table-total-height: 44px;  /* قياس — تُزيح الرأس الملتصق تحتها */
+
+  /* ارتفاع الشريط العلوي.
+     64px = أطول عنصر فيه (زرّ بارتفاع --ds-control-height-md = 44px) + 10px
+     فوقه ومثلها تحته. مصدر واحد وثلاثة تابعين: الفاصل فوق المحتوى في القشرة،
+     وحساب ارتفاع منطقة المحتوى، وبداية الشريط الجانبي على الديسكتوب —
+     وكلّها تقرأ هذا التوكن، فلا قيمة 4rem مكتوبة يدويًّا في أي منها. */
+  --ds-app-header-height: 4rem;  /* 64px */
+
+  /* الشريط الجانبي — مقاسان مقيسان لا مقدّران:
+     272px على أطول صفّ حقيقي بخط Readex Pro.
+     96px على أطول **كلمة مفردة**: الوضع المطوي أيقونة فوق كلمة، وعند 80px
+     لا يبقى للنص إلا 64px فتكسر «المستخدمون» آخر حرف إلى سطر — وهو كسر
+     داخل الكلمة يقطع وصل الحروف العربية. */
+  --ds-sidebar-width:           17rem;  /* 272px */
+  --ds-sidebar-width-collapsed:  6rem;  /*  96px */
+
+  /* حشوة الصفحة — المسافة من حافّة السطح الأبيض إلى أوّل المحتوى وآخره.
+     المواصفة: specs/organisms/page-layout.md.
+     مصدر واحد تقرؤه قشرة اللوحة (base.component.scss) على `.content-body`
+     نفسها، فتأخذها كل صفحة مهما كان غلافها الداخلي، ولا تكتب صفحةٌ حشوتها
+     بنفسها. وفتات الخبز يقرأ الحشوة الأفقية نفسها فيصطفّ مع عنوان الصفحة.
+     24 من الجهات الأربع، و16 على الجوال (قاعدة max-width أسفل الملف):
+     على شاشة 360px كانت 24 من كل جهة مع هامشَي السطح تأكل نحو خُمس العرض
+     من المحتوى الذي جاء المستخدم لأجله. */
+  --ds-page-padding-block:  var(--ds-space-6);  /* 24 */
+  --ds-page-padding-inline: var(--ds-space-6);  /* 24 */
+
+  /* الرأس — ارتفاع ثابت: تسميات الأعمدة سطر واحد دائمًا، بخلاف الصفوف. */
+  --ds-table-header-height: 40px;  /* قياس */
+
+  /* حشوة خليّة الصف — **رأسيًّا فقط**، وهي ما يحدّد ارتفاع الصف مع أطول
+     عنصر فيه. تُتجاوَز على مستوى الشاشة حين تحتاج كثافة مختلفة:
+       16 + أفاتار 32 = 64  ·  12 + 32 = 56  ·  12 + أفاتار 24 = 48
+     الارتفاع لا يُكتب height أبدًا: صفّ فيه نصّ ملتفّ يطول من نفسه. */
+  --ds-table-cell-padding-block: var(--ds-space-4);
+
+  /* الحشوة الأفقية للخليّة — الفراغ بين عمود وعمود. تُتجاوَز على مستوى
+     الشاشة حين يكثر عدد الأعمدة فتتلاصق: جدول الدورات (10 أعمدة) يرفعها
+     إلى 24 (قرار المنتج 2026-09-21). الرأس والصفوف يقرآنها معًا، فلا
+     ينزاح عنوان العمود عن محتواه. */
+  --ds-table-cell-padding-inline: var(--ds-space-4);
+
+  /* عمود الاختيار — عرض مقيس يسع خانة 18px بحشوة 12px من الجهتين
+     مع بقاء هدف اللمس 44px عبر المساحة القابلة للنقر داخل الخلية. */
+  --ds-table-select-width: 60px;  /* قياس */
+
+  /* عنوان القسم — لافتة لا صف، فهو أقصر من الصف عمدًا. */
+  --ds-table-group-bg:     var(--ds-color-surface-default); /* أبيض (قرار 2026-09-14؛ كان surface-page الرمادي) */
+  --ds-table-group-fg:     var(--ds-color-text-primary);    /* اسم القسم أسود (طلب المنتج 2026-09-14) */
+  --ds-table-group-accent: var(--ds-brand-600);             /* الخطّ في بداية القسم، على صفوفه ما دام مفتوحًا */
+  /* خطّ الصفّ المفتوح في لوحة التفاصيل (.ds-table__row--active): سمك خطّ
+     عنوان القسم نفسه — إشارتان بسمك واحد في الجدول الواحد. */
+  --ds-table-active-bar-width: 4px;  /* قياس */
+  --ds-table-group-accent-width: 4px;  /* قياس — شبكة 4/8؛ كان 2 (طلب المنتج «زيد سمك الخط» 2026-09-14) */
+  --ds-table-group-height: 40px;  /* قياس */
+
+  /* شريط التحديد — **مقلوب**. سطح داكن على صفحة فاتحة يقول «هذه طبقة
+     مؤقتة ظهرت بفعلك» بلا حدّ ولا ظل. لونُ العلامة هنا كان يجعله يُقرأ
+     لافتةً ترويجية، والفاتح يذوب في الصفحة فلا يُلاحَظ ظهوره أصلًا. */
+  --ds-table-selection-bg:     var(--ds-color-surface-inverse);
+  --ds-table-selection-fg:     var(--ds-color-text-inverse);
+  /* الدرجة 400 لا 500: الحمراء 500 تعطي 4.27:1 على سطحنا المعكوس فترسب
+     في AA، و400 تعطي 5.92:1. */
+  --ds-table-selection-danger-fg: var(--ds-danger-400);
+  --ds-table-selection-radius: var(--ds-radius-lg);
+
+  /* شريط الأدوات — يعلو الرأس داخل القشرة: بحث وفلاتر في طرف البداية،
+     أفعال في طرف النهاية.
+     سلّم الفجوات ثلاث قيم تقول ثلاثة أشياء:
+       8  بين أزرار الأفعال — يربطها مجموعةً واحدة
+       12 بين البحث والفلتر — 8 تجعل حدّي الحقلين يتلامسان فيُقرآن حقلًا مجزّأً
+       16 بين طرفَي الشريط — الحدّ الأدنى للفصل */
+  /* رمادي خفيف لا أبيض: الشريط منطقة **أدوات** لا بيانات، وفصله عن سطح
+     الصفوف بدرجة واحدة يقول ذلك بلا حدّ ثانٍ ولا عنوان. */
+  --ds-table-toolbar-bg:            var(--ds-color-surface-page);
+  --ds-table-toolbar-border:        var(--ds-color-divider);
+  --ds-table-toolbar-gap-actions:   var(--ds-space-2);  /* 8  */
+  --ds-table-toolbar-gap-fields:    var(--ds-space-3);  /* 12 */
+  --ds-table-toolbar-gap-sides:     var(--ds-space-4);  /* 16 */
+  /* مقياس لا خطوة في سلّم المسافات: يسع أطول placeholder في الصفحة
+     («البحث باسم أو بريد المدرب») مع أيقونة البحث وزرّ المسح وفائض.
+     ولا ينكمش — حقلٌ يرسو على عرض مختلف في كل تبويب يقفز أمام العين. */
+  --ds-table-toolbar-search-width:  320px;  /* قياس */
+
+  /* لوحة الفلترة — عمودان: الخصائص | القيم (specs/patterns/filtering.md).
+     عمود الخصائص يسع أطول اسم خاصية وتحته قيمتها المختارة مختصرة، وعمود
+     القيم يسع حقل البحث وأطول خيار شائع بلا قصّ. والسقف الرأسي يمنع لوحة
+     تتجاوز الشاشة حين تكثر القيم: القائمة تتمرّر داخل عمودها وحده. */
+  --ds-filter-panel-facets-width:   176px;  /* قياس */
+
+  /* حقل الفترة الزمنية — specs/molecules/date-range-field.md. الفترات بعرض عمود خصائص
+     الفلترة، وخليّة اليوم بارتفاع زرّ md، ودائرته بارتفاع عنصر التحكم الصغير
+     (يكبران معًا على اللمس من توكنيهما). */
+  --ds-date-field-presets-width: var(--ds-filter-panel-facets-width);
+  --ds-date-field-cell-size:     var(--ds-button-height-md);   /* 40 */
+  --ds-date-field-day-size:      var(--ds-control-height-sm);  /* 36 */
+  --ds-filter-panel-options-width:  264px;  /* قياس */
+  --ds-filter-panel-max-block-size: min(400px, 70vh);  /* قياس */
+
+  /* شريط الحفظ الثابت أسفل الكانفاس — specs/organisms/save-bar.md. حشوة 16 فوق الزرّ
+     وتحته، وارتفاعه كاملًا (مع خطّه) تقرؤه الأيقونتان العائمتان لتصعدا فوقه
+     (styles.scss). الزرّ يرتفع على اللمس إلى 44 فيرتفع الشريط معه. */
+  --ds-save-bar-padding-block: var(--ds-space-4);  /* 16 */
+  --ds-save-bar-block-size: calc(2 * var(--ds-save-bar-padding-block) + var(--ds-button-height-md) + var(--ds-border-width-sm));
+
+  /* لوحة أعمدة الجدول — specs/organisms/table-columns.md. بعرض عمود القيم في لوحة
+     الفلترة: قائمة واحدة من أسماء أعمدة قصيرة بمقبض ومربّع — لا قياس جديد. */
+  --ds-table-columns-panel-width:   var(--ds-filter-panel-options-width);
+
+  /* الشارة في خلية الحالة — **حدّ أدنى** لا عرضًا ثابتًا: «فعال» أضيق من
+     «غير فعال»، وحافّة مسنَّنة في العمود تحوّل الطول إلى إشارة ثانية. */
+  --ds-table-badge-min-width: 64px;  /* قياس */
+  /* الاسم يُقصّ بالكلمة عند هذا الحدّ. البريد والهاتف والتاريخ لا تُقصّ. */
+  --ds-table-truncate-max-width: 256px;  /* قياس */
+  /* سطر الاسم في جدولَي التصنيفات والوسوم: 75 حرفًا، ثم سطر ثانٍ، ثم «…»
+     (بطلب صريح 2026-09-10). مقيس بـ Readex Pro (2026-09-11): 75 حرفًا عربيًّا
+     = 54–60ch، فـ 60ch يسعها — و75ch كان يسع نحو 95. بـ ch فيتبع حجم خطّ الخليّة. */
+  --ds-table-clamp-line-length: 60ch;  /* قياس */
+  /* سطر عنوان المقال في جدول المقالات: سطران ثم «…» بعرض عمود «عنوان المقال» في
+     Figma (Frame 89، 2026-09-11 — النصّ 281px). أضيق من سطر الاسم عمدًا: العمود لا
+     يبتلع الفراغ، فيذهب ما زاد إلى بقيّة الأعمدة (طلب المنتج). */
+  --ds-table-title-line-length: 281px;  /* قياس */
+
+  /* الأفاتار — **مربّع** لا دائري، وثلاثة مقاسات على شبكة الـ8:
+       sm 24 — القوائم الكثيفة والأسطر الثانوية
+       md 32 — صفوف الجداول (الافتراضي)
+       lg 40 — الهيدر
+     المربّع يميّزه عن الأيقونة الدائرية ويجعل حرفيه يجلسان في مساحة أوسع.
+     الاستدارة أصغر في sm: 8px على مربّع 24 تلتهم ثلثه فيعود شبه دائري. */
+  --ds-avatar-size-sm:   24px;  /* قياس */
+  --ds-avatar-size-md:   32px;  /* قياس */
+  --ds-avatar-size-lg:   40px;  /* قياس */
+  --ds-avatar-radius:    var(--ds-radius-md);  /* 8 — md و lg */
+  --ds-avatar-radius-sm: var(--ds-radius-sm);  /* 6 */
+
+  /* رمادي خفيف جدًا: الأفاتار حاملٌ للصورة أو للحرفين، لا عنصرٌ يُرى
+     بذاته. لون العلامة خلفه كان يجعل عمودًا من الصفوف صفًّا من الحبوب
+     البنفسجية تزاحم حبّة الحالة. الحرفان يبقيان بلون العلامة — هما
+     المعلومة، والخلفية سطح يحملها. */
+  --ds-avatar-bg:      var(--ds-color-surface-sunken);
+  --ds-avatar-fg:      var(--ds-color-text-brand);
+
+  /* شريط النسبة — يُعرض مع الرقم دائمًا، لا بديلًا عنه (WCAG 1.4.1). */
+  --ds-table-bar-track:  var(--ds-neutral-100);
+  --ds-table-bar-fill:   var(--ds-color-brand-solid);
+  --ds-table-bar-height: 6px;     /* قياس */
+  --ds-table-bar-radius: var(--ds-radius-pill);
+
+  /* ── التبويبات ─────────────────────────────────────────────────────────
+     كلها مشتقة من الطبقة الدلالية، فالوضع الداكن يتبعها بلا نسخة ثانية.
+
+     شكل المفتاح المقطّع في فلتر صفحة التطبيقات (قرار المنتج 2026-09-13،
+     بدل الخطّ السفلي): سكّة رمادية وقرص أبيض بظلّ تحت المفتوح. القيم نفسها
+     في `.app-radio-group--segmented` (styles.scss) و`radio.component.scss`،
+     فيُقرأ الاثنان عائلةً واحدة.
+
+     المفتوح يُميَّز بالشكل لا باللون وحده (WCAG 1.4.1): قرص وظلّ، ونصّ
+     أغمق. والوزن واحد للجميع: تثقيل المفتوح يوسّعه فتزحف جيرانه.
+
+     الخامل `text-muted` على السكّة: 4.7:1 — فوق 4.5:1 لنصّ عادي. */
+  --ds-tab-track:          var(--ds-color-surface-sunken);
+  --ds-tab-track-padding:  var(--ds-space-1);
+  --ds-tab-track-radius:   var(--ds-radius-control);
+  --ds-tab-gap:            var(--ds-space-1);
+  --ds-tab-fg:             var(--ds-color-text-muted);
+  --ds-tab-fg-hover:       var(--ds-color-text-primary);
+  --ds-tab-fg-active:      var(--ds-color-text-primary);
+  --ds-tab-weight:         var(--ds-font-weight-medium);
+  --ds-tab-weight-active:  var(--ds-font-weight-medium);
+  --ds-tab-surface-active: var(--ds-color-surface-default);
+  --ds-tab-shadow-active:  var(--ds-elevation-1);
+
+  /* المقطع 32px في سكّة بحشوة 4px = 40px، ارتفاع البحث والزرّ بجواره.
+     وعلى اللمس ترفعه قاعدة (pointer: coarse) أدناه إلى 44px مع الزرّ الصغير. */
+  --ds-tab-height:         var(--ds-button-height-sm);
+  --ds-tab-padding-inline: var(--ds-space-3);
+  --ds-tab-radius:         var(--ds-radius-md);
+
+  /* الشريط المنزلق في قائمة الأقسام العمودية — 3px لا 2px: طرفاه مستديران
+     (--ds-radius-pill)، وعند 2px تلتهم الاستدارةُ الطرفين فيبدو مدبَّبًا. */
+  --ds-tab-indicator:        var(--ds-color-border-brand);
+  --ds-tab-indicator-size:   3px;   /* قياس */
+  --ds-tab-indicator-radius: var(--ds-radius-pill);
+
+  /* صفّ قائمة الأقسام العمودية: هدف لمس 44px (WCAG 2.5.5). */
+  --ds-tab-min-height:      var(--ds-control-height-md);
+
+  /* قائمة الأقسام العمودية (app-tab-nav orientation="vertical") — عرض عمودها
+     في تخطيط الشاشة. 256 بين عمود الخصائص في لوحة الفلترة (176) والقائمة
+     الجانبية (272): يسع «رسالة الترحيب» بأيقونتها على سطر، والأطول يلتفّ. */
+  --ds-tab-nav-vertical-width: 16rem;  /* 256px — قياس */
+
+  /* الحدود */
+  --ds-border-width-sm: 1px;
+  --ds-border-width-md: 2px;
+
+  /* الارتفاع (الظلال) — خافتة، لأن لوحة التحكم أداة عمل لا صفحة تسويق */
+  --ds-elevation-0: none;
+  --ds-elevation-1: 0 1px 2px rgba(16, 16, 20, 0.06), 0 1px 3px rgba(16, 16, 20, 0.04);
+  --ds-elevation-2: 0 2px 4px rgba(16, 16, 20, 0.06), 0 4px 8px rgba(16, 16, 20, 0.05);
+  --ds-elevation-3: 0 4px 8px rgba(16, 16, 20, 0.06), 0 12px 20px rgba(16, 16, 20, 0.08);
+  --ds-elevation-4: 0 8px 16px rgba(16, 16, 20, 0.08), 0 24px 40px rgba(16, 16, 20, 0.10);
+
+  /* الحركة — قصيرة وهادفة */
+  --ds-duration-instant: 80ms;
+  --ds-duration-fast:    140ms;
+  --ds-duration-normal:  220ms;
+  --ds-duration-slow:    320ms;
+  --ds-easing-standard:  cubic-bezier(0.2, 0, 0, 1);
+  --ds-easing-enter:     cubic-bezier(0, 0, 0, 1);
+  --ds-easing-exit:      cubic-bezier(0.3, 0, 1, 1);
+
+  /* ارتفاعات عناصر التحكم — md = 44px يحقق الحد الأدنى لهدف اللمس */
+  --ds-control-height-sm: 36px;
+  --ds-control-height-md: 44px;
+  --ds-control-height-lg: 52px;
+  --ds-touch-target-min:  44px;
+
+  /* أحجام الأيقونات */
+  --ds-icon-size-sm: 16px;
+  --ds-icon-size-md: 20px;
+  --ds-icon-size-lg: 24px;
+
+  /* نطاق z-index المحجوز. ممنوع استخدام أي قيمة خارج هذه التوكنز. */
+  --ds-z-base:     0;
+  --ds-z-raised:   10;
+  --ds-z-sticky:   1020;
+  --ds-z-dropdown: 1030;
+  --ds-z-overlay:  1040;
+  /* الحوار فوق الدرج لا تحته: الحوار يُفتح من الدرج (تأكيد حذف من لوح
+     تفاصيل) لا العكس. و1055 لا 1050: لوح محرّر الصفحات v2 عند 1055 خامّ،
+     وعند 1050 كان يعلو كل حوار يُفتح منه. والتعادل يحسمه ترتيب DOM لصالح
+     الحوار — إطار CustomDialogService يُلحق بـ body آخرًا. */
+  --ds-z-drawer:   1050;
+  --ds-z-modal:    1055;
+  --ds-z-popover:  1060;
+  --ds-z-toast:    1080;
+  --ds-z-tooltip:  1090;
+
+  /* عرض المحتوى */
+  --ds-container-max: 1440px;
+  --ds-prose-max:     72ch;
+}
+
+/* -----------------------------------------------------------------------------
+   الطبقة 2 — SEMANTIC
+   هذه هي الطبقة التي تستهلكها المكونات. الوضع الفاتح.
+   -------------------------------------------------------------------------- */
+:root {
+  /* الأسطح */
+  --ds-color-surface-page:     var(--ds-neutral-50);
+  --ds-color-surface-default:  var(--ds-neutral-0);
+  --ds-color-surface-raised:   var(--ds-neutral-0);
+  --ds-color-surface-sunken:   var(--ds-neutral-100);
+  --ds-color-surface-hover:    var(--ds-neutral-50);
+  /* تمرير لعنصر يجلس على الكانفاس مباشرة لا على سطح أبيض.
+     surface-hover مشتقّ من neutral-50 وهو **نفس** لون الكانفاس، فالتمرير
+     عليه يرسم رماديًا فوق الرمادي نفسه ولا يُرى. الدرجة التالية تفصل. */
+  --ds-color-surface-hover-on-page: var(--ds-neutral-100);
+  --ds-color-surface-selected: var(--ds-brand-50);
+  /* أبرز من التمرير — للتنقّل حيث يجب أن يُقرأ «هنا أنا» لا «مررت هنا». */
+  --ds-color-surface-selected-bold: var(--ds-brand-100);
+  --ds-color-surface-disabled: var(--ds-neutral-100);
+  --ds-color-surface-inverse:  var(--ds-neutral-950);
+
+  /* النص — لا تُستخدم درجة أفتح من neutral-700 لأي نص */
+  --ds-color-text-primary:     var(--ds-neutral-950);
+  --ds-color-text-secondary:   var(--ds-neutral-800);
+  --ds-color-text-muted:       var(--ds-neutral-700);
+  --ds-color-text-placeholder: var(--ds-neutral-700);
+  --ds-color-text-disabled:    var(--ds-neutral-600);
+  --ds-color-text-inverse:     var(--ds-neutral-0);
+  --ds-color-text-brand:       var(--ds-brand-800);
+  --ds-color-text-link:        var(--ds-brand-800);
+  --ds-color-text-success:     var(--ds-success-700);
+  --ds-color-text-danger:      var(--ds-danger-700);
+  --ds-color-text-warning:     var(--ds-warning-700);
+  --ds-color-text-info:        var(--ds-info-700);
+
+  /* الحدود والفواصل */
+  --ds-color-border-subtle:  var(--ds-neutral-200);
+  --ds-color-border-default: var(--ds-neutral-300);
+  --ds-color-border-strong:  var(--ds-neutral-400);
+  --ds-color-border-brand:   var(--ds-brand-800);
+  --ds-color-border-danger:  var(--ds-danger-600);
+  --ds-color-divider:        var(--ds-neutral-200);
+
+  /* الإجراء الأساسي */
+  --ds-color-action-primary-bg:        var(--ds-brand-800);
+  --ds-color-action-primary-bg-hover:  var(--ds-brand-900);
+  --ds-color-action-primary-bg-active: var(--ds-brand-950);
+  --ds-color-action-primary-text:      var(--ds-neutral-0);
+
+  /* الإجراء الثانوي — سطح أبيض بإطار محايد
+     الإطار رمادي لا بنفسجي: البنفسجي لون الفعل الأساسي، وحملُ الثانوي
+     له يجعل الصفّ الواحد يعرض لونين متطابقين برتبتين مختلفتين —
+     فيضيع أيّهما المقصود. والحياد هنا هو ما يُبقي للبنفسجي معنًى واحدًا. */
+  --ds-color-action-secondary-bg:        var(--ds-neutral-0);
+  --ds-color-action-secondary-bg-hover:  var(--ds-neutral-50);
+  --ds-color-action-secondary-bg-active: var(--ds-neutral-100);
+  --ds-color-action-secondary-text:      var(--ds-neutral-950);
+  --ds-color-action-secondary-border:    var(--ds-neutral-300);
+
+  /* الإجراء الثالثي — نص فقط */
+  /* قيمة مكتوبة لا خاصّية محذوفة: النوع لا يعتمد على غياب إعلان. */
+  --ds-color-action-tertiary-bg:        transparent;
+  --ds-color-action-tertiary-bg-hover:  var(--ds-neutral-100);
+  --ds-color-action-tertiary-bg-active: var(--ds-neutral-200);
+  --ds-color-action-tertiary-text:      var(--ds-neutral-800);
+
+  /* الرابط — فعل نصّي بلا صندوق، بلون العلامة لا بالأسود.
+     الفرق عن tertiary: الثالثيّ فعل ثانويّ محايد (زرّ ⋯، إغلاق)، والرابط
+     فعل يُقرأ رابطًا فيأخذ لون الرابط نفسه — وإلا لم يُميَّز عن نصّ عادي. */
+  --ds-color-action-link-bg:        transparent;
+  --ds-color-action-link-bg-hover:  var(--ds-brand-50);
+  --ds-color-action-link-bg-active: var(--ds-brand-100);
+  --ds-color-action-link-text:      var(--ds-color-text-link);
+
+  /* الإجراء الخطر */
+  /* 600 لا 700: الدرجة التي يُقرأ منها «خطر» بلا لبس، وتمرّ AA مع
+     الأبيض (4.58:1). و700/800 للتمرير والضغط بعدها. */
+  --ds-color-action-danger-bg:        var(--ds-danger-600);
+  --ds-color-action-danger-bg-hover:  var(--ds-danger-700);
+  --ds-color-action-danger-bg-active: var(--ds-danger-800);
+  --ds-color-action-danger-text:      var(--ds-neutral-0);
+  --ds-color-action-danger-bg-subtle: var(--ds-danger-50);
+
+  /* الإجراء المحايد — تعبئة مصمتة بلا لون علامة
+     متى هذا لا primary: فعل مصمت لا يجوز أن يحمل وزن العلامة (تصدير،
+     طباعة)، أو فعل أساسي داخل منطقة فيها primary أعلى منه رتبةً.
+     الدرجات 800→900→950 تحاكي نمط primary وdanger حرفيًّا. */
+  --ds-color-action-neutral-bg:        var(--ds-neutral-800);
+  --ds-color-action-neutral-bg-hover:  var(--ds-neutral-900);
+  --ds-color-action-neutral-bg-active: var(--ds-neutral-950);
+  --ds-color-action-neutral-text:      var(--ds-neutral-0);
+
+  /* الإجراء بالذكاء الاصطناعي — سطح أبيض يجري على إطاره شعاع (2026-09-11)
+     في سكونه رتبته رتبة الثانويّ: فعل موازٍ للأساسيّ لا يزاحمه، فلا تعبئة.
+     وما يميّزه هويّته لا ثقله: التدرّج من لون العلامة إلى لونها المساند
+     يقول قبل القراءة إن هذا الفعل **يولّد** لا يحرّر. ولا لون خارج
+     السلّمين — الأزرق معلومة في دلالة الألوان، فلا يُستعار للذكاء.
+     عند التمرير **يمتلئ الزرّ بالتدرّج نفسه** لا بتعبئة الأساسيّ (قرار المنتج
+     2026-09-15، عن Uiverse «cssbuttons-io/wonderful-baboon-62»؛ كان يأخذ أزرق
+     الأساسيّ الصلب منذ 2026-09-10). الفائدة: الهويّة التي يقولها الإطار في
+     السكون هي نفسها التي تمتلئ بها اللحظة التالية — لا لونان لفعل واحد.
+     والآلية: الطبقات الثلاث لا تتغيّر، إنما يُرفع **الغطاء** الذي يسترها.
+
+     ⟨الغطاء⟩ هو ما تعنيه توكنات -bg الثلاثة هنا — طبقة padding-box فوق
+     التدرّج، لا خلفيةٌ مستقلّة:
+       السكون  → السطح الافتراضي معتمًا كاملًا، فلا يظهر إلا حلقة الإطار.
+       التمرير → شفاف تمامًا، فيظهر التدرّج في الزرّ كلّه.
+       الضغط   → حجابٌ أسود 16% فوق التدرّج، فيغمق كما يغمق كل زرّ مضغوط
+                 (اختيار المنتج 2026-09-15: لا تصغير، تغميق كبقية الأزرار).
+     الانتقال بينها يُسجَّل نوعًا بـ@property في button.component.scss، وإلا
+     انقلب الغطاء دفعةً بدل أن ينساب.
+
+     التباين: النصّ brand-800 على الأبيض 8.32:1 · الأبيض على طرفَي التدرّج
+     6.28:1 و4.59:1 (كلاهما فوق 4.5 — AA للنصّ العادي) والضغط يرفعهما ·
+     الأيقونة accent-700 ‏6.24:1. */
+  --ds-color-action-ai-bg:             var(--ds-color-surface-default);
+  --ds-color-action-ai-bg-hover:       transparent;
+  --ds-color-action-ai-bg-active:      rgb(0 0 0 / 0.16);
+  --ds-color-action-ai-text:           var(--ds-brand-800);
+  --ds-color-action-ai-text-hover:     var(--ds-color-action-primary-text);
+  --ds-color-action-ai-icon:           var(--ds-accent-700);
+  --ds-color-action-ai-gradient-start: var(--ds-brand-700);
+  --ds-color-action-ai-gradient-end:   var(--ds-accent-600);
+  /* مسار الشعاع: الإطار الفاتح الذي يجري عليه شعاع زرّ الذكاء (قرار
+     2026-09-11). فاتح عمدًا — الشعاع بطرفي الهويّة هو ما يُرى، والمسار
+     خلفيّته. تباينه 1.44:1 كإطار الثانويّ (neutral-300 ‏1.71:1): الزرّ يُعرف
+     بنصّه (8.32:1) لا بإطاره، فلا يلزم المسارَ 3:1 (WCAG 1.4.11). */
+  --ds-color-action-ai-border-track:   var(--ds-brand-200);
+  /* (أُزيل --ds-color-action-ai-gradient-highlight في 2026-09-11: كان بقعة
+     الضوء في الدوران المخروطي، والشعاع حلّ محلّه.) */
+  /* التدرّج الثابت — لبطاقة البدء في الحالة الفارغة. الزرّ يرسم إطاره
+     الثابت بنفسه من الطرفين أعلاه، على الطبقة نفسها التي يستبدلها بالمسار
+     حين يجري الشعاع. */
+  --ds-color-action-ai-gradient: linear-gradient(
+    135deg,
+    var(--ds-color-action-ai-gradient-start),
+    var(--ds-color-action-ai-gradient-end)
+  );
+
+  /* شفافية التعطيل — الزرّ يبهت بلونه ولا يُستبدل برمادي.
+     الفائدة: يبقى النوع مقروءًا وهو معطَّل، فيعرف المستخدم أيّ فعل
+     تعذّر عليه لا مجرّد أن فعلًا ما تعذّر. */
+  --ds-opacity-disabled: 0.5;
+
+  /* حالة التعطيل — للحقول والعناصر التي لا تبهت */
+  --ds-color-action-disabled-bg:     var(--ds-neutral-200);
+  --ds-color-action-disabled-text:   var(--ds-neutral-600);
+  --ds-color-action-disabled-border: var(--ds-neutral-200);
+
+  /* ── الزرّ — طبقة المكوّن ──────────────────────────────────────────────
+     Primitive ← Semantic ← Component (DS-Rule 6). المكوّن لا يقرأ التوكن
+     الدلالي مباشرة، فتغييرُ مقاس زرٍّ لا يمسّ بقيّة عناصر التحكّم. */
+  /* ⚠️ الزرّ وحده مفكوك عن --ds-control-height-* بقرار صريح.
+     هذه هي الفائدة المقصودة من طبقة المكوّن: الحقل والبحث والقائمة تبقى
+     على 36/44/52، والزرّ ينزل إلى 32/40/48.
+     الثمن: md=40px دون --ds-touch-target-min (44px)، فيسقط WCAG 2.5.5
+     على الأجهزة اللمسية — ويُعوَّض بقاعدة (pointer: coarse) أدناه. */
+  --ds-button-height-sm:    32px;
+  --ds-button-height-md:    40px;
+  --ds-button-height-lg:    48px;
+
+  --ds-button-padding-x-sm: var(--ds-space-3);
+  --ds-button-padding-x-md: var(--ds-space-4);
+  --ds-button-padding-x-lg: var(--ds-space-6);
+
+  --ds-button-icon-sm:      var(--ds-icon-size-sm);
+  --ds-button-icon-md:      var(--ds-icon-size-md);
+  --ds-button-icon-lg:      var(--ds-icon-size-lg);
+
+  /* استدارة واحدة للمقاسات الثلاثة: 12px من --ds-radius-control، كالحقل
+     والبحث (قرار 2026-09-10؛ كانت 8px). الأزرار تقف متجاورة مع الحقل
+     والبحث في الشريط نفسه، واختلاف الاستدارة بين جارين يُقرأ قبل أي نسبة. */
+  --ds-button-radius-sm:    var(--ds-radius-control);   /* 12px */
+  --ds-button-radius-md:    var(--ds-radius-control);   /* 12px */
+  --ds-button-radius-lg:    var(--ds-radius-control);   /* 12px */
+  --ds-button-radius:       var(--ds-button-radius-md);
+  --ds-button-gap:          var(--ds-space-2);
+  --ds-button-border-width: var(--ds-border-width-sm);
+  --ds-button-font-weight:  var(--ds-font-weight-medium);
+  --ds-button-transition:   var(--ds-duration-fast) var(--ds-easing-standard);
+  /* التسمية تخفت أثناء التحميل ولا تُستبدل: المستخدم يفقد سياق ما ينتظره. */
+  --ds-button-loading-label-opacity: 0.7;
+  /* دورة شعاع زرّ الذكاء الاصطناعي حول الإطار. خارج سلّم --ds-duration-*
+     بقرار صريح: ذلك سلّم انتقالات (80–320ms)، وهذه حلقة مستمرّة — دورة في
+     أقلّ من ثوانٍ تُقرأ وميضًا لا حركة هادئة. 3s لا 4s (2026-09-11): الشعاع
+     قصير، وعلى 4s يبدو زاحفًا على زرّ عرضه ~220px. تحت prefers-reduced-motion
+     يختفي كليًّا. */
+  --ds-button-ai-loop: 3s;
+  /* طول الشعاع: 64px — قرابة ربع محيط زرّ md بنصّه، فيُرى رأسًا وذيلًا لا نقطة. */
+  --ds-button-ai-beam-size: var(--ds-space-16);
+  /* غسلة الامتلاء — رفع الغطاء عن التدرّج عند التمرير (قرار 2026-09-15).
+     أبطأ من --ds-button-transition عمدًا: 140ms تجعل التدرّج يَظهر ظهورًا،
+     و320ms تجعله **يمتلئ** — وهي أقرب درجة في السلّم إلى 300ms في المرجع،
+     واختيار المنتج 2026-09-15 بين 140 و220 و320. تسري على الغطاء وطرفَي
+     الإطار وحدها؛ النصّ والأيقونة يبقيان على سرعة الزرّ فلا تتأخّر القراءة
+     خلف اللون. وتحت prefers-reduced-motion يصفّرها السلّم كبقية الانتقالات. */
+  --ds-button-ai-wash: var(--ds-duration-slow) var(--ds-easing-standard);
+
+  /* ── المفتاح — <app-toggle> ───────────────────────────────────────────
+     48×28 بمقبض 24 (قرار 2026-09-10؛ كان 40×22 بمقبض 18). المقبض كرة عليها
+     وجه يدور حين ينزلق (قرار 2026-09-12، عن Uiverse «Shoh2008/average-monkey-56»؛
+     كان ✓ و×). المقاس بقي ولم يُمدّ إلى 64×28 كنسبة المثال.
+     المسافة المقطوعة 48 − 24 − 2 × 2 = 20px. */
+  --ds-switch-track-width:  48px;
+  --ds-switch-track-height: 28px;
+  --ds-switch-thumb-size:   24px;
+  --ds-switch-inset:        2px;
+  /* المطفأ رمادي فاتح (قرار 2026-09-10؛ رُفض neutral-500 لأنه ثقيل، ورُفض
+     البنفسجي الفاتح brand-200 لأن المطلوب من الـ neutral).
+     ⚠️ neutral-300 تباينه على الأبيض 1.71:1، دون 3:1 التي يفرضها WCAG 1.4.11
+        لحدود عنصر التحكّم — قرار جمالي صريح بعد عرض الرقم.
+     والوجه في المطفأ أدكن من مساره (neutral-500، 3.07:1 على الأبيض): بلون
+     المسار نفسه كان يذوب في المقبض. في المشتعل الوجه بلون المسار.
+     الثلاثة دلالية، فتنقلب في الوضع الداكن بلا تعريف ثانٍ. */
+  --ds-switch-track-off:       var(--ds-color-border-default);      /* 1.71 */
+  --ds-switch-track-off-hover: var(--ds-color-border-strong);       /* 2.27 */
+  --ds-switch-icon-off:        var(--ds-color-field-border);        /* 3.07 */
+  --ds-switch-track-on:        var(--ds-color-action-primary-bg);   /* 8.32 */
+  --ds-switch-track-on-hover:  var(--ds-color-action-primary-bg-hover);
+  /* الكرة المظللة: تدرّج 45° من thumb-shade إلى thumb-bg. المثال #DEDEDE→#FFF،
+     وsurface-sunken أقرب درجة دلالية تنقلب في الداكن. والظل elevation-2
+     (كان 1): الكرة تحتاج ظلًّا يرفعها عن المسار. */
+  --ds-switch-thumb-bg:        var(--ds-color-surface-default);
+  --ds-switch-thumb-shade:     var(--ds-color-surface-sunken);
+  --ds-switch-thumb-shadow:    var(--ds-elevation-2);
+  /* 600ms بإيقاع متماثل (قرار 2026-09-12 بطلب المستخدم: 320ms «سريعة جدًّا»).
+     خارج سلّم --ds-duration-* كـ --ds-button-ai-loop: الدورة الكاملة حركة واحدة
+     طويلة لا انتقال حالة. والإيقاع ease-in-out كالمثال: standard يُنجز معظم
+     الدورة في أول 100ms فتبدو خاطفة. تُصفَّر المدة تحت prefers-reduced-motion. */
+  --ds-switch-duration:        600ms;
+  --ds-switch-easing:          cubic-bezier(0.45, 0, 0.55, 1);
+  --ds-switch-transition:      var(--ds-switch-duration) var(--ds-switch-easing);
+  /* الوجه: عينان 4 بينهما 4، وفم 4 نقطة يتّسع 8×4 ابتسامة — وجه 12×12 في
+     وسط المقبض 24. وعمق الدوران 10 أضعاف ارتفاع المسار، نسبة المثال
+     (400px على مفتاح 40). */
+  --ds-switch-face-dot:         var(--ds-space-1);
+  --ds-switch-face-gap:         var(--ds-space-1);
+  --ds-switch-face-smile:       var(--ds-space-2);
+  --ds-switch-face-perspective: calc(var(--ds-switch-track-height) * 10);
+
+  /* ── بطاقة الربط — <app-connection-card> ─────────────────────────────
+     تطبيق خارجي أو بوابة دفع: شعار واسم ووصف، وتذييل يعرض الحساب المتصل
+     والإجراء (قرار 2026-09-11، النموذج «ب2»).
+     الشعار 44 كارتفاع عنصر التحكّم، والعريض 96 لشعارات هي كلمات (بوابات
+     الدفع). وارتفاع التذييل الأدنى 88 يساوي أعلى محتوى له — رقم الحساب فوق
+     شارة الحالة مع الحشوة — فتقف الخطوط الفاصلة على مستوى واحد في الصفّ. */
+  --ds-connection-logo-size:       var(--ds-control-height-md);   /* 44 */
+  --ds-connection-logo-wide:       6rem;                          /* 96 */
+  --ds-connection-foot-min-height: 5.5rem;                        /* 88 */
+  --ds-connection-segment-width:   var(--ds-space-6);             /* 24 */
+  --ds-connection-segment-height:  6px;
+  /* هالة الشعار: نسخة مكبّرة مموّهة من الشعار نفسه خلف زاويته، فتأخذ كل
+     بطاقة لون خدمتها دون قائمة ألوان تُصان — وأي تطبيق جديد يأخذ لونه وحده
+     (قرار 2026-09-12، صورة مرجعية من المستخدم). الإشباع يعيد للّون حدّته بعد
+     التمويه، والشفافية تُبقيه همسًا لا يمسّ تباين النص فوقه. */
+  --ds-connection-glow-size:       12rem;                         /* 192 */
+  --ds-connection-glow-filter:     blur(3rem) saturate(1.6);
+  --ds-connection-glow-opacity:    0.15;  /* كانت 0.22 — «أخف درجة» بطلب المستخدم 2026-09-12 */
+  /* الشعار العريض كلمة بخطوط رفيعة (Stripe، Paymob): بعد التمويه يبقى من
+     لونه أقلّ بكثير، فتُضاعف شفافيته ليقارب حضور هالة الشعار المربّع. */
+  --ds-connection-glow-opacity-wide: 0.35; /* كانت 0.5 — بالنسبة نفسها */
+
+  /* ── شريط الإشارة — <app-notice-strip> ───────────────────────────────
+     سطر هادئ تحت عنوان الصفحة: شعارات ما يخصّه ثم جملة واحدة، بخلفية
+     فاتحة من لون النيّة، بلا حدّ ولا أيقونة ولا زرّ إغلاق (قرار 2026-09-12:
+     الخيار «ب» بالبرتقالي الفاتح). لوح الشعار 24 ارتفاعًا والشعار داخله 16،
+     وعرضه الأقصى 48 فلا يطغى شعار عريض على جيرانه. */
+  --ds-notice-strip-logo-height: var(--ds-space-6);      /* 24 */
+  --ds-notice-strip-logo-glyph:  var(--ds-icon-size-sm); /* 16 */
+  --ds-notice-strip-logo-max:    3rem;                   /* 48 */
+  /* خلفية النيّة warning — أفتح من خلفية التنبيه (قرار المنتج 2026-09-13).
+     تقرؤها أيضًا قاعدة «طرق سحب الأرباح» التي يُكتب عليها الشريط. */
+  --ds-notice-strip-warning-bg:  var(--ds-warning-25);
+
+  /* حقل البحث
+     ⚠️ البحث — كالزرّ — مفكوك عن --ds-control-height-* بقرار صريح.
+     موضعه الغالب شريط أدوات فوق جدول، يقف فيه بجوار أزرار على
+     --ds-button-height-md (40px). وعلى 44px كان يعلو جيرانه بأربع
+     بكسلات، فيُقرأ الصفّ غير مستقيم قبل أن يُقرأ أيّ شيء فيه.
+     الثمن نفسه ثمنُ الزرّ: 40px دون --ds-touch-target-min (44px)،
+     ويُعوَّض بقاعدة (pointer: coarse) أدناه. */
+  --ds-search-height: 40px;
+
+  /* خلفية واحدة في كل الحالات التفاعلية — لا تلوين عند التركيز.
+     الحدّ وحلقة التركيز تقولان إن الحقل نشط، وهما كافيتان؛ وتلوين
+     الخلفية تحت نصٍّ يُكتب الآن يضيف تباينًا ثالثًا بلا معلومة.
+     (المعطَّل يبقى على --ds-color-field-bg-disabled: غيابُ التفاعل
+      حالةٌ يجب أن تُرى، لا حالة تُخفى.) */
+  --ds-search-bg: var(--ds-field-bg);
+
+  /* نصّ البحث وتلميحه بخطّ الحقل نفسه — عنصران شقيقان لا يختلفان في
+     مقاس ما يُكتب فيهما. (الاقتراحات في اللوحة تبقى على --ds-font-size-md.) */
+  --ds-search-font-size:   var(--ds-field-font-size);
+  --ds-search-font-weight: var(--ds-field-font-weight);
+  /* العدسة بمقاس أيقونة الحقل (18px). */
+  --ds-search-icon-size:   var(--ds-field-icon-size);
+
+  /* إطار التركيز — الأساسي الخفيف ملتفًّا حول الحدّ.
+     ⚠️ لا يُستعمل --ds-focus-ring العام هنا بقرار صريح: فجوته البيضاء
+     (--ds-focus-ring-offset = 2px) تفصل الحلقة عن الحدّ، فيُقرآن خطّين
+     بنفسجيّين بينهما فراغ لا إطارًا واحدًا حول الحقل.
+     والبديل هنا ملتصق: 1px بنفسجي يضاعف الحدّ (فيصير المحيط الصلب 2px،
+     وهو حدّ WCAG 2.4.11 الأدنى)، ثم 3px من الأساسي الخفيف حوله.
+     الدرجة brand-100 لا brand-50: الأخيرة عند 1.09 تختفي على سطح أبيض.
+     والإطار نفسه صار إطار الحقل وإطار التمرير أيضًا (DEBT-005 منجز)،
+     فيقرأ من توكنز الحقل ولا يُعرَّف مرّتين. */
+  --ds-search-focus-ring: var(--ds-field-ring);
+  --ds-search-focus-ring-width: var(--ds-field-ring-width);
+
+  /* الاستدارة 12px من --ds-radius-control، كالزرّ والحقل (قرار 2026-09-10؛
+     كانت 8px) — البحث يقف في الشريط نفسه بجوارهما وبالارتفاع نفسه (40px)،
+     واختلاف الاستدارة بين جارين يُقرأ قبل أي نسبة إلى الارتفاع. */
+  --ds-search-radius: var(--ds-radius-control);        /* 12px */
+
+  /* لوحة الاقتراحات تتدلّى ملتصقةً بالحقل فتُقرأ معه جسمًا واحدًا،
+     فتأخذ استدارته. */
+  --ds-search-panel-radius: var(--ds-search-radius);   /* 12px */
+
+  /* ── الحوار — <app-modal> ──────────────────────────────────────────────
+     المواصفة: specs/organisms/modal-drawer.md. كلها مشتقة من الطبقة الدلالية،
+     فالوضع الداكن يتبعها بلا نسخة ثانية — إلا المقاسات الثلاثة: قياس لا
+     اشتقاق، وهي مقاسات الدرج نفسها (سلّم عرض واحد لطبقتين شقيقتين).
+     العرض حدّ أقصى: على الشاشة الضيّقة ينكمش إلى عرضها ناقص الهامشين. */
+  --ds-modal-width-sm: 440px;  /* قياس — تأكيد: سطران وزرّان. كان 360 — وُسّع بطلب صريح 2026-09-10: سطر الوصف 400px */
+  --ds-modal-width-md: 560px;  /* قياس — نموذج قصير (الافتراضي). كان 480 — قرار 2026-09-10 */
+  --ds-modal-width-lg: 640px;  /* قياس — عمودا حقول: 288px لكلٍّ منهما يسع حقل الجوال */
+  /* قياس — عمودا حقول يسع كلٌّ منهما 70 حرفًا عربيًّا كاملة (حوارا التصنيف والوسم،
+     قرار 2026-09-11). مقيس بـ Readex Pro 12px: 70 حرفًا ≤ 412px، + حشوة 24 + حدّ 2
+     = 438 لكل حقل؛ × 2 + فجوة 16 + حشوة الحوار 2 × 20 = 932 ← 960. */
+  --ds-modal-width-xl: 960px;
+
+  /* الاستدارة radius-lg لا xl: هذا الملف يقول إن lg «للبطاقات والحوارات». */
+  --ds-modal-bg:       var(--ds-color-surface-default);
+  --ds-modal-radius:   var(--ds-radius-lg);
+  --ds-modal-shadow:   var(--ds-elevation-4);
+  /* الخلفية المعتمة وطمسها — من نظام التصميم المرجعي (Design-system-Acadimiate:
+     --ap-dialog-backdrop = slate-900 بشفافية 55%، وطمس 2px) بطلب صريح 2026-09-10.
+     الطمس لا زخرف: الحوار يعلو صفحة مكتظّة بالجداول، والتعتيم وحده يُبقي
+     تفاصيلها مقروءة خلفه فتنافسه على الانتباه.
+     قيمة خامّة لأن slate-900 (#0F172A) ليس في لوحتنا.
+     ⚠️ تخالف خلفية الدرج (--ds-color-overlay بلا طمس) — والدرج بلا استخدام اليوم. */
+  --ds-modal-backdrop:      rgb(15 23 42 / 0.55);
+  --ds-modal-backdrop-blur: 2px;
+  /* الفاصلان فوق الجسم وتحته — يظهران حين يفيض الجسم وحده. */
+  --ds-modal-divider:  var(--ds-color-divider);
+
+  /* إيقاع المسافات ثلاث علاقات بثلاثة أسماء، فتتغيّر إحداها بلا لمس الأخريين:
+       16  العنوان ← الجسم
+       24  بين حقلين — «الفجوة بين حقلين» في input-and-form.md
+       32  الجسم ← الذيل — «بين قسمين» هناك: الذيل منطقة فعل لا حقلٌ تالٍ */
+  --ds-modal-padding:    var(--ds-space-5);
+  --ds-modal-margin:     var(--ds-space-4);  /* أدنى فراغ عن حافّة الشاشة */
+  --ds-modal-header-gap: var(--ds-space-4);
+  --ds-modal-gap:        var(--ds-space-6);
+  --ds-modal-footer-gap: var(--ds-space-8);
+  --ds-modal-action-gap: var(--ds-space-2);  /* كذيل الدرج: يربط الزرّين مجموعةً */
+
+  /* العنوان عنوان الدرج نفسه. والوصف أكبر من وصف الدرج عمدًا: في التأكيد هو
+     العاقبة («لا يمكن التراجع…»)، لا سطرًا فرعيًّا. */
+  --ds-modal-title-size:         var(--ds-font-size-xl);
+  --ds-modal-title-weight:       var(--ds-font-weight-semibold);
+  --ds-modal-description-size:   var(--ds-font-size-md);
+  --ds-modal-description-color: var(--ds-color-text-secondary);
+
+  /* زرّ الإغلاق — هدف لمس كامل حول أيقونة 20px، كزرّ إغلاق الدرج. */
+  --ds-modal-close-size:     var(--ds-touch-target-min);
+  --ds-modal-close-icon:     var(--ds-icon-size-md);
+  --ds-modal-close-radius:   var(--ds-radius-md);
+  --ds-modal-close-fg:       var(--ds-color-text-muted);
+  --ds-modal-close-fg-hover: var(--ds-color-text-primary);
+  --ds-modal-close-bg-hover: var(--ds-color-surface-hover);
+
+  /* ── لوحة التفاصيل — <app-detail-panel> ───────────────────────────────
+     المواصفة: specs/organisms/detail-panel.md. لوحة تجلس بجوار القائمة لا فوقها،
+     فلا حجاب ولا ظلّ: حدٌّ يفصلها عن الجدول كما يفصل عمودٌ عمودًا.
+     الرأس والذيل والإغلاق بقيم الحوار نفسها (--ds-modal-*) — ثلاث طبقات
+     شقيقة بعنوان واحد وزرّ إغلاق واحد. */
+  /* 480 = درج md. و640 (درج lg) جُرّب ورُفض (قياس 2026-09-15): كانفاس اللوحة
+     على شاشة 1440 نحو 1150، فيبقى للجدول 430px — تخرج عنده أعمدة «تاريخ الطلب»
+     وما بعده خلف التمرير الأفقي، والقائمة هي نصف هذا النمط. وعند 480 يبقى
+     للجدول نحو 610 فتظهر أعمدته الأربعة الأولى، واللوحة تسع محتواها. */
+  --ds-detail-panel-width:    480px;
+  --ds-detail-panel-padding:  var(--ds-space-5);
+  --ds-detail-panel-bg:       var(--ds-color-surface-default);
+  --ds-detail-panel-border:   var(--ds-color-border-subtle);
+  /* تطفو فوق القائمة فتحتاج ظلًّا يقول ذلك — وهو ظلّ النموذج المعتمد نفسه. */
+  --ds-detail-panel-shadow:   var(--ds-elevation-2);
+  /* أزرار التنقّل بين السجلات: أصغر من هدف اللمس عمدًا — أداة ثانوية في الرأس
+     بجوار زرّ الإغلاق (44)، وثلاثة أهداف بحجم 44 في رأس واحد تزدحم. */
+  --ds-detail-panel-nav-size: 32px;  /* قياس */
+
+  /* ── التنبيه العابر — <app-toast-host> ────────────────────────────────
+     المواصفة: specs/molecules/alert-toast.md § Toast. قرار 2026-09-26:
+     بطاقة بيضاء يذوب فيها لون الحالة من جهة البداية، والأيقونة في مربّع أبيض،
+     ثم عنوان ووصف. زرّ الإغلاق زرّ الحوار نفسه (--ds-modal-close-*).
+     الموضع أسفل الكانفاس من جهة البداية بجوار الشريط الجانبي — يمين في العربية
+     (المستخدم، 2026-09-26: لا منتصف الصفحة). الإزاحة عن الشريط تُحسب في
+     styles.scss (--ds-toast-inset-inline-start). وعلى الجوال أعلى الشاشة. */
+  --ds-toast-width:         360px;
+  --ds-toast-offset:        var(--ds-space-4);   /* من حافّة الكانفاس */
+  --ds-toast-stack-gap:     var(--ds-space-2);   /* بين تنبيهين */
+  --ds-toast-padding:       var(--ds-space-4);
+  --ds-toast-gap:           var(--ds-space-3);   /* بين الأيقونة والنصّ */
+  --ds-toast-bg:            var(--ds-color-surface-raised);
+  --ds-toast-border:        var(--ds-color-border-subtle);
+  --ds-toast-radius:        var(--ds-radius-lg);
+  --ds-toast-shadow:        var(--ds-elevation-3);
+  /* الغسلة: تبدأ بدرجة حدّ الحالة (--ds-color-*-border · 200) عند الحافّة،
+     وتمرّ بخلفيتها (--ds-color-*-bg · 50)، وتذوب إلى سطح البطاقة قبل منتصفها
+     فيبقى النصّ على الأبيض. الدرجة 50 وحدها لم تُرَ في اللقطة (2026-09-26). */
+  --ds-toast-wash-mid:      22%;
+  --ds-toast-wash-stop:     55%;
+  /* مربّع الأيقونة: أبيض على الغسلة بظلّ خفيف، كمقاس الأفاتار الأكبر. */
+  --ds-toast-tile-size:     40px;
+  --ds-toast-tile-radius:   var(--ds-radius-md);
+  --ds-toast-tile-bg:       var(--ds-color-surface-raised);
+  --ds-toast-tile-shadow:   var(--ds-elevation-1);
+  --ds-toast-icon:          var(--ds-icon-size-md);
+  --ds-toast-title-size:    var(--ds-font-size-lg);
+  --ds-toast-title-weight:  var(--ds-font-weight-semibold);
+  --ds-toast-title-color:   var(--ds-color-text-primary);
+  --ds-toast-message-size:  var(--ds-font-size-md);
+  --ds-toast-message-color: var(--ds-color-text-secondary);
+
+  /* ── حقل الجوال — <app-phone-field> ───────────────────────────────────
+     المواصفة: specs/molecules/phone.md. الصندوق صندوق الحقل نفسه — الارتفاع
+     والحدّ والتعبئة والاستدارة وإطار التركيز من --ds-field-* و--ds-color-field-*
+     — وهذه ما يخصّ الحقل المركّب وحده. */
+  --ds-phone-country-bg-hover:   var(--ds-color-surface-hover);
+  --ds-phone-country-fg:         var(--ds-color-text-primary);
+  --ds-phone-country-gap:        var(--ds-space-2);
+  --ds-phone-country-padding-x:  var(--ds-space-3);
+  /* الفاصل منحسر عن حافّتي الحقل: خطّ بكامل الارتفاع فوق سطح واحد يُقرأ حدَّ
+     صندوق ثانٍ، فيشطر الحقل صندوقين في العين. */
+  --ds-phone-divider:            var(--ds-color-divider);
+  --ds-phone-divider-inset:      var(--ds-space-2);
+  /* عرض محجوز لرمز الاتّصال: «+1» و«+966» يفترقان ثلاثة محارف، وبلا حجز
+     ينزلق حقل الرقم — والمؤشّر داخله — عند كل تبديل دولة. */
+  --ds-phone-dial-min-width:     4ch;  /* قياس */
+  /* شارة العلم صندوق ثابت دائري: نسب ملفّات الأعلام متباعدة (قطر 11:28،
+     سويسرا 1:1)، وارتفاع حرّ يسنّن عمود اللائحة. والحلقة الداخلية تُبقي
+     العلم الأبيض الحوافّ (اليابان) مرئيًّا على سطح أبيض. */
+  --ds-phone-flag-size:          var(--ds-icon-size-md);
+  --ds-phone-flag-bg:            var(--ds-color-surface-sunken);
+  --ds-phone-flag-fg:            var(--ds-color-text-secondary);
+  --ds-phone-flag-ring:          var(--ds-color-border-subtle);
+  /* لائحة الدول بطاقة عائمة: ظلّ وحدّ خافت واستدارة البطاقات. */
+  --ds-phone-panel-bg:           var(--ds-color-surface-raised);
+  --ds-phone-panel-border:       var(--ds-color-border-subtle);
+  --ds-phone-panel-radius:       var(--ds-radius-lg);
+  --ds-phone-panel-shadow:       var(--ds-elevation-3);
+  --ds-phone-panel-max-height:   320px;  /* قياس */
+  /* البحث شريط مثبَّت بحشوته وفاصله السفلي — أداة فوق القائمة لا صفّ فيها. */
+  --ds-phone-search-padding:     var(--ds-space-2);
+  --ds-phone-option-gap:         var(--ds-space-3);
+  --ds-phone-option-height:      var(--ds-touch-target-min);
+  --ds-phone-option-padding-x:   var(--ds-space-4);
+  --ds-phone-option-bg-active:   var(--ds-color-surface-hover);
+  --ds-phone-option-bg-selected: var(--ds-color-surface-selected);
+  /* علامة الاختيار: تعبئة المرور وتعبئة المحدَّد كلتاهما فاتحة، فالعلامة إشارة
+     غير لونية تقول أيّهما المختار. */
+  --ds-phone-check-size:         var(--ds-icon-size-sm);
+  --ds-phone-check-fg:           var(--ds-color-text-brand);
+
+  /* ── رفع الصور — <app-upload> ─────────────────────────────────────────
+     المواصفة: specs/molecules/upload.md. صفّ واحد بحالتين: منطقة إسقاط بحدّ متقطّع
+     قبل الرفع، وبطاقة ملف بعده — والبنية لا تتغيّر بينهما. */
+  --ds-upload-zone-bg:              var(--ds-field-bg);
+  --ds-upload-zone-bg-hover:        var(--ds-color-surface-hover);
+  --ds-upload-zone-bg-active:       var(--ds-color-surface-selected);
+  --ds-upload-zone-bg-disabled:     var(--ds-field-bg-disabled);
+  --ds-upload-zone-border:          var(--ds-color-field-border);
+  --ds-upload-zone-border-hover:    var(--ds-color-field-border-hover);
+  --ds-upload-zone-border-active:   var(--ds-color-field-border-focus);
+  --ds-upload-zone-border-error:    var(--ds-color-field-border-error);
+  --ds-upload-zone-border-disabled: var(--ds-color-field-border-disabled);
+  /* أعرض من حدّ الحقل: الخطّ المتقطّع بسمك 1px يُقرأ إطارًا باهتًا لا دعوة. */
+  --ds-upload-zone-border-width:    var(--ds-border-width-md);
+  --ds-upload-radius:               var(--ds-radius-control);
+  /* المنطقة والبطاقة صفّ واحد بمحتويين، فحشوتهما وفجوتهما مشتقّتان بالاسم:
+     تعديل البطاقة يصل إلى المنطقة، ولا يقفز الصفّ عند وصول الصورة. */
+  --ds-upload-file-padding:         var(--ds-space-3);
+  --ds-upload-file-gap:             var(--ds-space-3);
+  --ds-upload-zone-padding:         var(--ds-upload-file-padding);
+  --ds-upload-zone-padding-sm:      var(--ds-space-2);
+  --ds-upload-zone-gap:             var(--ds-upload-file-gap);
+  /* المربّع 40px هو ما يحدّد ارتفاع الصفّ في الحالتين. */
+  --ds-upload-thumb-size:           40px;  /* قياس */
+  --ds-upload-thumb-radius:         var(--ds-radius-md);
+  --ds-upload-placeholder-bg:       var(--ds-color-surface-sunken);
+  --ds-upload-placeholder-fg:       var(--ds-color-text-muted);
+  /* المطالبة تعليمة لا قيمة: 12px بوزن عادي، واسم الملف وحده على مقاس الأساس. */
+  --ds-upload-prompt-size:          var(--ds-font-size-xs);
+  --ds-upload-prompt-fg:            var(--ds-color-text-secondary);
+  --ds-upload-action-fg:            var(--ds-color-text-link);
+  --ds-upload-file-bg:              var(--ds-color-surface-default);
+  --ds-upload-file-border:          var(--ds-color-border-default);
+  --ds-upload-file-name-size:       var(--ds-font-size-md);
+  --ds-upload-file-name-weight:     var(--ds-font-weight-medium);
+  --ds-upload-file-name-fg:         var(--ds-color-text-primary);
+  --ds-upload-file-meta-size:       var(--ds-font-size-xs);
+  --ds-upload-file-meta-fg:         var(--ds-color-text-muted);
+  --ds-upload-file-meta-gap:        var(--ds-space-1);
+  --ds-upload-list-gap:             var(--ds-space-2);
+  /* زرّا البطاقة: 32px على المؤشّر، و44px على اللمس من قاعدة (pointer: coarse). */
+  --ds-upload-button-size:          var(--ds-button-height-sm);
+  --ds-upload-button-radius:        var(--ds-radius-sm);
+  /* زرّ الحذف عارٍ بلا نصّ، فيحمل اللونُ المعنى — نبرة الخطر مشروعة هنا. */
+  --ds-upload-remove-fg:            var(--ds-color-text-danger);
+  --ds-upload-remove-bg-hover:      var(--ds-color-danger-bg);
+  --ds-upload-replace-fg:           var(--ds-color-text-secondary);
+  --ds-upload-replace-bg-hover:     var(--ds-color-surface-hover);
+  /* شريط التقدّم يحلّ محلّ الحجم في سطره، فلا يزيد ارتفاع البطاقة أثناء الرفع. */
+  --ds-upload-progress-height:      var(--ds-space-1);
+  --ds-upload-progress-radius:      var(--ds-radius-pill);
+  --ds-upload-progress-track:       var(--ds-color-surface-sunken);
+  --ds-upload-progress-fill:        var(--ds-color-brand-solid);
+  /* المربّع (appearance="tile"): الصورة كما ستظهر، وبجانبها «تغيير …» و«حذف».
+     الشعار لا يُقصّ (contain)، والحشوة الصغيرة تُبعد حوافّه عن الحدّ. */
+  --ds-upload-tile-size:            56px;  /* قياس — wide ضعفه عرضًا */
+  --ds-upload-tile-radius:          var(--ds-radius-control);
+  --ds-upload-tile-padding:         var(--ds-space-1);
+  --ds-upload-tile-gap:             var(--ds-space-3);
+
+  /* حقل اللون (app-color-field): حاضنة داخل صندوق الحقل. حدّها الداخلي دائم —
+     لون قريب من الأبيض على صندوق أبيض كان سيختفي. */
+  --ds-swatch-size:                 24px;  /* قياس */
+  --ds-swatch-radius:               var(--ds-radius-sm);
+  --ds-swatch-edge:                 var(--ds-color-border-default);
+
+  /* حقول الإدخال */
+
+  /* ⚠️ الحدّ neutral-500 لا neutral-300 — والسبب معيار لا ذوق.
+     WCAG 1.4.11 يفرض 3:1 لحدّ عنصر الواجهة حين يكون الحدّ وسيلة تمييزه.
+     neutral-300 تباينه **1.71:1** فلا يبلغ ذلك، وneutral-500 يبلغ 3.07:1.
+     ⛔ ولا يُحلّ هذا بتعبئة رمادية خفيفة تحت الحدّ: المعيار لا يجمع
+        تباينين تحت الحدّ ليصنع منهما واحدًا فوقه — تعبئة neutral-50 على
+        أبيض تباينها 1.09:1، فلا الحدّ يمرّ ولا هي. الحدّ الأدكن وحده يمرّ.
+     والتعبئة الرمادية أدناه تبقى لأنها تُهدّئ وقع الحدّ بصريًّا وتضيف
+     دليلًا ثانيًا — لا لأنها تُستوفي المعيار. */
+  --ds-color-field-border:       var(--ds-neutral-500);  /* 3.07 */
+  /* التمرير أدكن من الافتراضي، فينتقل مع الحدّ الجديد درجةً واحدة. */
+  --ds-color-field-border-hover: var(--ds-neutral-600);  /* 4.17 */
+  /* حدّ التركيز هو لون التركيز نفسه — لا درجة ثانية بجوار الحلقة.
+     كان brand-800 والحلقة brand-700: بنفسجيّان متقاربان حول حقلٍ واحد.
+     وربطه بـ --ds-color-focus-ring يقلبه في الداكن تلقائيًّا إلى brand-400
+     (6.98:1 على #1E1D23)، وكان brand-800 هناك 2.01:1 فيرسب في WCAG 1.4.11.
+     ⚠️ ولا يُعاد تعريف --ds-color-field-border-error في الداكن: danger-600
+        على #1E1D23 تباينه 3.65:1 فيمرّ كما هو. */
+  --ds-color-field-border-focus: var(--ds-color-focus-ring);
+  --ds-color-field-border-error: var(--ds-danger-600);
+  /* المعطَّل يعود إلى الدرجة الفاتحة: غياب التفاعل يُرى بخفوت الحدّ
+     مع خلفيته الرمادية، ولا يسري عليه 1.4.11 (استثناء العنصر المعطَّل). */
+  --ds-color-field-border-disabled: var(--ds-neutral-300);
+
+  /* ── تعبئة عناصر الاختيار (مربّع الاختيار وزرّ الراديو) ─────────────
+     تبقى بيضاء: تعبئة هذين تحمل **حالة** (محدَّد/غير محدَّد)، فتلوينها
+     رماديًّا يجعل غير المحدَّد يُقرأ معطَّلًا — وdisabled عندهما
+     neutral-100، وهي جارة neutral-50 فلا يفرّق بينهما أحد. */
+  --ds-color-field-bg:           var(--ds-neutral-0);
+  --ds-color-field-bg-disabled:  var(--ds-neutral-100);
+  --ds-color-field-text:         var(--ds-neutral-950);
+
+  /* ── تعبئة أسطح كتابة النصّ (حقل، منطقة نصّ، بحث) — طبقة المكوّن ────
+     بيضاء في كل الحالات التفاعلية (قرار 2026-09-10؛ كانت neutral-50 تصير
+     بيضاء عند التركيز). الحدّ neutral-500 (3.07:1) هو ما يميّز الحقل عن
+     البطاقة البيضاء — وهو وحده كان يستوفي WCAG 1.4.11، فلا يسقط شيء.
+     ⚠️ ولا تُلوَّن بلون العلامة عند التركيز: الحدّ والإطار يقولان إن الحقل
+     نشط، وتلوين الخلفية تحت نصٍّ يُكتب الآن يضيف تباينًا ثالثًا بلا معلومة
+     — الحجّة نفسها المكتوبة في --ds-search-bg أعلاه. */
+  --ds-field-bg:                 var(--ds-neutral-0);
+  --ds-field-bg-focus:           var(--ds-neutral-0);
+  --ds-field-bg-disabled:        var(--ds-color-field-bg-disabled);
+  /* للقراءة فقط يشارك المعطَّل تعبئته: الفرق بينهما **سلوكي لا بصري**
+     (ترتيب التنقّل · تباين النصّ · النسخ) — راجع specs/molecules/input-and-form.md */
+  --ds-field-bg-readonly:        var(--ds-color-field-bg-disabled);
+
+  /* ── مقاس الحقل ونصّه ─────────────────────────────────────────────────
+     40px كالبحث والزرّ (قرار 2026-09-10؛ كان 44px = --ds-control-height-md)،
+     فيستقيم حقل وزرّ في صفّ واحد. والثمن ثمنهما نفسه: دون
+     --ds-touch-target-min، ويُعوَّض بقاعدة (pointer: coarse) أدناه. */
+  --ds-field-height-md: 40px;
+  /* النصّ والتلميح 12px بوزن عادي.
+     ⚠️ Safari على iOS يكبّر الصفحة عند التركيز على أي حقل خطّه دون 16px
+        — وكان يفعل ذلك على 14px أيضًا، فالسلوك ليس جديدًا. */
+  --ds-field-font-size:   var(--ds-font-size-xs);
+  --ds-field-font-weight: var(--ds-font-weight-regular);
+
+  /* ── إطار التمرير والتركيز — الأساسي الخفيف ملتصقًا بالحدّ ────────────
+     التمرير: 3px من brand-100 حول الحدّ. التركيز: 1px بلون التركيز يضاعف
+     الحدّ (محيط صلب 2px = حدّ WCAG 2.4.11 الأدنى) ثم الـ3px نفسها حوله.
+     يقرؤه حقل البحث أيضًا — إطار واحد للعنصرين (DEBT-005 منجز). */
+  --ds-field-ring:       var(--ds-brand-100);
+  --ds-field-ring-width: 3px;
+
+  /* ── أيقونة داخل الحقل ────────────────────────────────────────────────
+     18px — خارج سلّم --ds-icon-size-* (16/20/24) بقرار صريح (2026-09-10):
+     بعد نزول نصّ الحقل إلى 12px صارت 20px أثقل من النصّ بجوارها، و16px
+     أصغر من أن تُقرأ علامةً للحقل. تأخذها كل أيقونة داخل حقل (عدسة البحث
+     اليوم)، وتُعرض بـ <ds-icon size="inherit"> مع هذه الأبعاد على العنصر. */
+  --ds-field-icon-size: 18px;
+
+  /* ── اللاصقة — نصّ ثابت داخل حدّ الحقل (`https://` قبل النطاق) ───────
+     سطح غائر كما اقتُرح في specs/molecules/input-and-form.md، والنصّ فوقه
+     text-secondary (6.2:1). أوّل استعمال: حقل النطاق المخصص (2026-09-14). */
+  --ds-field-affix-bg: var(--ds-color-surface-sunken);
+
+  /* حلقة التركيز — إلزامية ولا يجوز إزالتها
+     ⚠️ لتلوين الحلقة في عنصرٍ واحد لا يكفي إعادة تعريف --ds-color-focus-ring
+        عليه: var() داخل --ds-focus-ring تُحَلّ هنا على :root، والعنصر يرث
+        القيمة محلولةً. أعِد تعريف --ds-focus-ring معه بالتركيبة نفسها
+        (كما يفعل زرّ danger في button.component.scss). */
+  --ds-color-focus-ring:  var(--ds-brand-700);
+  --ds-focus-ring-width:  2px;
+  --ds-focus-ring-offset: 2px;
+  --ds-focus-ring: 0 0 0 var(--ds-focus-ring-offset) var(--ds-color-surface-default),
+                   0 0 0 calc(var(--ds-focus-ring-offset) + var(--ds-focus-ring-width)) var(--ds-color-focus-ring);
+
+  /* الحالات الدلالية — خلفية خافتة + حد + لون صلب، لكل نية */
+  --ds-color-success-bg:     var(--ds-success-50);
+  --ds-color-success-border: var(--ds-success-200);
+  --ds-color-success-solid:  var(--ds-success-700);
+  --ds-color-danger-bg:      var(--ds-danger-50);
+  --ds-color-danger-border:  var(--ds-danger-200);
+  --ds-color-danger-solid:   var(--ds-danger-700);
+  --ds-color-warning-bg:     var(--ds-warning-50);
+  --ds-color-warning-border: var(--ds-warning-200);
+  --ds-color-warning-solid:  var(--ds-warning-700);
+  --ds-color-info-bg:        var(--ds-info-50);
+  --ds-color-info-border:    var(--ds-info-200);
+  --ds-color-info-solid:     var(--ds-info-700);
+  --ds-color-neutral-bg:     var(--ds-neutral-100);
+  --ds-color-neutral-border: var(--ds-neutral-300);
+  --ds-color-neutral-solid:  var(--ds-neutral-700);
+  --ds-color-brand-bg:       var(--ds-brand-50);
+  --ds-color-brand-border:   var(--ds-brand-200);
+  --ds-color-brand-solid:    var(--ds-brand-800);
+  /* الـaccent — تمييزٌ لا نيّة: شارة «مالك الأكاديمية» (قرار 2026-09-13).
+     ليس حالةً ولا فعلًا، فلا يدخل STATUS_MAP ولا الأزرار.
+     الصلب تدرّجٌ كتدرّج شارة «جديد»: من accent-700 (6.24:1 مع نصّ أبيض)
+     إلى accent-600 (4.59:1) — أفتح درجة يبقى عليها النصّ الأبيض فوق 4.5:1؛
+     accent-500 كان 3.3:1. والنصّ 8.32:1 على الأبيض. */
+  --ds-color-accent-bg:        var(--ds-accent-50);
+  --ds-color-accent-border:    var(--ds-accent-200);
+  --ds-color-accent-solid:     var(--ds-accent-700);
+  --ds-color-accent-solid-end: var(--ds-accent-600);
+  --ds-color-text-accent:      var(--ds-accent-800);
+
+  /* ألوان أنواع الملفات — تمييزٌ بصريّ لا حالة (قرار المنتج 2026-09-16).
+     طبقةٌ فئوية مستقلّة: تستعير من السلالم مباشرةً لا من التوكنز الدلالية،
+     فلا يصير الأخضر «نجاحًا» ولا الأحمر «خطرًا» حين يعني «فيديو» و«PDF».
+     تُستعمل في مربّع الأيقونة وحده (الرفوف، صفّ الجدول، بطاقة الشبكة)،
+     ولا تُستعمل خلفيةً لعنصر كبير ولا لونًا لنصّ. النوع مكتوب دائمًا
+     بجوار الأيقونة، فاللون لا يحمل معنى وحده (WCAG 1.4.1). */
+  --ds-filetype-video-fg: var(--ds-success-700);
+  --ds-filetype-video-bg: var(--ds-success-50);
+  --ds-filetype-image-fg: var(--ds-warning-700);
+  --ds-filetype-image-bg: var(--ds-warning-50);
+  --ds-filetype-pdf-fg:   var(--ds-danger-700);
+  --ds-filetype-pdf-bg:   var(--ds-danger-50);
+  --ds-filetype-audio-fg: var(--ds-info-700);
+  --ds-filetype-audio-bg: var(--ds-info-50);
+  --ds-filetype-other-fg: var(--ds-accent-700);
+  --ds-filetype-other-bg: var(--ds-accent-50);
+
+  /* غلاف النوع — type-cover.md
+     غلاف المحتوى الذي لا صورة له: لوحة بتدرّج لون العلامة، يطلّ من أسفلها
+     تركيبٌ مجرّد يقول النوع (قرار المنتج 2026-09-17).
+     · اللوحة brand-100 → brand-300: أعمق من brand-50 عمدًا — الورقة الشفّافة
+       فوقها لا تُقرأ على سطح عند 1.09 من الأبيض.
+     · الورقة أبيض 55% لا أبيض صريح: لوحٌ أبيض حادّ يسرق العين من اسم الملف
+       تحته، والشفافية تُبقي الغلاف خلفيّةً.
+     · الأسطر من brand-800 بشفافيتين: 16% نصّ و45% عنوان. */
+  --ds-type-cover-panel-from:  var(--ds-brand-100);
+  --ds-type-cover-panel-to:    var(--ds-brand-300);
+  --ds-type-cover-sheet:       color-mix(in srgb, var(--ds-neutral-0) 55%, transparent);
+  --ds-type-cover-sheet-edge:  color-mix(in srgb, var(--ds-neutral-0) 65%, transparent);
+  --ds-type-cover-sheet-back:  color-mix(in srgb, var(--ds-neutral-0) 35%, transparent);
+  --ds-type-cover-line:        color-mix(in srgb, var(--ds-brand-800) 16%, transparent);
+  --ds-type-cover-line-strong: color-mix(in srgb, var(--ds-brand-800) 45%, transparent);
+  --ds-type-cover-mark:        var(--ds-brand-800);
+  --ds-type-cover-mark-fg:     var(--ds-color-text-inverse);
+  --ds-type-cover-shadow:      0 8px 20px color-mix(in srgb, var(--ds-brand-950) 10%, transparent);
+  /* من أين يطلّ المشهد: 55% في الغلاف الكبير (قرار المنتج)، و46% في المربّع
+     الصغير — عند 40 بكسل لا يتّسع الجزء الظاهر لتفاصيل النوع عند 55%. */
+  --ds-type-cover-peek:        55%;
+  --ds-type-cover-peek-sm:     46%;
+  /* قياس: سُمك سطر المشهد ونبضة الموجة في المربّع الصغير — دون أصغر خطوة في
+     سلّم المسافات (4)، فعندها تلتصق الأسطر ولا يبقى بينها بياض يُقرأ. */
+  --ds-type-cover-line-sm:     2px;
+
+  /* الرفوف — shelf-tabs.md
+     البطاقة المختارة على الدرجة التفاعلية نفسها: brand-800. جُرّبت 900
+     فبدت ثقيلة على سطح بهذا الحجم (قرار المنتج 2026-09-16).
+     والورقة الخلفية brand-600 لتبقى «رزمة» تُرى خلفها. */
+  --ds-shelf-selected-bg:    var(--ds-brand-800);
+  --ds-shelf-selected-paper: var(--ds-brand-600);
+
+  /* الحجاب خلف الحوارات والأدراج */
+  --ds-color-overlay: rgba(43, 42, 48, 0.48);
+
+  /* الهيكل العظمي أثناء التحميل */
+  --ds-color-skeleton-base:    var(--ds-neutral-100);
+  --ds-color-skeleton-shimmer: var(--ds-neutral-200);
+
+  /* مسار التنقّل — Breadcrumb
+     الفاصل مخفيّ عن قارئ الشاشة فهو عنصر واجهة غير نصّي: يكفيه 3:1 (WCAG 1.4.11)،
+     والحالية تُميَّز بالوزن مع اللون لا باللون وحده (WCAG 1.4.1). */
+  --ds-breadcrumb-gap:            var(--ds-space-2);   /* 8px */
+  --ds-breadcrumb-min-height:     var(--ds-space-8);   /* 32px */
+  --ds-breadcrumb-font-size:      var(--ds-font-size-md);
+  --ds-breadcrumb-link-fg:        var(--ds-color-text-secondary);
+  --ds-breadcrumb-link-fg-hover:  var(--ds-color-text-primary);
+  --ds-breadcrumb-link-weight:    var(--ds-font-weight-regular);
+  --ds-breadcrumb-link-radius:    var(--ds-radius-sm);
+  --ds-breadcrumb-current-fg:     var(--ds-color-text-primary);
+  --ds-breadcrumb-current-weight: var(--ds-font-weight-semibold);
+  --ds-breadcrumb-separator-fg:   var(--ds-color-text-muted);
+  --ds-breadcrumb-separator-size: var(--ds-icon-size-sm);
+  --ds-breadcrumb-transition:     var(--ds-duration-fast) var(--ds-easing-standard);
+
+  /* رأس الصفحة — <app-page-header>
+     المواصفة: specs/organisms/page-layout.md. العنوان وتحته الوصف، والإجراء في
+     الطرف الآخر. كلها مشتقة من الطبقة الدلالية، فتتبع الوضع الداكن بلا نسخة.
+
+     العنوان 24px شبه عريض: هو «Page Title» في سلّم UI-04، والوحيد في الصفحة
+     بهذا المقاس — عناوين الأقسام تحته 20px فما دون.
+     الوصف 14px بلون text-muted (#686573، تباين 5.68:1 — AA): معلومة شارحة
+     لا تنافس العنوان، وأفتح درجة يسمح بها النظام لنصّ يُقرأ.
+
+     إيقاع المسافات ثلاث علاقات بثلاثة أسماء:
+        8   العنوان ← الوصف: ملتصقان، الوصف يشرح هذا العنوان لا غيره
+        16  العناوين ↔ الإجراءات: الحدّ الأدنى للفصل بين طرفين
+        24  الرأس ← المحتوى: بداية ما جاء المستخدم لأجله (16 على الجوال) */
+  --ds-page-header-title-size:          var(--ds-font-size-3xl);   /* 24 */
+  --ds-page-header-title-weight:        var(--ds-font-weight-semibold);
+  --ds-page-header-title-line-height:   var(--ds-line-height-tight);
+  --ds-page-header-title-fg:            var(--ds-color-text-primary);
+  --ds-page-header-description-size:    var(--ds-font-size-md);    /* 14 */
+  --ds-page-header-description-weight:  var(--ds-font-weight-regular);
+  --ds-page-header-description-line-height: var(--ds-line-height-normal);
+  --ds-page-header-description-fg:      var(--ds-color-text-muted);
+  /* سطر الوصف لا يمتدّ بعرض الشاشة: فوق ~72 حرفًا تفقد العين بداية السطر التالي. */
+  --ds-page-header-description-max:     var(--ds-prose-max);
+  --ds-page-header-title-gap:           var(--ds-space-2);         /* 8  */
+  --ds-page-header-gap:                 var(--ds-space-4);         /* 16 */
+  --ds-page-header-actions-gap:         var(--ds-space-2);         /* 8 — يربط الأزرار مجموعةً */
+  --ds-page-header-spacing:             var(--ds-space-6);         /* 24 */
+
+  /* ── الطيّ — <app-accordion-panel> ─────────────────────────────────────
+     المواصفة: specs/molecules/accordion.md. اللوحة بطاقة مستقلّة: سطح أبيض بحدّ
+     خافت واستدارة 12، وداخلها رأسٌ رمادي بحشوة 4 حوله — فالرأس يُقرأ كتلةً
+     قابلة للضغط، والمحتوى يبقى على الأبيض حيث يُقرأ. */
+  --ds-accordion-gap:             var(--ds-space-3);  /* 12 بين لوحة وأخرى */
+  --ds-accordion-bg:              var(--ds-color-surface-raised);
+  --ds-accordion-border:          var(--ds-color-border-subtle);
+  --ds-accordion-radius:          var(--ds-radius-lg);
+  --ds-accordion-inset:           var(--ds-space-1);  /* 4 — الحافّة البيضاء حول الرأس */
+  /* درجتان من سلّم الرمادي لا سطحان دلاليّان: السلّم في هذا النطاق ثلاث درجات
+     (50 · 100 · 200)، و`surface-sunken` (100) ساكنًا يستهلك الوسطى فلا يبقى
+     للمرور إلا 200 — رمادي ثقيل يقفز تحت الفأرة. فالساكن 50 والمرور 100
+     (قرار المنتج 2026-09-19: «أ — أفتح درجة»). */
+  --ds-accordion-header-bg:       var(--ds-neutral-50);
+  --ds-accordion-header-bg-hover: var(--ds-neutral-100);
+  --ds-accordion-header-radius:   var(--ds-radius-md);
+  --ds-accordion-header-padding-x: var(--ds-space-4);
+  --ds-accordion-header-padding-y: var(--ds-space-3);
+  --ds-accordion-header-size:     var(--ds-font-size-lg);      /* 16 */
+  --ds-accordion-header-weight:   var(--ds-font-weight-semibold);
+  --ds-accordion-chevron-fg:      var(--ds-color-text-muted);
+  --ds-accordion-body-padding:    var(--ds-space-4);
+  /* المفتوحة ترتفع قليلًا عن أخواتها المطويّة — الظلّ يقول أيّها مفتوحة
+     قبل أن تُقرأ زاوية السهم. */
+  --ds-accordion-shadow-open:     var(--ds-elevation-1);
+
+  /* ── شريط التوزيع ──────────────────────────────────────────────────────
+     مبلغ واحد أو عدد واحد مقسوم على أجزاء (نصيبك من كل عملية بيع، الطلبات
+     بين المتجر وموقعك). غير `--ds-table-bar-*`: تلك نسبة واحدة داخل خلية
+     جدول، وهذه عدّة أجزاء بخريطة ألوان.
+
+     الارتفاع 32 لا 24 (قرار المنتج 2026-09-20): الشريط رقمٌ يُقرأ لا زينة،
+     وعند 24 يبهت الجزء الصغير منه. والنقطة مربّع مستدير 10 لا دائرة —
+     تتبع استدارة النظام. */
+  --ds-distribution-bar-height:     32px;
+  --ds-distribution-bar-height-sm:  16px;
+  --ds-distribution-bar-track:      var(--ds-neutral-100);
+  --ds-distribution-bar-radius:     var(--ds-radius-pill);
+  --ds-distribution-bar-gap:        2px;
+  --ds-distribution-dot-size:       10px;
+  --ds-distribution-dot-radius:     var(--ds-radius-xs);
+
+  /* لونا قناتي البيع في المخططات والنقاط (chart.md § لونا قناتي البيع).
+     أكاديميات بلس أخضر #0B7A5E بقرار المنتج 2026-09-24 (كان --ds-info-500):
+     لونه لا درجة من سُلّم مشترك — تباينه مع الأبيض 5.3، فيصلح نصًّا أيضًا. */
+  --ds-channel-site:                var(--ds-brand-800);
+  --ds-channel-plus:                #0B7A5E;
+
+  /* درجتان أفتح لكل قناة — لأجزاء كلٍّ واحد داخل عمود القناة، كالرسوم والعمولة
+     في «من الإجمالي إلى الصافي» (قرار المنتج 2026-09-24: مخططات بلس خضراء
+     ومخططات الموقع بنفسجية). درجتا الموقع 600 و400 من سُلّم العلامة، ودرجتا بلس
+     بفرق الإضاءة نفسه (OKLCH) من #0B7A5E: تباين 2.95 و1.71 مقابل 4.62 و2.40. */
+  --ds-channel-site-mid:            var(--ds-brand-600);
+  --ds-channel-site-subtle:         var(--ds-brand-400);
+  --ds-channel-plus-mid:            #29A985;
+  --ds-channel-plus-subtle:         #85D6B9;
+}
+
+/* -----------------------------------------------------------------------------
+   الوضع الداكن — البنية جاهزة، غير مُفعّلة بعد.
+   ThemeService يضيف الفئة dark-theme على <html>.
+   تنبيه: هذه القيم مبدئية ولم تُدقّق بعد بمعايير التباين.
+   لا تُعتمد قبل مراجعة كاملة — انظر 01-FOUNDATIONS.md § الوضع الداكن
+   -------------------------------------------------------------------------- */
+html.dark-theme {
+  --ds-color-surface-page:     #17161B;
+  --ds-color-surface-default:  #1E1D23;
+  --ds-color-surface-raised:   #26252C;
+  --ds-color-surface-sunken:   #131217;
+  --ds-color-surface-hover:    #2C2B33;
+  --ds-color-surface-hover-on-page: var(--ds-color-surface-hover);
+  --ds-color-surface-selected: var(--ds-brand-950);
+  --ds-color-surface-selected-bold: var(--ds-brand-900);
+  --ds-color-surface-disabled: #26252C;
+  --ds-color-surface-inverse:  var(--ds-neutral-50);
+
+  --ds-color-text-primary:     var(--ds-neutral-50);
+  --ds-color-text-secondary:   var(--ds-neutral-200);
+  --ds-color-text-muted:       var(--ds-neutral-400);
+  --ds-color-text-placeholder: var(--ds-neutral-400);
+  --ds-color-text-disabled:    var(--ds-neutral-600);
+  --ds-color-text-inverse:     var(--ds-neutral-950);
+  --ds-color-text-brand:       var(--ds-brand-400);
+  --ds-color-text-link:        var(--ds-brand-400);
+  --ds-color-text-success:     var(--ds-success-400);
+  --ds-color-text-danger:      var(--ds-danger-400);
+  --ds-color-text-warning:     var(--ds-warning-400);
+  --ds-color-text-info:        var(--ds-info-400);
+  /* الـaccent يفتح كما يفتح brand: والصلب الفاتح تحت نصّ text-inverse الداكن
+     (شارة «مالك الأكاديمية»)، لا accent-700 الذي يطمس نصًّا داكنًا فوقه. */
+  --ds-color-text-accent:      var(--ds-accent-400);
+  --ds-color-accent-solid:     var(--ds-accent-400);
+  --ds-color-accent-solid-end: var(--ds-accent-300);
+
+  /* أنواع الملفات في الداكن: الرمز يفتح والخلفية تُغمق، كبقية الأزواج هنا. */
+  --ds-filetype-video-fg: var(--ds-success-400);
+  --ds-filetype-video-bg: var(--ds-success-950);
+  --ds-filetype-image-fg: var(--ds-warning-400);
+  --ds-filetype-image-bg: var(--ds-warning-950);
+  --ds-filetype-pdf-fg:   var(--ds-danger-400);
+  --ds-filetype-pdf-bg:   var(--ds-danger-950);
+  --ds-filetype-audio-fg: var(--ds-info-400);
+  --ds-filetype-audio-bg: var(--ds-info-950);
+  --ds-filetype-other-fg: var(--ds-accent-400);
+  --ds-filetype-other-bg: var(--ds-accent-950);
+
+  /* غلاف النوع: اللوحة تصير سطحًا داكنًا مصبوغًا بلون العلامة لا بنفسجيًّا
+     فاتحًا، والورقة أبيض بنسبة منخفضة — الأبيض 55% على سطح داكن لوحٌ ساطع. */
+  --ds-type-cover-panel-from:  color-mix(in srgb, var(--ds-brand-800) 22%, var(--ds-color-surface-sunken));
+  --ds-type-cover-panel-to:    color-mix(in srgb, var(--ds-brand-600) 34%, var(--ds-color-surface-sunken));
+  --ds-type-cover-sheet:       color-mix(in srgb, var(--ds-neutral-0) 12%, transparent);
+  --ds-type-cover-sheet-edge:  color-mix(in srgb, var(--ds-neutral-0) 18%, transparent);
+  --ds-type-cover-sheet-back:  color-mix(in srgb, var(--ds-neutral-0) 8%, transparent);
+  --ds-type-cover-line:        color-mix(in srgb, var(--ds-neutral-0) 20%, transparent);
+  --ds-type-cover-line-strong: color-mix(in srgb, var(--ds-neutral-0) 45%, transparent);
+  --ds-type-cover-mark:        var(--ds-brand-500);
+  --ds-type-cover-shadow:      none;
+
+  /* الرفوف في الداكن: المختار يفتح كما يفتح كل سطح ممتلئ هنا. */
+  --ds-shelf-selected-bg:    var(--ds-brand-600);
+  --ds-shelf-selected-paper: var(--ds-brand-800);
+
+  /* رأس الطيّ في الداكن: سلّم الرمادي الفاتح لا يخدم هنا — الرأس أغمق درجةً
+     من سطح البطاقة، ومروره يفتح لا يغمق. */
+  --ds-accordion-header-bg:       var(--ds-color-surface-default);
+  --ds-accordion-header-bg-hover: var(--ds-color-surface-hover);
+
+  --ds-color-border-subtle:  #302F38;
+  --ds-color-border-default: #3D3B45;
+  --ds-color-border-strong:  #4E4C57;
+  --ds-color-divider:        #302F38;
+
+  --ds-color-action-primary-bg:        var(--ds-brand-600);
+  --ds-color-action-primary-bg-hover:  var(--ds-brand-500);
+  --ds-color-action-primary-bg-active: var(--ds-brand-700);
+  --ds-color-action-primary-text:      var(--ds-neutral-950);
+
+  /* المحايد ينعكس كما ينعكس الأساسي: تعبئة فاتحة ونصّ داكن.
+     والتمرير يفتح لا يُغمق — الاتجاه نفسه الذي يسلكه primary هنا. */
+  --ds-color-action-neutral-bg:        var(--ds-neutral-200);
+  --ds-color-action-neutral-bg-hover:  var(--ds-neutral-100);
+  --ds-color-action-neutral-bg-active: var(--ds-neutral-300);
+  --ds-color-action-neutral-text:      var(--ds-neutral-950);
+
+  /* الذكاء الاصطناعي: في الداكن يفتح الإطار والنصّ درجاتٍ كما يفتح الرابط.
+     غطاء السكون والتمرير لا يُعادان هنا: الأوّل هو السطح الافتراضي فينقلب
+     معه، والثاني شفاف في الوضعين. وحده غطاء الضغط ينقلب — في الداكن الأبرز
+     هو الأفتح كما في الأساسيّ والمحايد، فحجابٌ أبيض لا أسود.
+     والنصّ الأبيض على طرفَي التدرّج الداكن يصير نصًّا داكنًا: neutral-950
+     على brand-500 ‏5.47:1 وعلى accent-500 ‏5.48:1 — AA.
+     قيم مبدئية كبقية الكتلة. */
+  --ds-color-action-ai-text:           var(--ds-brand-400);
+  --ds-color-action-ai-icon:           var(--ds-accent-400);
+  --ds-color-action-ai-bg-active:      rgb(255 255 255 / 0.16);
+  --ds-color-action-ai-gradient-start: var(--ds-brand-500);
+  --ds-color-action-ai-gradient-end:   var(--ds-accent-500);
+  /* المسار في الداكن حدّ السطح الافتراضي: brand-200 يتوهّج على السطح الداكن
+     فينافس الشعاع الذي يجري عليه. */
+  --ds-color-action-ai-border-track:   var(--ds-color-border-default);
+
+  --ds-color-field-bg:          #1E1D23;
+  --ds-color-field-bg-disabled: #26252C;
+  /* الحدّ neutral-600 لا #3D3B45 — للحجّة نفسها في الفاتح (WCAG 1.4.11):
+     #3D3B45 كان 1.52:1 على السطح فيختفي الحقل. وneutral-600 أدنى درجة
+     تمرّ على الأسطح الثلاثة (4.01:1 على #1E1D23)، وneutral-700 يسقط عليه (2.95).
+     التمرير يفتح درجةً (neutral-500): في الداكن الأبرز هو الأفتح.
+     والمعطَّل يعود إلى حدّ السطح (#3D3B45): أخفت من الافتراضي، ولا يسري عليه
+     1.4.11. وبدون هذا السطر كان يرث neutral-300 من الفاتح — أسطع حدّ في
+     الشاشة لحقلٍ معطَّل. */
+  --ds-color-field-border:          var(--ds-neutral-600);
+  --ds-color-field-border-hover:    var(--ds-neutral-500);  --ds-color-field-border-disabled: var(--ds-color-border-default);
+  --ds-color-field-text:        var(--ds-neutral-50);
+
+  /* الداكن يعكس العلاقة: سطح الكتابة **أغمق** من الصفحة لا أفتح، وعند
+     التركيز يفتّح درجةً. */
+  --ds-field-bg:                #1A191F;
+  --ds-field-bg-focus:          #1E1D23;
+  --ds-field-bg-disabled:       var(--ds-color-field-bg-disabled);
+  --ds-field-bg-readonly:       var(--ds-color-field-bg-disabled);
+
+  --ds-color-focus-ring: var(--ds-brand-400);
+
+  /* الأساسي الخفيف ينقلب في الداكن: brand-100 يضيء كصفيحة بيضاء على
+     أرضية #1E1D23، فالإطار يأخذ أغمق درجات الأساسي بدلًا منه.
+     --ds-search-focus-ring يقرأ هذا التوكن، فينقلب معه (html.dark-theme
+     هو عنصر الجذر نفسه، فيُحلّ var() هنا بالقيمة الداكنة). */
+  --ds-field-ring: var(--ds-brand-950);
+
+  --ds-color-overlay: rgba(9, 9, 11, 0.66);
+  /* المرجع لا يعرّف وضعًا داكنًا، فتبقى خلفية الحوار في الداكن على الحجاب المعتمد هنا. */
+  --ds-modal-backdrop: var(--ds-color-overlay);
+
+  --ds-color-skeleton-base:    #26252C;
+  --ds-color-skeleton-shimmer: #302F38;
+}
+
+/* -----------------------------------------------------------------------------
+   قواعد أساسية مشتركة
+   -------------------------------------------------------------------------- */
+
+/* هدف اللمس: على الأجهزة اللمسية يرتفع الحد الأدنى تلقائيًا */
+@media (pointer: coarse) {
+  :root {
+    --ds-control-height-sm: var(--ds-touch-target-min);
+    /* الزرّ مفكوك عن السلّم أعلاه (32/40/48)، فلا ترفعه تلك القاعدة.
+       وعلى اللمس ترتفع مقاساته الثلاثة إلى 44px: sm وmd معًا دون الحدّ،
+       وlg عند 48px يتجاوزه فيبقى كما هو. */
+    --ds-button-height-sm: var(--ds-touch-target-min);
+    --ds-button-height-md: var(--ds-touch-target-min);
+    /* والبحث كذلك: 40px على اللمس دون الحدّ الأدنى، فيرتفع إلى 44px.
+       ويرتفع معه جيرانه من الأزرار، فيبقى الصفّ مستقيمًا كما كان. */
+    --ds-search-height: var(--ds-touch-target-min);
+    /* والحقل مثلهما منذ 2026-09-10: 40px يرتفع إلى 44px على اللمس. */
+    --ds-field-height-md: var(--ds-touch-target-min);
+  }
+}
+
+/* الجوال — الصفحة تضيق فيضيق إطارها، والمحتوى يبقى.
+   767.98px هو حدّ القشرة نفسه (base.component.scss): تحته يصير الشريط الجانبي
+   درجًا يطفو، فيأخذ المحتوى عرض الشاشة كلّه ناقص هامشَي السطح.
+   ولا يُصغَّر شيء آخر: الرأس يعيد ترتيب نفسه (العنوان ثم الإجراء بعرض كامل)
+   بدل أن يتقلّص — RESPONSIVE-02. */
+@media (max-width: 767.98px) {
+  :root {
+    --ds-page-padding-block:     var(--ds-space-4);      /* 16 */
+    --ds-page-padding-inline:    var(--ds-space-4);      /* 16 */
+    --ds-page-header-title-size: var(--ds-font-size-2xl); /* 20 */
+    --ds-page-header-spacing:    var(--ds-space-4);      /* 16 */
+  }
+}
+
+/* احترام تفضيل تقليل الحركة — إلزامي (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-duration-instant: 0ms;
+    --ds-duration-fast:    0ms;
+    --ds-duration-normal:  0ms;
+    --ds-duration-slow:    0ms;
+    --ds-switch-duration:  0ms;
+  }
+}
+
+/* فئة مساعدة وحيدة يوفّرها النظام: حلقة تركيز موحّدة.
+   تُستخدم داخل مكونات النظام فقط — لا تُستخدم كـ utility عامة. */
+.ds-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+/* -----------------------------------------------------------------------------
+   جسر الثيم القديم — Legacy bridge (المرحلة 0 من توحيد الأزرار)
+   -------------------------------------------------------------------------- */
+
+/* المشكلة: لون العلامة كان له مصدران. `panel-style.css` (الثيم المشترى)
+   يعرّف `--p-primary-color: #702EA4` حرفيًّا، والنظام يعرّف `--ds-brand-800`.
+   مصدران لقرار تصميمي واحد = خرق DS-Rule 2، وهو ما أنتج أربع درجات بنفسجية
+   في الكود (#6a2cda، #702ea4، #7c3aed، #78398d).
+
+   الحل: هذا الملف يُحمَّل **بعد** panel-style.css في angular.json (63 ← 65)،
+   فتغلب هذه التعريفات عليها بلا تعديل الملف المشترى وبلا !important.
+   ~1720 عنصرًا يقرأ `--p-primary-*` اليوم يصير مصدره النظام.
+
+   ⚠️ الربط بالتوكن **الأوّلي** (`--ds-brand-800`) لا الدلالي
+   (`--ds-color-action-primary-bg`) — بقرار صريح. الدلالي ينقلب في الوضع
+   الداكن إلى `--ds-brand-600`، وكان ذلك سيغيّر مظهر تلك الـ1720 دفعةً واحدة
+   قبل أن تُدقَّق قيم الوضع الداكن (انظر التحذير فوق `html.dark-theme`).
+   الأوّلي ثابت في الوضعين، فالمظهر الحالي محفوظ كما هو.
+   عند اعتماد الوضع الداكن: انقل هذه الثلاثة إلى التوكن الدلالي.
+
+   الفارق البصري عن #702EA4: ‏#6E2BA1 — ‏3/255 كحدّ أقصى في كل قناة
+   (ΔE < 1، دون عتبة الإدراك)، وهي المعادلة التي أقرّها النظام أصلًا في
+   تعليق `--ds-brand-800`. التباين المضمون على الأبيض: 8.32 (AAA).
+
+   ⛔ لا تُضف هنا جسورًا لكلاسات `.btn-*`. الجسر للتوكنات فقط؛ توحيد
+   الكلاسات يتم بترحيلها إلى `[dsButton]` (المراحل 1-4). */
+:root {
+  --p-primary-color: var(--ds-brand-800);
+
+  /* البديلان الشفّافان كانا hex بثماني خانات (`df` = ‏87.5%، `1f` = ‏12.2%).
+     لا يمكن تركيب قناة ألفا على متغيّر بهذه الصيغة، فـ`color-mix` هي
+     الطريقة الوحيدة لاشتقاقهما من المصدر نفسه بدل تكرار الـhex. */
+  --p-primary-semi-light: color-mix(in srgb, var(--ds-brand-800) 87.5%, transparent);
+  --p-primary-light:      color-mix(in srgb, var(--ds-brand-800) 12.2%, transparent);
+}
