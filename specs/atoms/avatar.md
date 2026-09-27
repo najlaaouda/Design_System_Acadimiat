@@ -8,7 +8,7 @@ selector: ['<app-avatar>']
 source: ['src/app/shared/ui/avatar']
 origin: ['CLAUDE.md', 'src/app/shared/ui/avatar']
 keywords: ['أفاتار', 'صورة المستخدم', 'الحرفان', 'avatar', 'initials']
-last_verified: 2026-09-15
+last_verified: 2026-09-26
 ---
 
 # الأفاتار — `<app-avatar>`
@@ -123,13 +123,15 @@ last_verified: 2026-09-15
 * المقاسات بخصائص منطقية (`inline-size` / `block-size`)، ولا قاعدة اتجاه في المكوّن.
 * `letter-spacing: 0` على الحرفين — (تعليق الكود) «الحرفان العربيان يتّصلان، فلا تباعد بينهما.»
 
-> ⚠️ **غير موثّق بعد:** ترتيب الحرفين واتجاههما لاسم لاتيني داخل صفحة RTL.
+(وُثّق 2026-09-26 من الكود) لا `dir` ولا `unicode-bidi` على الحرفين: يرثان اتجاه الصفحة، والحرفان نصّ واحد متّصل (`words[0][0] + words[1][0]`) يرتّبه المتصفح بخوارزمية الاتجاه. ولا `text-transform` ولا تكبير في الكود: الحرفان بحالتهما في الاسم — «john smith» ← «js».
+
+> ⚠️ **غير موثّق بعد:** هل يُكبَّر الحرفان اللاتينيان، وهل يلزم عزل اتجاههما (`dir="auto"`) لاسم يجمع عربيًّا ولاتينيًّا — قرار لم يُتّخذ.
 
 ## 11. إمكانية الوصول
 
 (تعليق الكود) «الأفاتار **زخرفي دائمًا**: الاسم مكتوب بجواره نصًّا أو على الزرّ الحاوي، فإعلانه لقارئ الشاشة تكرار. لذلك `aria-hidden` ثابت و`alt=""`.»
 
-> ⚠️ **غير موثّق بعد:** تباين الحرفين (`--ds-avatar-fg` على `--ds-avatar-bg`) — لا رقم له في CLAUDE.md ولا في الكود.
+**تباين الحرفين** (قيس 2026-09-26 من قيم `tokens.css`): `--ds-avatar-fg` (`brand-800` #6E2BA1) على `--ds-avatar-bg` (`neutral-100` #EAE9ED) = **6.89:1** — فوق 4.5:1 لنصّ عادي (AA). والحرفان بوزن 600 و12px (14 في `lg`). وفي الوضع الداكن المبدئي يصيران `brand-400` على `#131217` — لم يُقس.
 
 ## 12. النصوص
 
@@ -163,8 +165,13 @@ avatar: (user?.avatar || '').toString().trim() || null,
 
 ## 15. الدَّين القائم
 
-* `src/app/views/admin/main-features/orders/order-details/order-details.component.ts` (السطران 87 و100) ما زال يمرّر `environment.defaultUserImage || 'assets/images/default-avatar.png'` إلى `[src]` في `order-details.component.html:21` — النافذة التي تفتحها `cancelled-payments` و`user-participations-tab`. إصلاح 2026-09-15 كان في `order-view.ts` (لوحة تفاصيل الطلبات) وحدها.
-* تعليق رأس `avatar.component.ts` يشير إلى المواصفة `Design-System/specs/atoms/avatar.md`، ولا ملف بهذا الاسم.
+* ✅ **أُصلح 2026-09-27:** `order-details.component.ts` يمرّر صورة المشتري الحقيقية أو `null`، فيظهر الحرفان. — **وكان:** `order-details.component.ts` (السطران 87 و100) يمرّر `environment.defaultUserImage || 'assets/images/default-avatar.png'` إلى `[src]` في `order-details.component.html:21` — النافذة التي تفتحها `cancelled-payments` و`user-participations-tab`. إصلاح 2026-09-15 كان في `order-view.ts` (لوحة تفاصيل الطلبات) وحدها. (قيس 2026-09-26: ما زال في السطرين نفسيهما.)
+* ~~تعليق رأس `avatar.component.ts` يشير إلى المواصفة `Design-System/specs/atoms/avatar.md`، ولا ملف بهذا الاسم.~~ صُحّح 2026-09-26: كان البند يقول إن الملف غير موجود، وهو هذا الملف — التعليق صحيح.
+
+**مراجعة 2026-09-26 مقابل الكود:** المقاسات والاستدارات والتوكنز والمدخلات والحالات واشتقاق الحرفين مطابقة لـ`avatar.component.ts` و`tokens.css`. ووُثّق من الكود §10 (الاتجاه وحالة الأحرف)، وقيس §11 (التباين).
+
+* ⚠️ تعارض (2026-09-26): `CLAUDE.md` الجذر (قرار 2026-09-15، منقول في §1) — «24 / 32 / 40, radius 8» للمقاسات كلها · الكود — `sm` على `--ds-avatar-radius-sm` = `--ds-radius-sm` (6)، بتعليق في `tokens.css` («8px على مربّع 24 تلتهم ثلثه فيعود شبه دائري») بلا تاريخ. (البند 12 في تعارضات `README.md`.)
+* للعلم: `REQ-004` (2026-09-09) في `BACKEND-REQUIREMENTS.md` يصف الحلّ المؤقت بخلفية `--ds-brand-100`، والكود على `--ds-avatar-bg` = `surface-sunken` (`neutral-100`). السجلّ يُضاف إليه ولا يُعدَّل، فلم يُمسّ.
 
 ## 16. روابط
 

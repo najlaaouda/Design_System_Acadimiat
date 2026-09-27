@@ -6,7 +6,7 @@ status: approved
 components: ['<app-modal>', '<app-drawer>', '<app-sheet>', '<app-detail-panel>', '<app-notice-strip>', '<app-alert>']
 origin: ['Design-System/components/modal-drawer.md', 'CLAUDE.md']
 decisions: ['UI-12 — حوار أم درج أم صفحة (بلا تاريخ في الأصل)', '2026-09-11 — حقلان متجاوران ⇒ <app-modal size="xl"> («إضافة مدرب»)', '2026-09-14 — الإشارة أوّل جسم النافذة تحت العنوان، ولا يعلوها إلا تنبيه تعذّر الحفظ', '2026-09-14 — لا <app-alert tone="info"> للإشارة في النافذة، وتعذّر الحفظ <app-alert tone="danger"> أعلى الجسم']
-last_verified: 2026-09-14
+last_verified: 2026-09-26
 ---
 
 # الحوارات — نمط

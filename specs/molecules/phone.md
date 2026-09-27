@@ -8,7 +8,7 @@ selector: ['app-phone-field']
 source: ['src/app/shared/ui/phone-field']
 origin: ['Design-System/components/phone.md']
 keywords: ['موبايل', 'جوال', 'هاتف', 'رقم', 'دولة', 'علم', 'phone', 'tel', 'E.164']
-last_verified: 2026-09-10
+last_verified: 2026-09-26
 ---
 
 # حقل رقم الموبايل — `<app-phone-field>`
@@ -62,7 +62,21 @@ last_verified: 2026-09-10
 
 ## 5. الحالات
 
-> ⚠️ **غير موثّق بعد:** جدول الحالات (Default · Hover · Focus · Disabled · Error). المكتوب منها موزّع: زرّ الدولة يقول إنه تفاعلي بالسهم وتعبئة المرور والحلقة الداخلية (§3)، والتركيز حلقتان (§11)، و`disabled` (§7)، والتحقّق `required` و`invalidPhone` ونصّ رسالته من `<app-form-field>` (§8 عقد القيمة)، والحدّ والتعبئة وإطار التمرير والتركيز من توكنز الحقل (§6).
+المكتوب منها موزّع: زرّ الدولة يقول إنه تفاعلي بالسهم وتعبئة المرور والحلقة الداخلية (§3)، والتركيز حلقتان (§11)، و`disabled` (§7)، والتحقّق `required` و`invalidPhone` ونصّ رسالته من `<app-form-field>` (§8 عقد القيمة)، والحدّ والتعبئة وإطار التمرير والتركيز من توكنز الحقل (§6).
+
+**ما يرسمه `phone-field.component.scss`:**
+
+| الحالة | الصفّ | زرّ الدولة وحقل الرقم |
+|---|---|---|
+| Default | `--ds-field-bg` وحدّ `--ds-color-field-border` | الزرّ شفّاف، والسهم `--ds-color-text-muted` |
+| Hover | حدّ `--ds-color-field-border-hover` وإطار `--ds-field-ring` 3px (لا يسري على المعطَّل ولا على المركَّز) | الزرّ: تعبئة `--ds-phone-country-bg-hover` |
+| Focus (`:focus-within`) | 1px بلون التركيز يضاعف الحدّ ثم 3px من `--ds-field-ring`، والتعبئة `--ds-field-bg-focus` | الزرّ بلوحة المفاتيح: حلقة داخلية `inset` بسمك `--ds-focus-ring-width` ولون `--ds-color-focus-ring` |
+| مفتوحة (`.ds-phone--open`) | كالتركيز | السهم يدور 180° |
+| Error | الحدّ `--ds-color-field-border-error` ويثبت في التمرير والتركيز | `aria-invalid` على حقل الرقم وحده |
+| Disabled | `--ds-field-bg-disabled` وحدّ `--ds-color-field-border-disabled` | الزرّ والرقم `--ds-color-text-disabled`، واللائحة لا تُفتح |
+| Loading · Success | لا ينطبق — لا حالة لهما في المكوّن؛ الكشف غير المتزامن لا يُظهر شيئًا (§8) | |
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 6. التوكنز
 
@@ -70,17 +84,24 @@ last_verified: 2026-09-10
 
 | التوكن | يشير إلى | القيمة |
 |---|---|---|
-| `--ds-phone-country-bg-hover` | `--ds-color-surface-hover` | |
+| `--ds-phone-country-bg-hover` | `--ds-color-surface-hover` | `#F5F5F7` |
+| `--ds-phone-country-fg` | `--ds-color-text-primary` | `#2B2A30` |
 | `--ds-phone-country-gap` · `-padding-x` | `--ds-space-2` · `--ds-space-3` | 8 · 12px |
-| `--ds-phone-divider` · `-inset` | `--ds-color-divider` · `--ds-space-2` | 8px |
+| `--ds-phone-divider` · `-inset` | `--ds-color-divider` · `--ds-space-2` | `#D9D8DE` · 8px |
 | `--ds-phone-dial-min-width` | — | `4ch` (قياس) |
 | `--ds-phone-flag-size` | `--ds-icon-size-md` | 20px |
-| `--ds-phone-flag-bg` · `-fg` · `-ring` | `--ds-color-surface-sunken` · `--ds-color-text-secondary` · `--ds-color-border-subtle` | |
-| `--ds-phone-panel-bg` · `-border` · `-radius` · `-shadow` | `--ds-color-surface-raised` · `--ds-color-border-subtle` · `--ds-radius-lg` · `--ds-elevation-3` | 12px |
+| `--ds-phone-flag-bg` · `-fg` · `-ring` | `--ds-color-surface-sunken` · `--ds-color-text-secondary` · `--ds-color-border-subtle` | `#EAE9ED` · `#55525E` · `#D9D8DE` |
+| `--ds-phone-panel-bg` · `-border` · `-radius` · `-shadow` | `--ds-color-surface-raised` · `--ds-color-border-subtle` · `--ds-radius-lg` · `--ds-elevation-3` | `#FFFFFF` · `#D9D8DE` · 12px · — |
 | `--ds-phone-panel-max-height` | — | 320px (قياس) |
+| `--ds-phone-search-padding` | `--ds-space-2` | 8px |
 | `--ds-phone-option-height` | `--ds-touch-target-min` | 44px |
-| `--ds-phone-option-bg-active` · `-bg-selected` | `--ds-color-surface-hover` · `--ds-color-surface-selected` | |
-| `--ds-phone-check-size` · `-fg` | `--ds-icon-size-sm` · `--ds-color-text-brand` | 16px |
+| `--ds-phone-option-gap` · `-padding-x` | `--ds-space-3` · `--ds-space-4` | 12 · 16px |
+| `--ds-phone-option-bg-active` · `-bg-selected` | `--ds-color-surface-hover` · `--ds-color-surface-selected` | `#F5F5F7` · `#F8F3FF` |
+| `--ds-phone-check-size` · `-fg` | `--ds-icon-size-sm` · `--ds-color-text-brand` | 16px · `#6E2BA1` |
+
+(الصفوف `-country-fg` و`-search-padding` و`-option-gap`/`-padding-x` وعمود القيم أُكملت 2026-09-26 من `tokens.css`.) **ولا يُقرأ `--ds-phone-check-size`**: علامة الاختيار تأخذ مقاسها من `<ds-icon size="sm">` (16) مباشرة.
+
+**ما يقرؤه المكوّن من الدلالي مباشرة:** الرمز `--ds-field-font-size` (12) بأرقام بعرض ثابت، والسهم `--ds-color-text-muted`، وشارة الرمز النصّية `--ds-font-size-2xs` (10) بوزن 600، وحقل الرقم `--ds-field-font-size` وحشوته `--ds-space-3`. وحقل البحث في اللائحة: ارتفاعه `--ds-control-height-sm` (36، و44 لمسًا)، واستدارته `--ds-radius-md` (8)، وخطّه `--ds-field-font-size` (12، قرار 2026-09-10 في التعليق؛ كان 14)، وتركيزه حدّ `--ds-color-field-border-focus` مع 3px من `--ds-field-ring` بلا الـ1px. والصفّ في اللائحة 14 (`--ds-font-size-md`)، و«لم نجد دولة…» 14 بلون `--ds-color-text-muted` وحشوة `--ds-space-4`. (وُثّق 2026-09-26 من الكود)
 
 ## 7. الواجهة البرمجية
 
@@ -139,6 +160,8 @@ last_verified: 2026-09-10
 
 > ⚠️ **غير موثّق بعد:** شكل الحقل واللائحة على الجوال. المكتوب: الارتفاع 44px على اللمس (§6)، وصفوف اللائحة 44px (§11)، واللائحة تنفتح إلى الأعلى حين يضيق ما تحت الحقل (§8 لائحة الدول).
 
+**ما يحسبه الكود لموضع اللائحة** (ثوابت في `phone-field.component.ts`، لا توكنز): عرضها عرض الصفّ ولا يقلّ عن **280px**، ولا يتجاوز الشاشة ناقص 8px من كل جانب؛ تبدأ من حافّة الصفّ اليسرى (الصفّ LTR) وتُسحب إلى الداخل إن تجاوزت الشاشة؛ بينها وبين الصفّ **4px**؛ وتنفتح إلى الأعلى حين يقلّ ما تحت الصفّ عن **200px** وما فوقه أكبر؛ وارتفاعها الأصغر من 320px وما بقي في جهتها. وتلحق بالصفّ مع التمرير في أيّ سلف (مستمع `scroll` بالالتقاط) ومع تغيير حجم النافذة. ولا شكل آخر للجوال. (وُثّق 2026-09-26 من الكود)
+
 ## 10. RTL
 
 الصفّ `dir="ltr"` لأن محتواه لاتيني: زرّ الدولة يسار الرقم — ترتيب «+966 5xxxxxxxx» العالمي. فالخصائص المنطقية **داخله** تُحلّ مقابل LTR لا الصفحة. والتسمية والنصّ المساعد والرسالة خارجه فتبقى RTL. واللائحة RTL (أسماء عربية)، ورمز الاتّصال داخلها `dir="ltr"` صراحةً وإلا عُرض «966+». والعلم لا ينقلب — دلالي لا اتجاهي.
@@ -156,7 +179,17 @@ last_verified: 2026-09-10
 
 نصّ الرسالة من `<app-form-field [error]>` بحسب سياق النموذج (§8 عقد القيمة)، ورسالة الصيغة المعتمدة «أدخل رقم موبايل صحيحًا.» في [`forms.md` §10](../patterns/forms.md#رسالة-الخطأ-تخبر-بالإصلاح-14-15). والنائب مشتقّ من دولته (§8).
 
-> ⚠️ **غير موثّق بعد:** نصّ اسم زرّ الدولة المخفيّ بصريًّا ونصّ تسمية حقل البحث في اللائحة.
+**النصوص المكتوبة في الكود:**
+
+| الموضع | النصّ |
+|---|---|
+| اسم زرّ الدولة المخفيّ بصريًّا | اسم الدولة بالعربية من `Intl.DisplayNames('ar')` — بعد «+966» المرئي |
+| النص الإرشادي لحقل البحث | «البحث باسم الدولة أو رمزها» |
+| اسم حقل البحث (`aria-label`) | «البحث عن دولة» |
+| اسم اللائحة (`aria-label`) | «الدول» |
+| لا تطابق | «لم نجد دولة مطابقة لـ «‹العبارة›».» |
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 13. مثال
 
@@ -177,7 +210,7 @@ last_verified: 2026-09-10
 >
 > | في `src/app` | الاستخدامات |
 > |---|---|
-> | `<app-phone-field>` | **6** — حوارات المستخدمين الأربعة، وحوار «إضافة حساب بنكي»، وتبويب الفوترة في الإعدادات |
+> | `<app-phone-field>` | **6** — حوارات المستخدمين الأربعة، وحوار «إضافة حساب بنكي»، وتبويب الفوترة في الإعدادات · **7** (قيس 2026-09-26): ومعها حوار «تحديث البيانات» في الإعدادات |
 > | `<app-phone-input>` القديم (`shared/form-controls/`) | **11** ملفًّا (قياس 2026-09-10) — كلّها صفحات عامة: الدفع والتسجيل والملف الشخصي والانضمام. ولا علم فيه: رمز الاتّصال وحده. شاشات البانل نُقلت أوّلًا بقرار، والعامة بعد مراجعة الحقل الجديد |
 >
 > القديم يبقى حتى تُنقل شاشاته واحدةً واحدة، ثم يُحذف. والعقد واحد — قيمة E.164 وخطأا `required` و`invalidPhone` — فنقل شاشة لا يمسّ نموذجها ولا الخادم.
@@ -189,10 +222,16 @@ last_verified: 2026-09-10
 >
 > **التحقّق بعد النشر:** `/assets/flags/sa.svg` يردّ 200. ولا تُنسخ الملفّات إلى `src/assets` لإسكات العَرَض: نسخة ثانية تتقادم عن الحزمة.
 
+### مراجعة 2026-09-26 مقابل الكود
+
+* صُحّح 2026-09-26: عدد استعمالات `<app-phone-field>` صار 7 لا 6 (أُضيف حوار «تحديث البيانات»).
+* ⚠️ تعارض (2026-09-26): §11 «التركيز حلقتان: على الصفّ كلّه، وداخلية على الزرّ» · قاعدة إخفاء التركيز العامة في `src/styles.scss` (السطور 2322–2324، `DEBT-011`) تستثني `.ds-field__control` و`.ds-field__box` و`.ds-search__box` ولا تستثني `.ds-phone` — فما لم يُفعَّل خيار التركيز في دائرة الوصول تُلغى بـ`!important` ظلال الصفّ عند `:focus-within` وحلقة الزرّ الداخلية معًا، ويبقى من التركيز تغيّر لون الحدّ وحده. (ولا أثر لها والقائمة مفتوحة والتركيز في البحث: الصفّ حينها لا يطابق `:focus-within`.)
+* ⚠️ للتحقّق: زرّ الدولة `<button role="combobox">`، ودور `combobox` في ARIA لا يأخذ اسمه من محتواه — فقول §11 «اسم زرّ الدولة من محتواه» قد لا يصل إلى قارئ الشاشة. لم يُختبر بقارئ شاشة في هذه المراجعة.
+
 ## 16. روابط
 
 - **يستخدم:** `<app-form-field>` حاويًا — [`input-and-form.md`](./input-and-form.md) · `<ds-icon>` للسهم — [`icon.md`](../atoms/icon.md) · `flag-icons` (7.5) للأعلام
-- **يُستخدم في:** حوارات المستخدمين الأربعة، وحوار «إضافة حساب بنكي»، وتبويب الفوترة في الإعدادات
+- **يُستخدم في:** حوارات المستخدمين الأربعة، وحوار «إضافة حساب بنكي»، وتبويب الفوترة في الإعدادات، وحوار «تحديث البيانات» في الإعدادات (قيس 2026-09-26)
 - **ذو صلة:** [`forms.md`](../patterns/forms.md) — تعليم الإلزام في `<app-phone-input>` القديم · [`iconography.md`](../foundations/iconography.md) §11
 - **الكود:** [`shared/ui/phone-field/`](../../../src/app/shared/ui/phone-field/) · **المُحدِّد:** `<app-phone-field>`
 - **الأصل:** `Design-System/components/phone.md` · **المرجع:** `d:\Acadimiat\Design-system-Acadimiate\components\phone.md` — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)

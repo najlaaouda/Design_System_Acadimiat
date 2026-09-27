@@ -8,7 +8,7 @@ selector: ['<app-shelf-tabs>']
 source: ['src/app/shared/ui/shelf-tabs/shelf-tabs.component.ts']
 origin: ['Design-System/components/shelf-tabs.md']
 keywords: ['رفوف', 'تبويب', 'أنواع الملفات', 'إدارة الملفات', 'shelf tabs', 'tablist']
-last_verified: 2026-09-16
+last_verified: 2026-09-26
 ---
 
 # رفوف التصفّح (Shelf tabs) — `<app-shelf-tabs>`
@@ -44,7 +44,15 @@ last_verified: 2026-09-16
 └─────────────────┘            ← حشوة 16، استدارة 12، حدّ border-subtle
 ```
 
-المختار: سطح `brand-solid` ونصّ `text-inverse`، والورقة الخلفية `brand-border`، والمربّع أبيض شفاف.
+المختار: سطح `--ds-shelf-selected-bg` (`brand-800`) وحدّه باللون نفسه، ونصّ `text-inverse`، وظلّ `elevation-2` دائمًا؛ والورقة الخلفية `--ds-shelf-selected-paper` (`brand-600`)؛ والمربّع أبيض شفاف (`text-inverse` بنسبة 16% فوق السطح) ورمزه `text-inverse`.
+
+**بقية المقاسات في الكود** (وُثّق 2026-09-26 من الكود — [`shelf-tabs.component.ts`](../../../src/app/shared/ui/shelf-tabs/shelf-tabs.component.ts)):
+
+* الشبكة: `repeat(auto-fit, minmax(160px, 1fr))` بفجوة 16، وحشوة علوية 8 بقدر ما تطلّ الورقة فلا تُقصّ.
+* البطاقة `<button role="tab">`: عمود بفجوة 12 بين المربّع والاسم والعدد، ارتفاع أدنى `--ds-touch-target-min` (44)، سطح `surface-default`، حدّ `border-width-sm`، ونصّ `text-primary`.
+* الورقة الخلفية: بعرض البطاقة ناقص 12 من كل جهة، وارتفاع 24، تطلّ 8 فوقها، وحدّها `border-width-sm` بـ`border-subtle` بلا حدّ سفلي، واستدارة 12 لزاويتيها العلويتين.
+* مربّع الأيقونة: رمزه `text-secondary` بمقاس `<ds-icon>` الافتراضي (20).
+* الاسم والعدد بارتفاع سطر `tight`.
 
 ## 4. الأنواع والمقاسات
 
@@ -58,6 +66,8 @@ tone?: 'video' | 'image' | 'pdf' | 'audio' | 'other'
 
 الرفّ **المختار** تعبئته لون العلامة، فمربّعه أبيض شفاف ولا لون نوعٍ يُقرأ فوقه. والاسم مكتوب في البطاقة دائمًا، فاللون لا يحمل المعنى وحده.
 
+✅ **أُصلح 2026-09-27:** رفوف `/admin/files` تمرّر `tone` من مفتاح الرفّ (`video` · `pdf` · `image` · `audio`)، و«كل الملفات» بلا `tone` فيبقى رماديًّا. (كانت حتى 2026-09-26 لا تمرّره فالمربّعات كلها رمادية.)
+
 ## 5. الحالات
 
 | الحالة | الشكل |
@@ -68,6 +78,8 @@ tone?: 'video' | 'image' | 'pdf' | 'audio' | 'other'
 | تركيز | `--ds-focus-ring` |
 | تحميل | العدد هيكل بعرض 40px |
 | الوضع المفروض | حدّ `Highlight` حول المختار |
+
+(وُثّق 2026-09-26 من الكود): الظلّ والخلفية ينتقلان في `--ds-duration-fast`، وعلوّ الورقة في `--ds-duration-normal` (يصفّرهما `prefers-reduced-motion` من التوكن). والمختار ظلّه `elevation-2` ساكنًا لا عند التمرير وحده. وإطار الوضع المفروض `border-width-md`. والضغط على الرفّ المختار نفسه لا يُطلق `valueChange`. لا حالة تعطيل ولا خطأ في المكوّن؛ وإدارة الملفات تعبّر عن تعذّر تحميل الأعداد بترك `count` بلا قيمة، فتظهر الرفوف بلا أرقام.
 
 ## 6. التوكنز
 
@@ -88,7 +100,7 @@ tone?: 'video' | 'image' | 'pdf' | 'audio' | 'other'
 
 | الاسم | النوع | | |
 |---|---|---|---|
-| `items` | `ShelfTab[]` | **إلزامي** | `{ value, label, icon, count?, tone? }` — `count: null` هيكل تحميل، وبلا `count` لا عدد |
+| `items` | `readonly ShelfTab[]` | **إلزامي** (`[]`) | `{ value, label, icon, count?, tone? }` — `count: null` هيكل تحميل، وبلا `count` لا عدد |
 | `value` | `string \| null` | — | الرفّ المختار |
 | `label` | `string` | **إلزامي** | اسم المجموعة لقارئ الشاشة («أنواع الملفات») |
 | `controls` | `string \| null` | — | معرّف ما تتحكّم فيه (اللوحة تحتها بـ`role="tabpanel"`) |
@@ -104,10 +116,13 @@ tone?: 'video' | 'image' | 'pdf' | 'audio' | 'other'
 
 * المختار وحده `tabindex="0"`.
 * «التالي» **يسارًا في العربية** — من اتجاه العنصر المحسوب. Home / End إلى الطرفين.
+* (وُثّق 2026-09-26 من الكود) السهمان الأفقيان يدوران من الطرف إلى الطرف الآخر، والسهمان ↑↓ لا يفعلان شيئًا.
 
 ## 9. الاستجابة
 
 على الجوال (أقل من 768px) صفّ يُمرَّر أفقيًّا بعرض 144px للبطاقة، والبطاقة التالية تطلّ من الحافة فتقول إن هناك المزيد.
+
+(وُثّق 2026-09-26 من الكود): 144 عرضٌ أدنى لا ثابت، والتمرير بـ`scroll-snap` على بداية كل بطاقة وشريط تمرير مخفي. وتصغر البطاقة درجةً: فجوة 12 بين البطاقات، حشوة 12، فجوة 8 داخلها، مربّع 32، اسم 14، عدد 16.
 
 ## 10. RTL
 
@@ -124,7 +139,29 @@ tone?: 'video' | 'image' | 'pdf' | 'audio' | 'other'
 
 ## 13. مثال
 
-> ⚠️ **غير موثّق بعد:** مقتطف استعمال (`<app-shelf-tabs>` بمصفوفة `items` كما في إدارة الملفات `/admin/files`). الأصل يكتفي بشكل `ShelfTab` في [§7](#7-الواجهة-البرمجية) وبنوع `tone` في [§4](#4-الأنواع-والمقاسات).
+من إدارة الملفات `/admin/files` (وُثّق 2026-09-26 من الكود — `files-page.component.html`):
+
+```html
+<app-shelf-tabs
+  label="أنواع الملفات"
+  [items]="shelfTabs"
+  [value]="shelf"
+  [controls]="listId"
+  (valueChange)="onShelfChange($event)"
+/>
+
+<div class="ds-page__table-block" [id]="listId" role="tabpanel" [attr.aria-label]="currentShelf.label">…</div>
+```
+
+```ts
+// files-page.component.ts — العدد null حتى يصل (هيكل)، وundefined إن تعذّر تحميله (بلا عدد)، والاسم والأيقونة من SHELVES
+this.shelfTabs = SHELVES.map(shelf => ({
+  value: shelf.key,
+  label: shelf.label,
+  icon: shelf.icon,
+  count: counts[shelf.key],
+}));
+```
 
 ## 14. ممنوع
 
@@ -135,6 +172,10 @@ tone?: 'video' | 'image' | 'pdf' | 'audio' | 'other'
 ## 15. الدَّين القائم
 
 > لا ينطبق — لا دين مسجّل للمكوّن في الأصل.
+
+* صُحّح 2026-09-26: كان §3 يقول إن سطح المختار `brand-solid` وورقته `brand-border`، والكود يقرأ `--ds-shelf-selected-bg` (`brand-800`) و`--ds-shelf-selected-paper` (`brand-600`) بقرار المنتج 2026-09-16 (تعليق `tokens.css`) — كما في §6 أصلًا (التعارض 16 في [`README.md`](../../README.md)).
+* ~~⚠️ تعارض (2026-09-26): المستهلك الوحيد (`/admin/files`) لا يمرّر `tone`~~ — ✅ **أُصلح 2026-09-27:** `files-page.component.ts` يمرّره.
+* تعليق `ShelfTab.tone` في الكود يقول «`other` رمادي»، والأنماط تقرأ `--ds-filetype-other-*` = `accent` (وردي) كما في §4 — التعليق قديم، والمواصفة صحيحة.
 
 ## 16. روابط
 

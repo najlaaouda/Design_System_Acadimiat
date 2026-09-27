@@ -8,7 +8,7 @@ selector: ['<app-menu>', '[appMenuItem]', '[appMenuTriggerFor]']
 source: ['src/app/shared/ui/menu', 'src/styles.scss']
 origin: ['Design-System/components/menu.md']
 keywords: ['القائمة ⋯', 'قائمة', 'إجراءات', 'حذف', 'menu', 'dropdown', 'appMenuItem', 'danger']
-last_verified: 2026-09-11
+last_verified: 2026-09-26
 ---
 
 # القائمة ⋯ (Menu) — `<app-menu>` · `appMenuItem`
@@ -68,7 +68,27 @@ last_verified: 2026-09-11
 
 ## 6. التوكنز
 
-> ⚠️ **غير موثّق بعد:** جدول التوكنز بأسمائها الكاملة (`--ds-…`) — العنصر · التوكن · القيمة. القيم مذكورة في الأصل بأسماء مختصرة على رسم التشريح في [§3](#3-التشريح) (`surface-raised` · `border-subtle` · `elevation-3` · `neutral-bg` · `divider` · `text-danger`…)، والارتفاع `--ds-control-height-sm`.
+من `src/styles.scss` § «القائمة ⋯ في البانل» تحت `body.ds-admin-session` — لا طبقة `--ds-menu-*` في `tokens.css`. (وُثّق 2026-09-26 من الكود)
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| سطح القائمة | `--ds-color-surface-raised` | أبيض |
+| حدّ السطح | `--ds-border-width-sm` · `--ds-color-border-subtle` | 1px |
+| استدارة السطح | `--ds-radius-lg` | 12px |
+| ظلّ السطح | `--ds-elevation-3` | بـ `!important` وأسبقية مضاعفة، لتغلب قاعدة إخفاء التركيز التي تمحو `box-shadow` عن `:focus-within` |
+| حشوة السطح | `--ds-space-1` | 4px |
+| عرض السطح | — | 160–280px خامّان (`min-inline-size` · `max-inline-size`) |
+| الطبقة | `--ds-z-popover` | 1060 — من `FloatingPanel` ([`overlay.md`](./overlay.md)) |
+| ارتفاع الخيار | `--ds-control-height-sm` | 36px، و44 على `pointer: coarse` |
+| حشوة الخيار | `--ds-space-2` / `--ds-space-3` | 8/12 |
+| استدارة الخيار | `--ds-radius-md` | 8px |
+| نصّ الخيار | `--ds-font-size-md` · `--ds-font-weight-regular` · `--ds-color-text-primary` | 14 · 400 |
+| فجوة الأيقونة والنصّ | `--ds-space-2` | 8px |
+| التمرير والتركيز | `--ds-color-neutral-bg` | `neutral-100` (#EAE9ED) |
+| المعطَّل | `--ds-color-text-disabled` | `neutral-600` بلا شفافية |
+| الهدّام | `--ds-color-text-danger` | `danger-700` |
+| خطّ «حذف» | `--ds-border-width-sm` · `--ds-color-divider` — هامش الخيار العلوي `--ds-space-2` + 1، والخطّ على `--ds-space-1` + 1 فوقه | 4 فوق الخطّ و4 تحته |
+| الفاصل اليدوي `.app-menu-divider` | `--ds-color-divider` · هامش `--ds-space-1` | |
 
 ## 7. الواجهة البرمجية
 
@@ -79,6 +99,9 @@ last_verified: 2026-09-11
 | `[appMenuTriggerFor]` | زرّ الفتح | `MenuComponent` | — | يضع `aria-haspopup` و`aria-expanded` |
 | `appMenuItem` | `<button>` أو `<a>` | — | — | الخيار: `role="menuitem"` ويغلق القائمة عند اختياره |
 | `danger` | `appMenuItem` | `boolean` | `false` | **لكل ما يحذف أو يُتلف**: أحمر، وخطّ فاصل فوقه |
+| `(closeRequest)` | `app-menu` | `void` | — | طلب إغلاق يُطلقه اختيار خيار أو Escape، ويستمع إليه زرّ الفتح — لا يُربط عادةً في الشاشة (وُثّق 2026-09-26 من الكود) |
+
+والموجِّه `appMenuItem` يضع على عنصره `role="menuitem"` و`tabindex="-1"` وصنف `app-menu-item` (و`app-menu-item--danger` مع `danger`)؛ و`[appMenuTriggerFor]` يضع `aria-haspopup="menu"` و`aria-expanded`. (وُثّق 2026-09-26 من الكود)
 
 ## 8. السلوك ولوحة المفاتيح
 

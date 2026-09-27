@@ -8,7 +8,7 @@ selector: ['<app-table-columns>']
 source: ['src/app/shared/ui/table/table-columns.component.ts', 'src/app/shared/ui/table/table-columns.ts']
 origin: ['Design-System/components/table-columns.md']
 keywords: ['الأعمدة', 'تخصيص البطاقات', 'ترتيب البطاقات', 'إخفاء البطاقات', 'إظهار الأعمدة', 'إخفاء الأعمدة', 'ترتيب الأعمدة', 'columns', 'column visibility', 'column order', 'app-table-columns']
-last_verified: 2026-09-24
+last_verified: 2026-09-26
 ---
 
 # أعمدة الجدول — `<app-table-columns>`
@@ -68,7 +68,22 @@ last_verified: 2026-09-24
 
 ## 5. الحالات
 
-> ⚠️ **غير موثّق بعد:** جدول حالات الزرّ واللوحة وصفوفها (Hover · Focus · Disabled). المذكور في الأصل متفرّق: «استعادة الافتراضي» معطَّل ما دام لا شيء تغيّر، والعمود الثابت مربّع مختار معطَّل (§3)؛ والزرّ يبقى فوق «لا نتائج» (§8)؛ و«كل البطاقات مخفية» حالة فارغة (§4).
+المذكور في الأصل متفرّق: «استعادة الافتراضي» معطَّل ما دام لا شيء تغيّر، والعمود الثابت مربّع مختار معطَّل (§3)؛ والزرّ يبقى فوق «لا نتائج» (§8)؛ و«كل البطاقات مخفية» حالة فارغة (§4).
+
+وجدول الحالات كما يرسمها الكود (وُثّق 2026-09-26 من الكود — [`table-columns.component.ts`](../../../src/app/shared/ui/table/table-columns.component.ts)):
+
+| الجزء | الحالة | الشكل |
+|---|---|---|
+| الزرّ «الأعمدة» | كلها | حالات `dsButton variant="secondary"` ([`button.md`](../atoms/button.md))؛ ومفتوحًا `aria-expanded="true"` بلا شكل خاصّ |
+| المقبض | تمرير | `surface-sunken` و`text-primary` (ساكنًا `text-muted` بلا خلفية) |
+| المقبض | تركيز | `--ds-focus-ring` |
+| المقبض | ضغط | مؤشّر `grabbing` (ساكنًا `grab`) |
+| المقبض | نقل بالسهمين / سحب | حالات [`sortable.md`](../molecules/sortable.md): فراغ رمادي، ونسخة مرفوعة، ووميض بعد الإفلات |
+| صفّ العمود | تمرير | لا شكل خاصّ بالصفّ — المربّع وحده يتفاعل ([`checkbox-radio-switch.md`](../atoms/checkbox-radio-switch.md)) |
+| العمود الثابت | معطَّل | قفل `security/lock` مكان المقبض بلا تفاعل، ومربّع مختار معطَّل |
+| «استعادة الافتراضي» | معطَّل | `[disabled]` ما دامت الحالة الافتراضية (`isDefaultColumnsState`) — حالة `tertiary` المعطّلة |
+| اللوحة | مفتوحة | تُرسم في `body` عبر `FloatingPanel`؛ مغلقة لا وجود لها في DOM |
+| تحميل · خطأ | — | لا ينطبق: القائمة من تعريف الصفحة لا من الخادم |
 
 ## 6. التوكنز
 
@@ -79,23 +94,42 @@ last_verified: 2026-09-24
 | عرض اللوحة | `--ds-table-columns-panel-width` | 264px — عرض عمود القيم في لوحة الفلترة |
 | أقصى ارتفاع | `--ds-filter-panel-max-block-size` | `min(400px, 70vh)` — المتحرّكة تتمرّر وحدها، والثابت والذيل باقيان |
 | السطح | `--ds-radius-lg` · `--ds-elevation-3` · `--ds-color-border-subtle` | 12px · ظلّ · حدّ خفيف |
-| الصفّ | `--ds-control-height-md` · `--ds-touch-target-min` · `--ds-radius-md` | 40px (44 على اللمس) · استدارة 8 |
+| الصفّ | `--ds-control-height-md` · `--ds-touch-target-min` · `--ds-radius-md` | 44px (`--ds-control-height-md` = 44، و`--ds-touch-target-min` 44 على اللمس) · استدارة 8 |
 | المقبض والقفل | `--ds-space-8` | 32px (44 على اللمس) — كمقبض صفّ الجدول |
 | الفجوة بين المقبض والمربّع والاسم | `--ds-space-2` | 8px |
 | «ثابت» | `--ds-font-size-xs` · `--ds-color-text-muted` | 12px |
+| حشوة القائمة | `--ds-space-2` | 8px — والقائمة المتحرّكة بلا حشوة علوية بعد قائمة الثابت (وُثّق 2026-09-26 من الكود) |
+| حشوة الصفّ الأفقية | `--ds-space-1` · `--ds-space-2` | 4 في البداية · 8 في النهاية (وُثّق 2026-09-26 من الكود) |
+| اسم العمود | `--ds-font-size-md` | 14px (وُثّق 2026-09-26 من الكود) |
+| الذيل | `--ds-space-2` · `--ds-color-divider` | حشوة 8، وخطّ فوقه `border-width-sm` (وُثّق 2026-09-26 من الكود) |
+| أقصى عرض | `--ds-space-4` | `calc(100vw - 2 × 16px)` (وُثّق 2026-09-26 من الكود) |
+| موضع اللوحة | — (`FloatingPanel`) | إزاحة 4 عن الزرّ، وهامش 16 عن حافّتي الشاشة، محاذاة `end` (وُثّق 2026-09-26 من الكود) |
 
 ## 7. الواجهة البرمجية
 
 | المُدخل | النوع | الافتراضي | |
 |---|---|---|---|
-| `columns` | `TableColumn[]` | `[]` | كل الأعمدة بترتيبها الافتراضي: `key` (ثابت — يُحفظ) · `label` (اسم الرأس حرفًا بحرف) · `locked?` |
-| `state` | `TableColumnsState` | — | `{ order, hidden }` للمتحرّكة وحدها |
+| `columns` | `readonly TableColumn[]` | `[]` | كل الأعمدة بترتيبها الافتراضي: `key` (ثابت — يُحفظ) · `label` (اسم الرأس حرفًا بحرف) · `locked?` |
+| `state` | `TableColumnsState` | `{ order: [], hidden: [] }` | `{ order, hidden }` للمتحرّكة وحدها |
 | `label` | `string` | `'الأعمدة'` | نصّ الزرّ |
 | `heading` | `string` | `'أعمدة الجدول'` | اسم اللوحة وقائمتها لقارئ الشاشة |
 
 | المُخرج | يحمل | |
 |---|---|---|
 | `stateChange` | `TableColumnsState` | مع كل تبديل ونقل واستعادة — يسري فورًا بلا «تطبيق» |
+
+**دوالّ `table-columns.ts`** (وُثّق 2026-09-26 من الكود) — خالصة، تستعملها الصفحة واللوحة معًا:
+
+| الدالّة | ما تفعله |
+|---|---|
+| `defaultColumnsState(columns)` | الترتيب كما عُرِّف وكل الأعمدة ظاهرة |
+| `normalizeColumnsState(columns, state)` | يصحّح حالةً محفوظة على تعريف اليوم (§8 «الحفظ») |
+| `visibleColumnKeys(state)` | الأعمدة المتحرّكة الظاهرة بترتيبها — ما ترسمه الصفحة بعد الثابتة |
+| `isDefaultColumnsState(columns, state)` | هل الحالة هي الافتراضية — يعطّل «استعادة الافتراضي» |
+| `readColumnsState(key, columns)` | الحالة المحفوظة في المتصفح أو `null` |
+| `writeColumnsState(key, columns, state)` | يحفظها، أو يمسح المفتاح إن كانت الافتراضية |
+
+وفي المكوّن `close(restoreFocus = true)` عامّة: تُغلق اللوحة، وتعيد التركيز إلى الزرّ إلا بـ`false`.
 
 ## 8. السلوك ولوحة المفاتيح
 
@@ -204,6 +238,9 @@ onColumnsChange(state: TableColumnsState) {
 ## 15. الدَّين القائم
 
 > لا ينطبق — لا بند له في [`TECHNICAL-DEBT.md`](../../TECHNICAL-DEBT.md)؛ الحفظ في المتصفح ينتظر الخادم ([`REQ-078`](../../BACKEND-REQUIREMENTS.md) · [`REQ-079`](../../BACKEND-REQUIREMENTS.md) — §8 «الحفظ» و§4).
+
+* صُحّح 2026-09-26: كانت المواصفة تقول ارتفاع الصفّ «40px (44 على اللمس)» من `--ds-control-height-md`، والكود يقرأ `--ds-control-height-md` وقيمته في `tokens.css` 44 — فالصفّ 44 في كل حال (§6). وتعليق الكود «على اللمس: الصفّ 44» يوحي بأن 40 كان المقصود؛ لم يُحسم هنا (التعارض 13 في [`README.md`](../../README.md)).
+* (قيس 2026-09-26): مستهلكان — `/admin/products/courses` و«نظرة عامة» في `/admin/dashboard` — كما في §1.
 
 ## 16. روابط
 

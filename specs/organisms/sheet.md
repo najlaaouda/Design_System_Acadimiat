@@ -8,7 +8,7 @@ selector: ['<app-sheet>']
 source: ['src/app/shared/ui/sheet']
 origin: ['Design-System/components/sheet.md']
 keywords: ['النافذة بملء الشاشة', 'نافذة', 'محرّر', 'إنشاء', 'تحرير', 'sheet', 'app-sheet']
-last_verified: 2026-09-11
+last_verified: 2026-09-26
 ---
 
 # النافذة بملء الشاشة (Sheet) — `<app-sheet>`
@@ -21,7 +21,7 @@ last_verified: 2026-09-11
 
 سطح الإنشاء والتحرير الكبير. يغطّي الشاشة بهامش الصفحة المعتمد، والصفحة التي فُتح منها **معتمة خلفه** — فيعرف المستخدم أنه لم يغادرها، ويجد مساحة كتابة كاملة.
 
-**أول استعمال:** مقال جديد وتعديل المقال (`/admin/blog/articles/:id`) — قرار المنتج 2026-09-11، على نمط ClickUp.
+**أول استعمال:** مقال جديد وتعديل المقال (`/admin/blog/articles/:id`) — قرار المنتج 2026-09-11، على نمط ClickUp. وبعده «إنشاء مقال بالذكاء الاصطناعي» (`/admin/blog/articles/ai`) و«معاينة المقال» (نافذة ثانية فوق نافذة المقال) — ثلاث نوافذ في شاشتين (قيس 2026-09-26).
 
 | الحالة | المكوّن |
 |---|---|
@@ -52,7 +52,7 @@ last_verified: 2026-09-11
 | # | الجزء | المنفذ / المصدر | ملاحظة |
 |---|---|---|---|
 | ١ | التعتيم | داخلي | `--ds-color-overlay` خلف النافذة كلها |
-| ٢ | زرّ الإغلاق | داخلي | `essential/close-circle`، يطلب الإغلاق ولا يُغلق. **آخر الشريط**: أقصى جهة النهاية (يسار العربية) بعد الأفعال أيًّا كانت، وخارج منفذها (قرار المنتج 2026-09-11 — كان قبل العنوان) |
+| ٢ | زرّ الإغلاق | داخلي | `essential/close-circle` في `dsButton` ثالثي بأيقونة وحدها (`iconOnly`)، يطلب الإغلاق ولا يُغلق. **آخر الشريط**: أقصى جهة النهاية (يسار العربية) بعد الأفعال أيًّا كانت، وخارج منفذها (قرار المنتج 2026-09-11 — كان قبل العنوان) |
 | ٣ | العنوان | `[sheet-title]` | المسار وعنوان `<h2>` |
 | ٤ | الأفعال | `[sheet-actions]` | زرّ أساسي واحد (UI-05) |
 | ٥ | — | — | **لا زرّ طيّ للّوحة** (قرار المنتج 2026-09-11): على سطح المكتب ثابتة، وعلى الجوال تُفتح من الذيل |
@@ -82,7 +82,23 @@ last_verified: 2026-09-11
 
 `--ds-z-overlay` (1040) للتعتيم والنافذة — **لا** `--ds-z-modal`. ما يُفتح من داخلها يعلوها: الدرج (1050)، وحوار التأكيد (1055)، واللوحات العائمة (1060)، وقوائم `app-native-select` (2000).
 
-> ⚠️ **غير موثّق بعد:** جدول توكنز النافذة (العنصر · التوكن · القيمة) — لا `--ds-sheet-*` في `tokens.css`. المذكور في الأصل متفرّقًا: `--ds-color-overlay` للتعتيم و`--ds-color-surface-page` لأرضية اللوحة وعرضها 25rem ([§3](#3-التشريح))، والهامش `--ds-page-padding-*` ([§9](#9-الاستجابة)).
+لا `--ds-sheet-*` في `tokens.css`. المكوّن يعرّف متغيّرًا محلّيًّا واحدًا على `.ds-sheet` — `--ds-sheet-panel-width: 25rem` — ويقرأ الباقي من التوكنز الدلالية مباشرةً. (وُثّق 2026-09-26 من الكود)
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| التعتيم | `--ds-color-overlay` · طبقة `--ds-z-overlay` | `rgba(43, 42, 48, 0.48)` · 1040 |
+| موضع النافذة | `inset: --ds-page-padding-block --ds-page-padding-inline` | 24px (16px تحت 768px) |
+| السطح | `--ds-color-surface-default` | أبيض |
+| الاستدارة | `--ds-radius-lg` | 12px |
+| الظلّ | `--ds-elevation-4` | |
+| حشوة الشريط | `--ds-space-3` / `--ds-space-4` — وعلى الجوال `--ds-space-2` / `--ds-space-3` | 12/16 — 8/12 |
+| الفجوة في الشريط | `--ds-space-4` بين طرفيه · `--ds-space-2` داخل كل طرف | 16 · 8 |
+| الفاصل تحت الشريط وحدّ اللوحة وفوق الذيل | `--ds-border-width-sm` · `--ds-color-divider` | 1px |
+| عرض اللوحة | `--ds-sheet-panel-width` (محلّي) | 25rem (400px) |
+| أرضية اللوحة | `--ds-color-surface-page` | رمادي الصفحة |
+| اللوحة فوق العمود على الجوال | `--ds-z-raised` | 10 |
+| حشوة ذيل الجوال | `--ds-space-3` / `--ds-space-4` | 12/16 |
+| الحركة | `--ds-duration-fast` (التعتيم) · `--ds-duration-normal` (النافذة، من `scale(0.98)`) · `--ds-easing-enter` | 140 · 220ms |
 
 ## 7. الواجهة البرمجية
 
@@ -141,7 +157,43 @@ last_verified: 2026-09-11
 
 ## 13. مثال
 
-> ⚠️ **غير موثّق بعد:** مثال شيفرة لـ `<app-sheet>` بمنافذه (`[sheet-title]` · `[sheet-actions]` · `[sheet-panel]`) ومسارها الابن. الأصل يصف المنافذ في [§3](#3-التشريح) ولا يعطي مثالًا كاملًا.
+من نافذة المقال — [`manage-articles.component.html`](../../../src/app/views/admin/blog/articles/manage-articles/manage-articles.component.html)، مختصرًا (وُثّق 2026-09-26 من الكود):
+
+```html
+<app-sheet
+  [heading]="isEditMode ? 'تعديل المقال' : 'مقال جديد'"
+  closeLabel="إغلاق المقال"
+  [hasPanel]="!articleLoadError"
+  panelLabel="إعدادات المقال"
+  backLabel="العودة إلى المقال"
+  (closed)="requestClose()"
+>
+  <div sheet-title class="article-sheet__heading">
+    <a routerLink="/admin/blog/articles" queryParamsHandling="merge">المقالات</a>
+    <ds-icon name="arrow/arrow-right-02" size="sm" directional aria-hidden="true" />
+    <h2>{{ isEditMode ? 'تعديل المقال' : 'مقال جديد' }}</h2>
+  </div>
+
+  <!-- ما داخل @if يُلفّ بـ ngProjectAs وإلا هبط في العمود -->
+  <ng-container ngProjectAs="[sheet-actions]">
+    @if (!articleLoadError) {
+      <div class="article-actions">
+        <button dsButton type="button" variant="secondary" (click)="saveForLater()">حفظ كمسودة</button>
+        <button dsButton type="button" variant="primary" (click)="publishNow()">حفظ ونشر</button>
+      </div>
+    }
+  </ng-container>
+
+  <!-- العمود: المحتوى الافتراضي -->
+  …
+
+  <ng-container ngProjectAs="[sheet-panel]">
+    @if (!articleLoading && !articleLoadError) { <div class="article-panel">…</div> }
+  </ng-container>
+</app-sheet>
+```
+
+والمسار الابن في [`admin.routes.ts`](../../../src/app/views/admin/admin.routes.ts): `articles` يحمل ابنين — `ai` ثم `:id` — ولكلٍّ `canDeactivate` يستدعي `canLeave()` في المكوّن، فيسأل عمّا لم يُحفظ أيًّا كان طريق الخروج.
 
 ## 14. ممنوع
 
@@ -154,10 +206,16 @@ last_verified: 2026-09-11
 
 > لا ينطبق — لا دَين مسجَّل لها في الأصل ولا في [`TECHNICAL-DEBT.md`](../../TECHNICAL-DEBT.md).
 
+**مراجعة 2026-09-26 — المواصفة مقابل الكود:**
+
+- صُحّح 2026-09-26: كانت المواصفة تقول إن الاستعمال نافذة المقال وحدها، والكود يستعمل `<app-sheet>` أيضًا في «إنشاء مقال بالذكاء الاصطناعي» (`/admin/blog/articles/ai`) وفي «معاينة المقال».
+- ⚠️ تعارض (2026-09-26): المواصفة (قرار 2026-09-15، قاعدة الصورة المرجعية في `CLAUDE.md` و[`modal-drawer.md`](./modal-drawer.md) §6): «زرّ الإغلاق في كل طبقة هو زرّ `<app-modal>` — 44×44، استدارة 8، `--ds-modal-close-*`» · الكود: زرّ إغلاق النافذة `dsButton` ثالثي بأيقونة وحدها — ارتفاع `--ds-button-height-md` (40، و44 على اللمس) بعرض أدنى 44، واستدارة `--ds-button-radius` (12)، وألوان الزرّ الثالثي. الأيقونة نفسها (`essential/close-circle`).
+- ⚠️ تعارض (2026-09-26): المواصفة §6 تذكر «قوائم `app-native-select` (2000)» فوق النافذة، والأسس تمنع `z-index` حرًّا · الكود: `native-select.component.ts` يكتب `zIndex: '2000'` خامًّا (التعارض 15 في فهرس README).
+
 ## 16. روابط
 
 - **يستخدم:** `dsFocusTrap` — [`overlay.md`](../molecules/overlay.md) · `<ds-icon>` — [`icon.md`](../atoms/icon.md) · مكوّنات الحالات — [`states.md`](../patterns/states.md)
-- **يُستخدم في:** مقال جديد وتعديل المقال (`/admin/blog/articles/:id`)
+- **يُستخدم في:** مقال جديد وتعديل المقال (`/admin/blog/articles/:id`) ومعاينته · إنشاء مقال بالذكاء الاصطناعي (`/admin/blog/articles/ai`)
 - **ذو صلة:** [`modal-drawer.md`](./modal-drawer.md) · [`dialogs.md`](../patterns/dialogs.md) — القرار بين الطبقات
 - **الكود:** [`shared/ui/sheet/sheet.component.ts`](../../../src/app/shared/ui/sheet/sheet.component.ts) — `<app-sheet>`
 - **الأصل:** `Design-System/components/sheet.md` — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)

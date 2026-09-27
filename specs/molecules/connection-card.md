@@ -8,7 +8,7 @@ selector: ['<app-connection-card>', '<app-connection-summary>']
 source: ['src/app/shared/ui/connection-card']
 origin: ['Design-System/components/connection-card.md']
 keywords: ['بطاقة الربط', 'تطبيقات', 'تكاملات', 'بوابات الدفع', 'تم الربط', 'غير مرتبط', 'connection', 'integration']
-last_verified: 2026-09-12
+last_verified: 2026-09-26
 ---
 
 # بطاقة الربط — `<app-connection-card>` · `<app-connection-summary>`
@@ -93,6 +93,7 @@ last_verified: 2026-09-12
 * **`platform`** حالة Stripe اليوم: مرتبط بحساب أكاديميات قبل أن تربط الأكاديمية حسابها.
 * **`external`** حالة Zapier (قرار 2026-09-11): الربط يُنشأ في موقع Zapier بمفتاح من إعدادات الأكاديمية، والمنصة لا تعرف نتيجته. البطاقة لا تدّعي حالة لا تعرفها، فتقول أين يتم الربط وتفتح شرحه. ولا تُحسب في الملخص. ينتظر [REQ-017](../../BACKEND-REQUIREMENTS.md) ليعرف الخادم الحالة فتصير `connected`/`disconnected`.
 * **النجاح والخطأ بعد الإجراء** رسالتا Toast من الشاشة باسم الخدمة: «تم ربط Google Tag Manager»، «تم تفعيل Paymob». والشارة «تم الربط» بلا اسم ([`badge-status.md`](../atoms/badge-status.md) § connected).
+* في الكود: أيقونات الأزرار `settings/setting` لـ«إعدادات الربط» و`arrow/swap-horizontal-01` لـ«ربط التطبيق/البوابة» و«ربط حسابك»، وتاج `essential/crown` في وسم الباقة؛ وأثناء `loading` تفرغ الزاوية أيضًا (لا مفتاح ولا سهم)، والبطاقة `aria-busy="true"`. والبطاقة نفسها بلا Hover ولا Focus — الحالات لأزرارها ومفتاحها. (وُثّق 2026-09-26 من الكود)
 
 ## 6. التوكنز
 
@@ -109,6 +110,24 @@ last_verified: 2026-09-12
 | شفافية هالة الشعار العريض | `--ds-connection-glow-opacity-wide` | `0.35` |
 | استدارة لوح الشعار | `--ds-avatar-radius` | 8 |
 | المقطع المرتبط في الملخص | `--ds-color-success-solid` | `var(--ds-success-700)` |
+
+وما يقرؤه الكود غير ذلك (وُثّق 2026-09-26 من الكود):
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| البطاقة | `--ds-color-surface-raised` · حدّ `--ds-color-border-subtle` · `--ds-radius-lg` | 12 |
+| الجسم | حشوة `--ds-space-5` (و`--ds-space-4` حتى 640) · فجوة `--ds-space-3` | 20 (16) · 12 |
+| لوح الشعار | خلفية `--ds-neutral-0` · حدّ `--ds-color-border-subtle` · حشوة `--ds-space-2` | أبيض · 8 |
+| سطر الفئة | `--ds-font-size-xs` · `--ds-font-weight-medium` · `--ds-color-text-muted` | 12 · 500 |
+| الاسم | `--ds-font-size-lg` · `--ds-font-weight-semibold` | 16 · 600 |
+| الوصف | `--ds-font-size-md` · `--ds-color-text-muted` · سطران | 14 |
+| التذييل | حشوة `--ds-space-4` / `--ds-space-5` (الجانبية 16 حتى 640) · فجوة `--ds-space-3` · فاصل `--ds-color-divider` | 16 / 20 · 12 |
+| رقم الحساب | `--ds-font-family-mono` · `--ds-font-size-md` · `--ds-font-weight-semibold` | 14 · 600 |
+| نصّ الحالة (`platform` · `external` · `unavailable`) | `--ds-font-size-md` · `medium` · `--ds-color-text-muted` (و`text-secondary` لـ`platform` و`external`) | 14 · 500 |
+| عدد الملخص | `--ds-font-size-2xl` · `--ds-font-weight-bold` · `--ds-color-text-primary` | 20 · 700 |
+| نصّ الملخص | `--ds-font-size-md` · `--ds-color-text-secondary` | 14 |
+| المقطع غير المرتبط · بين المقاطع | `--ds-color-neutral-bg` · `--ds-space-1` | `neutral-100` · 4 |
+| شريط الملخص فوق 12 | عرض `12rem` خام | 192 |
 
 ## 7. الواجهة البرمجية
 
@@ -132,6 +151,18 @@ last_verified: 2026-09-12
 | `platformLabel` | نص حالة `platform` | «مرتبط بحساب أكاديميات» (قرار 2026-09-12؛ كان «يعمل بحساب أكاديميات») |
 | `kind` | `app` \| `gateway` — نص زرّ الربط: «ربط التطبيق» أو «ربط البوابة» | `app` |
 | `activationLockedReason` | سبب يمنع تغيير التفعيل الآن: يعطّل المفتاح، ويصير هو التلميح، ويُضاف إلى اسمه لقارئ الشاشة | — |
+
+الأنواع في الكود: `category` · `description` · `accountId` · `activationLabel` · `activationLockedReason` كلّها `string | null` وافتراضيّها `null`؛ و`detailsLink` `string | unknown[] | null` (مسار `routerLink`)؛ و`headingLevel` `2 | 3`. (وُثّق 2026-09-26 من الكود)
+
+**`<app-connection-summary>`** (وُثّق 2026-09-26 من الكود):
+
+| المُدخل | النوع | |
+|---|---|---|
+| `count` | `number` — **مطلوب** | المرتبط أو المفعَّل |
+| `total` | `number` — **مطلوب** | الكل. `0` لا يرسم مقاطع ولا شريطًا |
+| `label` | `string` — **مطلوب** | ما بعد العددين: «تطبيقات مرتبطة» |
+
+**`maskAccountId(value, visible = 4)`** مصدَّرة من ملف البطاقة: `null` لقيمة فارغة، والقيمة كما هي إن لم تزد على `visible`، وإلا «••••» وآخر `visible` خانات.
 
 ### المُخرجات
 
@@ -184,7 +215,6 @@ last_verified: 2026-09-12
 
 ```html
 <app-connection-summary [count]="connectedCount" [total]="apps.length" label="تطبيقات مرتبطة" />
-
 <app-connection-card
   name="Google Tag Manager"
   category="الإعلانات والتتبع"

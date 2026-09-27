@@ -8,7 +8,7 @@ selector: ['app-form-field']
 source: ['src/app/shared/ui/form-field']
 origin: ['Design-System/components/input-and-form.md']
 keywords: ['حقل', 'نموذج', 'إدخال', 'تحقّق', 'input', 'form', 'validation', 'readonly', 'لاصقة']
-last_verified: 2026-09-10
+last_verified: 2026-09-26
 ---
 
 # الحقول والنماذج — `<app-form-field>`
@@ -18,21 +18,28 @@ last_verified: 2026-09-10
 > [!CAUTION]
 > **الرقم الذي يجب أن يُقرأ قبل أي شيء في هذه الصفحة**
 >
-> | القياس في `src/app` | 2026-09-09 |
-> |---|---|
-> | `class="form-control"` | **583** |
-> | `<app-form-field>` في أي قالب | **1** — حوار «إضافة عميل» |
-> | `<app-accessible-form-field>` (مكوّن ثانٍ للغرض نفسه) | **0** |
+> | القياس في `src/app` | 2026-09-09 | 2026-09-26 |
+> |---|---|---|
+> | `class="form-control"` | **583** | **561** — `form-control` بحدود الكلمة في القوالب |
+> | `<app-form-field>` في أي قالب | **1** — حوار «إضافة عميل» | **94** موضعًا في **25** قالبًا في `views/admin`، وحوار «إرسال بريد» المشترك (`standalone/send-email-dialog`) |
+> | `<app-accessible-form-field>` (مكوّن ثانٍ للغرض نفسه) | **0** | **0** — والمجلد `shared/components/accessible-form-field` ما زال موجودًا |
 >
 > المكوّن بقي مبنيًّا وموثَّقًا ومربوطًا بالتوكنز بلا شاشة واحدة تستخدمه؛ والنسخة السابقة من هذه الصفحة قالت إنه «يحل محل 516 استخدامًا»، وتلك **نيّة** كُتبت بصيغة الواقع.
 >
-> أوّل متبنٍّ الآن هو [حوار «إضافة عميل»](../../../src/app/views/admin/members/users/students-tab/new-student-dialog/) — شاشة واحدة تُثبت المكوّن قبل التوسّع، لا 583 دفعةً واحدة.
+> أوّل متبنٍّ كان [حوار «إضافة عميل»](../../../src/app/views/admin/members/users/students-tab/new-student-dialog/) — شاشة واحدة تُثبت المكوّن قبل التوسّع، لا 583 دفعةً واحدة. واليوم (قيس 2026-09-26) هو في 25 قالبًا في اللوحة: حوارات المستخدمين الأربعة، والمدونة (المقال، إعداداتها، التصنيف، الوسم، المقال بالذكاء الاصطناعي)، والكوبون، والنطاق، والحساب البنكي، وبوابات الدفع، والتطبيقات، وتبويب «البيانات» في الدورة، وغيرها.
 >
 > ويبقى عندنا مكوّنان لا واحد: `shared/ui/form-field` و`shared/components/accessible-form-field` (صفر استخدام). هذا يخالف «لا نسخة ثانية من مكوّن موجود» في [الممنوعات](../../CLAUDE.md#2-قواعد-التوكنز--لا-تفاوض-فيها) — والمواصفة هنا تخصّ **الأول** حصرًا، والثاني يُحذف. مسجّل في [`TECHNICAL-DEBT.md`](../../TECHNICAL-DEBT.md) تحت `DEBT-003`.
 
 ## 1. متى تستخدمه
 
 > ⚠️ **غير موثّق بعد:** الأصل لا يكتب قسم «متى تستخدمه» للحقل. الحدّ بينه وبين حقل البحث مكتوب في [`search-field.md` §1–2](./search-field.md#2-متى-لا-تستخدمه)، وما لا يكفيه حقل نصّي (رفع صورة، رقم موبايل) يُسقَط داخله — §7 [عنصر تحكّم مُسقَط](#عنصر-تحكّم-مُسقَط--form_field_control).
+
+**ما يغطيه المكوّن في الكود:**
+
+* حقل نصّي بسطر واحد بأحد أنواع `kind` (§4)، أو منطقة نصّ (`kind="textarea"`) — ويعمل مع `formControlName` و`[(ngModel)]` (ControlValueAccessor).
+* حاوٍ لعنصر تحكّم مُسقَط يوفّر `FORM_FIELD_CONTROL` — القائمة المنسدلة، وحقل الموبايل، ورافع الصور، وحقل اللون (§7) — فيأخذ التسمية والنصّ المساعد والرسالة منه.
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 2. متى لا تستخدمه
 
@@ -41,6 +48,8 @@ last_verified: 2026-09-10
 > - أداة تصفية أو استكشاف لا مدخل في نموذج يُحفَظ ← `<app-search-field>` — [`search-field.md`](./search-field.md)
 > - اختيار من قائمة معرّفة ← `<app-native-select>` — [`select.md`](./select.md)
 > - الاختيار والتبديل ← [`checkbox-radio-switch.md`](../atoms/checkbox-radio-switch.md)
+
+**ما يستثنيه الكود صراحةً** — تعليق رأس `form-field.component.ts`: «منتقيات التاريخ ومحرّر Jodit تبقى خارج هذا المكوّن (استثناءات معتمدة)». فـ`<app-date-field>` و`<app-date-range-field>` يرسمان تسميتهما بأنفسهما (`label` مُدخل إلزامي فيهما — [`date-field.md`](./date-field.md) · [`date-range-field.md`](./date-range-field.md))، و`focusFirstInvalidField` في `field-error.ts` يقبل محدِّدًا إضافيًّا لمحرّر Jodit الخاطئ خارج الحقل. (وُثّق 2026-09-26 من الكود)
 
 ## 3. التشريح
 
@@ -60,6 +69,19 @@ last_verified: 2026-09-10
 
 النص المساعد **فوق** الحقل لا تحته: هو تعليمة تُقرأ قبل الكتابة، ووضعه بعد الحقل يعني أن المستخدم يقرأه بعد أن كتب. والرسالة **تحلّ محلّ** النص المساعد ولا تُضاف إليه — جمعُهما في `aria-describedby` يقرأ لقارئ الشاشة نصًّا غير ظاهر على الشاشة.
 
+### نصوص الحقل كما يرسمها `form-field.component.scss`
+
+| الجزء | الخط | الوزن | اللون | ارتفاع السطر |
+|---|---|---|---|---|
+| التسمية | 12 (`--ds-font-size-xs`) | 500 (`--ds-font-weight-medium`) | `--ds-color-text-secondary` | 1.45 (`--ds-line-height-snug`) |
+| «(مطلوب إدخاله)» · «(اختياري)» | يرث 12 | 400 (`--ds-font-weight-regular`) | `--ds-color-text-muted` | يرث |
+| النص المساعد | 12 | 400 | `--ds-color-text-muted` | 1.45 |
+| رسالة الخطأ | 12 | 500 | `--ds-color-text-danger` | 1.45 |
+| رسالة النجاح | 12 | 500 | `--ds-color-text-success` | 1.45 |
+| العدّاد | 12 | 400 | `--ds-color-text-muted` — وحين يبلغ `counterSuccessAt`: `--ds-color-text-success` | 1.45 |
+
+الفجوة بين أجزاء العمود `--ds-space-2` (8). وسطر الرسالة والعدّاد صفّ واحد (`.ds-field__footer`) بفجوة `--ds-space-3` (12)، والعدّاد يُدفع إلى طرف النهاية بـ`margin-inline-start: auto`. وحشوة الحقل `--ds-space-3` أفقيًّا و`--ds-space-2` رأسيًّا. (وُثّق 2026-09-26 من الكود)
+
 ### عدّاد الأحرف — مطبَّق
 
 الحقل الذي له `[maxlength]` يُظهر تحته عدّادًا **«0/35»** في طرف النهاية (يسارًا في RTL)، في سطر رسالة الخطأ نفسه (قرار 2026-09-10). ولا يُكتب الحدّ جملةً في النصّ المساعد («35 حرفًا كحد أقصى»): العدّاد يقولها ويقول معها كم بقي.
@@ -76,20 +98,20 @@ last_verified: 2026-09-10
 
 > **الحالة: مطبَّقة.** مُدخل واحد `kind` يضبط الأربعة معًا — وهو ما يمنع أن يُنسى `inputmode` في تسعة مواضع من عشرة. والمُدخل `type` القديم **حُذف**: مُدخلان متداخلان لمعنى واحد يتباعدان.
 
-| kind | type | inputmode | اتجاه المحتوى | لاصقة |
-|---|---|---|---|---|
-| `text` | text | — | يتبع الصفحة | — |
-| `name` | text | text | يتبع الصفحة | — · `autocomplete="name"` |
-| `email` | email | email | `ltr` | — |
-| `number` | text | numeric | `ltr` | — |
-| `url` | url | url | `ltr` | — (مقترحة: `https://`) |
-| `tel` | tel | tel | `ltr` | — |
-| `nationalId` | text | numeric | `ltr` | — · مع `maxlength` من المستهلك |
-| `password` | password | — | `ltr` | زرّ الإظهار لم يُبنَ بعد |
-| `code` | text | — | `ltr` | — · مفتاح أو معرّف يُنسخ من خدمة أخرى: `autocomplete="off"`، بلا تصحيح إملائي ولا حرف كبير تلقائي. أول استعمال: مفاتيح بوابات الدفع (2026-09-12) — التسمية عربية والاسم كما في لوحة البوابة بين قوسين: «المفتاح السري (Secret Key)» |
-| `textarea` | — | — | يتبع الصفحة | يرسم `<textarea>` بدل `<input>` |
+| kind | type | inputmode | اتجاه المحتوى | autocomplete | لاصقة |
+|---|---|---|---|---|---|
+| `text` | text | — | يتبع الصفحة | — | — |
+| `name` | text | text | يتبع الصفحة | `name` | — |
+| `email` | email | email | `ltr` | `email` | — |
+| `number` | text | numeric | `ltr` | `off` | — |
+| `url` | url | url | `ltr` | `url` | — (مقترحة: `https://`) |
+| `tel` | tel | tel | `ltr` | `tel` | — |
+| `nationalId` | text | numeric | `ltr` | `off` | — · مع `maxlength` من المستهلك |
+| `password` | password | — | `ltr` | `current-password` | زرّ الإظهار لم يُبنَ بعد |
+| `code` | text | — | `ltr` | `off` | — · مفتاح أو معرّف يُنسخ من خدمة أخرى: بلا تصحيح إملائي ولا حرف كبير تلقائي (`spellcheck="false"` · `autocapitalize="off"` · `autocorrect="off"`). أول استعمال: مفاتيح بوابات الدفع (2026-09-12) — التسمية عربية والاسم كما في لوحة البوابة بين قوسين: «المفتاح السري (Secret Key)» |
+| `textarea` | — | — | يتبع الصفحة | — | يرسم `<textarea>` بدل `<input>` — `rows` افتراضيًّا 3، وارتفاعه الأدنى 96px (قيمة مكتوبة في SCSS لا توكن)، ويُمدّ رأسيًّا (`resize: vertical`) |
 
-الجدول يطابق `KIND_SPECS` في [`form-field.component.ts`](../../../src/app/shared/ui/form-field/form-field.component.ts) حرفًا بحرف — وأيّ نوع يُضاف هناك يُضاف هنا.
+الجدول يطابق `KIND_SPECS` في [`form-field.component.ts`](../../../src/app/shared/ui/form-field/form-field.component.ts) حرفًا بحرف — وأيّ نوع يُضاف هناك يُضاف هنا. (عمود `autocomplete` أُضيف 2026-09-26 من `KIND_SPECS`؛ والمُدخل `[autocomplete]` يتجاوزه.)
 
 > **`price` غير موجود.** ذكرته النسخة السابقة من هذه الصفحة بين الأنواع المطبَّقة، ولا أثر له في المكوّن. هو **مقترح**: `inputmode="decimal"` مع العملة لاصقةً في البداية — فهو ينتظر [اللاصقة](#اللاصقة-وزرّ-المسح--prefix--clearable) أدناه ويُبنى معها. و`number` ليس بديلًا عنه: `inputmode="numeric"` لا تُظهر الفاصلة العشرية على الجوّال.
 
@@ -135,7 +157,7 @@ last_verified: 2026-09-10
 * **خارج القيمة تمامًا.** لا تُنسخ ولا تُرسل إلى الخادم مكرّرة. كتابتها داخل القيمة تعني أن على التحقّق أن يتعامل مع حذف المستخدم لها.
 * **خطّها هو الخط الأساسي** لا الأحادي — اللاصقة قد تكون عربية («ر.س»)، و`--ds-font-family-mono` يفرض عرضًا متساويًا على الحروف العربية فيكسر وصلها. وهذا يقع تحت «❌ `letter-spacing` على نص عربي» في [الممنوعات](../../CLAUDE.md#2-قواعد-التوكنز--لا-تفاوض-فيها) بالحجّة نفسها.
 * **حلقة التركيز حول الصفّ كلّه** لا حول `<input>` وحده، وإلا ظهر حدّان متداخلان داخل صندوق واحد.
-* **صفّ الحقل ينقلب إلى `ltr`** في `price` (المقترح) و`url`: محتواهما لاتيني، ولولا ذلك لانفصلت اللاصقة عن النص وقُرئا معكوسين.
+* **صفّ الحقل ينقلب إلى `ltr`** مع اتجاه محتواه: الصندوق يأخذ `dir` من `kind` نفسه (`[attr.dir]="spec.dir"` على `.ds-field__box`)، فينقلب في كل نوع محتواه لاتيني — `email` · `tel` · `number` · `nationalId` · `url` · `password` · `code` (وأوّل مستهلك، «عنوان النطاق»، `code`) — وفي `price` المقترح حين يُبنى. ولولا ذلك لانفصلت اللاصقة عن النص وقُرئا معكوسين.
 
 ### الأحجام
 
@@ -281,13 +303,45 @@ last_verified: 2026-09-10
 | `--ds-field-error-color` | `--ds-color-text-danger` | `#BC1E33` |
 | `--ds-color-field-placeholder` | `--ds-color-text-placeholder` | `#686573` |
 
-**أُضيف (2026-09-14):** `--ds-field-affix-bg` ← `--ds-color-surface-sunken` (`#EAE9ED`) — خلفية اللاصقة، والنصّ فوقها `text-secondary` بتباين 6.2:1.
+**أُضيف (2026-09-14):** `--ds-field-affix-bg` ← `--ds-color-surface-sunken` (`#EAE9ED`) — خلفية اللاصقة، والنصّ فوقها `text-secondary` بتباين 6.2:1. ويفصلها عن القيمة خطّ `--ds-color-border-subtle` في طرف النهاية، وخطّها `--ds-field-font-size` (12). (وُثّق 2026-09-26 من الكود)
 
 ## 7. الواجهة البرمجية
 
 المُدخلات موثّقة مع ما تضبطه: `kind` و`prefix`/`clearable`/`clearLabel`/`(cleared)` في §4 · `[maxlength]` و`[counterSuccessAt]` في §3 · `labelHidden` و`[success]` في §5 · `[required]` و`[optional]` و`[requiredMark]` في [`forms.md` — تعليم الإلزام](../patterns/forms.md#تعليم-الإلزام--كلمة-لا-نجمة).
 
-> ⚠️ **غير موثّق بعد:** جدول مُدخلات موحّد بالنوع والافتراضي لكل مُدخل (`label` · `hint` · `error` · `state` · `placeholder` …) — الأصل يذكرها في أمثلته ولا يجدولها.
+### المُدخلات — من `form-field.component.ts`
+
+| المُدخل | النوع | الافتراضي | ما يفعله |
+|---|---|---|---|
+| `label` | `string` | `''` | التسمية. بلا قيمة لا تُرسم `<label>` أصلًا |
+| `hint` | `string \| null` | `null` | النص المساعد فوق الحقل؛ يختفي حين تظهر رسالة خطأ |
+| `error` | `string \| null` | `null` | رسالة الخطأ تحت الحقل (`role="alert"`)، ووجودها يلوّن الحدّ ويكتب `aria-invalid` |
+| `success` | `string \| null` | `null` | رسالة التحقّق الناجح — §5 |
+| `required` | `boolean` | `false` | `aria-required` على الحقل، و«(مطلوب إدخاله)» ما دام `requiredMark` |
+| `requiredMark` | `boolean` | `true` | يُظهر «(مطلوب إدخاله)» — [`forms.md`](../patterns/forms.md#تعليم-الإلزام--كلمة-لا-نجمة) |
+| `optional` | `boolean` | `false` | «(اختياري)» بجانب التسمية (حين لا تُرسم علامة الإلزام) |
+| `kind` | `FormFieldKind` | `'text'` | §4 |
+| `placeholder` | `string` | `''` | |
+| `inputId` | `string` | مولَّد: `app-form-field-<n>` | ويقرؤه العنصر المُسقَط |
+| `disabled` | `boolean` | `false` | ويضبطه النموذج أيضًا (`setDisabledState`) |
+| `min` · `max` · `step` | `number \| string \| null` | `null` | تُكتب سماتٍ على `<input>` كما هي |
+| `rows` | `number` | `3` | لـ `textarea` وحده |
+| `maxlength` | `number \| null` | `null` | ويُظهر العدّاد — §3 |
+| `counterSuccessAt` | `number \| null` | `null` | §3 |
+| `autocomplete` | `string \| null` | `null` | يتجاوز المشتقّ من `kind` |
+| `labelHidden` | `boolean` | `false` | §5 |
+| `state` | `'default' \| 'success' \| 'error'` | `'default'` | لون الحدّ وحده. `error` بلا نصّ لا يُخفي النصّ المساعد (§15، DEBT-006) |
+| `prefix` | `string \| null` | `null` | §4 |
+| `clearable` | `boolean` | `false` | §4 |
+| `clearLabel` | `string` | `'مسح'` | §4 |
+
+| المُخرج | الحمولة | متى |
+|---|---|---|
+| `(fieldBlur)` | `FocusEvent` | عند مغادرة الحقل النصّي، بعد تعليمه «ملموسًا» |
+| `(fieldKeydown)` | `KeyboardEvent` | كل ضغطة مفتاح في الحقل النصّي |
+| `(cleared)` | `void` | بعد أن مسح زرّ ✕ القيمة |
+
+(وُثّق 2026-09-26 من الكود)
 
 ### عنصر تحكّم مُسقَط — `FORM_FIELD_CONTROL`
 
@@ -304,7 +358,7 @@ last_verified: 2026-09-10
 * العنصر يوفّر `FORM_FIELD_CONTROL` على نفسه، فلا يرسم الحقل `<input>` ولا `<textarea>`.
 * ويقرأ من الحقل `inputId` (فتشير إليه التسمية بـ `for`) و`describedBy` و`showError` و`required` و`labelId` — ولا يعيد بناء أيٍّ منها لنفسه.
 * النموذج يُربط **بالعنصر المُسقَط** (`formControlName` عليه) لا بالحقل.
-* المستهلكون: [`upload.md`](./upload.md) · [`phone.md`](./phone.md) · [`select.md`](./select.md) (منذ 2026-09-10).
+* المستهلكون: [`upload.md`](./upload.md) · [`phone.md`](./phone.md) · [`select.md`](./select.md) (منذ 2026-09-10) · [`color-field.md`](./color-field.md).
 
 ## 8. السلوك ولوحة المفاتيح
 
@@ -419,6 +473,13 @@ last_verified: 2026-09-10
 > النتيجة: حقل أحمر بلا أيّ كلمة تقول ما المشكلة — «الإبلاغ باللون وحده» (WCAG 1.4.1) داخل المكوّن الذي كُتب لمنعه.
 >
 > **المطبَّق:** `describedBy` لا يضيف `errorId` إلا حين توجد رسالة **مرسومة فعلًا**، والنصّ المساعد لا يختفي إلا حين **تحلّ محلّه** رسالة مرئية. يحرسه اختباران في [`form-field.component.spec.ts`](../../../src/app/shared/ui/form-field/form-field.component.spec.ts).
+
+### مراجعة 2026-09-26 مقابل الكود
+
+* صُحّح 2026-09-26: كانت المواصفة تقول إن صفّ الحقل ذي اللاصقة ينقلب إلى `ltr` في `url` (و`price` المقترح) وحدهما، والكود يقلبه مع كل `kind` اتجاهه `ltr` (`[attr.dir]="spec.dir"` على `.ds-field__box`).
+* صُحّح 2026-09-26: كانت المواصفة تعدّ العناصر المُسقَطة ثلاثة (الرفع، الموبايل، القائمة)، والكود أربعة — `color-field.component.ts` يوفّر `FORM_FIELD_CONTROL` أيضًا.
+* صُحّح 2026-09-26: كانت المواصفة تقول «`<app-form-field>` في قالب واحد»، والقياس اليوم 25 قالبًا في اللوحة (الإطار أعلى الصفحة).
+* ⚠️ تعارض (2026-09-26): فهرس «حالة التنفيذ» في `README.md` يقول «صفر استخدام» · الكود 94 موضعًا في 25 قالبًا (التعارض 47 هناك).
 
 ## 16. روابط
 

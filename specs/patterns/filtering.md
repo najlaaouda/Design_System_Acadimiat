@@ -17,7 +17,7 @@ decisions:
   - '2026-09-11 — اسم مجموعة لكل سطح (اللوحة والدرج)'
   - '2026-09-24 — الفلتر بجوار البحث في كل عرض وكل متصفح'
   - '2026-09-24 — عرض عمودَي اللوحة صريح في inline-size'
-last_verified: 2026-09-10
+last_verified: 2026-09-26
 ---
 
 # الفلترة: النمط المعتمد فوق الجداول — نمط
@@ -27,6 +27,8 @@ last_verified: 2026-09-10
 ## 1. متى تستخدمه
 
 > **الحالة:** مطبَّق في `/admin/blog/articles` (2026-09-10) — أوّل متبنٍّ. ثم التصنيفات والوسوم وبقية جداول اللوحة. انظر [خطة التحويل](#خطة-التحويل).
+>
+> **اليوم (قيس 2026-09-26):** `<app-filter-panel>` في 8 شاشات — المقالات · الدورات · الطلبات · الكوبونات · السلات المتروكة · الاستطلاعات · سجل المسحوبات (`finance-history`) · مقارنة المبيعات. و`<app-filter-bar>` في 10: الثماني نفسها وتقريرا الطلبات (`product-orders` و`coupon-orders`). و`<app-filter-chip>` في شاشة واحدة (`product-orders`). والتصنيفات والوسوم لم تُنقل بعد.
 
 ## 2. متى لا تستخدمه
 
@@ -186,12 +188,48 @@ selection: Record<string, string | null> = { status: null, author: null, categor
 />
 ```
 
+| المُدخل | النوع | الافتراضي | |
+|---|---|---|---|
+| `appearance` | `'card' \| 'inline'` | `'card'` | `card` بطاقة بمنافذ `[filter-search]` والمحتوى الافتراضي (الحقول) و`[filter-actions]`، والمطبَّق تحتها؛ `inline` الصفّ وحده |
+| `applied` | `readonly AppliedFilter[]` — `{ key, label, value }` | `[]` | فارغة: لا رقائق ولا «مسح الفلاتر» |
+| `resultCount` | `number \| null` | `null` | `null` يخفي العدد. إخفاؤه صفرًا وأثناء التحميل على المستهلك: يمرّر `null` |
+| `resultNoun` | `SelectionNoun \| null` | `null` | بلا قيمة: «نتيجة / نتيجتان / نتائج» |
+| `ariaLabel` | `string` | `'فلاتر'` | اسم `<section>` لقارئ الشاشة |
+
+| المُخرج | يحمل | |
+|---|---|---|
+| `removed` | `string` — `key` الرقاقة | زرّ الإزالة في الرقاقة |
+| `cleared` | — | «مسح الفلاتر» |
+
+`formatResultCount(count, noun)` مصدَّرة من الملف نفسه: 0 ← «لا مقالات» · 1 ← «1 مقال» · 2 ← «مقالان» · 3–10 ← «3 مقالات» · فوق 10 ← «12 مقالًا». وعلى الجوال (حتى 768) تتكدّس حقول مظهر `card` عمودًا بعرض كامل. (وُثّق 2026-09-26 من الكود)
+
 * **`appearance="inline"`** (2026-09-10): صفّ المطبَّق والعدد وحده، يُسقَط في منفذ `table-toolbar` بعد `app-table-toolbar` فيجلس تحته داخل قشرة الجدول، بخلفية الشريط وحدّه — سطرٌ ثانٍ من أدوات الجدول لا بطاقة داخل بطاقته. بلا مطبَّق ولا عدد لا يأخذ ارتفاعًا، والمنطقة الحيّة باقية فيه فارغة: منطقةٌ تُدرَج مع نصّها لا يعلنها قارئ الشاشة.
 * **`resultNoun`** — المعدود بصيغه الأربع (`SelectionNoun` من `app-table-selection-bar`)، والناتج من `formatResultCount`: «1 مقال» · «مقالان» · «3 مقالات» · «12 مقالًا». بلا قيمة: «نتيجة / نتيجتان / نتائج». كان يطبع «3 نتيجة».
 * **العدد أوّل السطر** (طرف البداية — يمينًا في العربية؛ قرار 2026-09-10، كان في آخره) بوزن متوسط ولون النصّ الأساسي: جواب «ماذا فعلت الفلترة؟» يُقرأ قبل ما أنتجه. ومع شرط مطبَّق وحده، ولا يُعرض صفرًا (حالة «لا نتائج» تقوله) ولا أثناء التحميل (عددٌ قديم فوق نتيجة جديدة).
 * **الرقائق لخصائص اللوحة — والحالة منها.** البحث ظاهر في حقله فلا رقاقة له، و«مسح الفلاتر» لا يمسحه.
 * **الرقاقة بيضاء بحدّ محايد** (`surface-default` · `border-default` · نصّ `text-primary`؛ قرار 2026-09-10، كانت بلون العلامة الخفيف): تقول ما طُبِّق ولا تنافس الفعل الأساسي على لونه — وشارة عدّاد «فلترة النتائج» وحدها بلون العلامة.
 * زرّ إزالة الرقاقة 24px مرسومة بأيقونة `essential/close-circle`، وعلى اللمس يمتدّ هدفه إلى 44px بطبقة شفّافة لا تزيح شيئًا.
+* في الكود: الرقاقة كبسولة (`--ds-radius-pill`) بخط 12، حشوتها 12 من البداية و4 من النهاية، والتسمية `text-muted` والقيمة `medium`. وزرّ الإزالة عند المرور `surface-sunken` ونصّ `text-primary`. و«مسح الفلاتر» زرّ نصّي 12 `medium` بلون `text-brand`، ارتفاعه الأدنى 36 (`--ds-control-height-sm`)، ومروره `surface-hover`. وسطر «الفلاتر المطبقة:» 12 `text-muted`. (وُثّق 2026-09-26 من الكود)
+
+### رقاقة الفلتر — `<app-filter-chip>`
+
+لجدول بخاصية واحدة (§2). رقاقة تفتح لوحة `listbox` بموضع `FloatingPanel`، ونصّها يحمل القيمة: «الحالة: فعال» · «الحالة: فعال +2» · «الحالة: الكل (48)».
+
+| المُدخل | النوع | الافتراضي | |
+|---|---|---|---|
+| `label` | `string` | — | **مطلوب**. اسم الخاصية |
+| `options` | `readonly FilterChipOption[]` — `{ value, label, count? }` | `[]` | `count: null` لا يُعرض |
+| `selected` | `readonly string[]` | `[]` | مصفوفة حتى في الأحادي |
+| `multiple` | `boolean` | `false` | متعدد بمربّعات `app-checkbox` واللوحة تبقى مفتوحة؛ الأحادي يُغلق بالاختيار، والضغط على المختار يلغيه |
+| `disabled` | `boolean` | `false` | |
+| `emptyLabel` | `string` | `'الكل'` | |
+| `totalCount` | `number \| null` | `null` | بين قوسين بجوار «الكل» |
+
+المُخرج: `selectedChange` (`readonly string[]`). ↓ يفتح اللوحة، وEscape يغلقها ويعيد التركيز إلى الرقاقة.
+
+الشكل: ارتفاع أدنى 36، استدارة 8، حدّ `border-default`، 14 `medium`؛ والمطبَّقة بخلفية `--ds-color-brand-bg` وحدّ `--ds-color-brand-border` ونصّ `text-brand`؛ واللوحة 220–320 عرضًا و`min(320px, 60vh)` ارتفاعًا، استدارة 8 وظلّ `elevation-2`. (وُثّق 2026-09-26 من الكود)
+
+* ⚠️ تعارض (2026-09-26): المواصفة ([`iconography.md`](../foundations/iconography.md) و`CLAUDE.md` الجذر: كل أيقونة من `src/icons/` عبر `<ds-icon>`) · الكود: سهم الرقاقة محرف ▾ (`&#9662;`) بشفافية 0.7، وعلامة الاختيار في الأحادي محرف ✓ — لا `arrow/arrow-down-02` ولا أيقونة من المجموعة.
 
 ### الترتيب
 
@@ -243,7 +281,7 @@ selection: Record<string, string | null> = { status: null, author: null, categor
 1. ✅ **المكوّنان** (2026-09-10): `app-filter-panel`، ومظهر `segmented` لـ `appRadioGroup`، و`unpublished` في `STATUS_MAP`.
 2. ✅ **المقالات** `/admin/blog/articles` (2026-09-10): اللوحة بالحالة أوّلًا، والترتيب المستقل، والمطبَّق تحت الشريط بمظهر `app-filter-bar` المضمَّن وتمييز عدده، و«لا نتائج» بزرّ لكل شرط، والدرج على الجوال. وحالة «غير منشور» في العمود والتصدير، والكاتب في سطر واحد.
    ⚠️ **سؤال مفتوح — الترتيب:** الصفحة الأولى تُعاد ترتيبها على الواجهة بـ `order` (الترتيب اليدوي) بعد وصولها، فـ«الأكثر مشاهدة» يحدّد **أيّ** خمسة مقالات تصل لا ترتيبها، و«تحميل المزيد» يُلحق بلا إعادة ترتيب. سلوكٌ قائم قبل الترحيل لم يُغيَّر: تصحيحه يحتاج أن نعرف ما يعيده الخادم حين يغيب `moreVisiting` — هل هو الترتيب اليدوي؟ وعندها يصير خيار «الترتيب اليدوي» ثالثًا، والسحب يُتاح فيه وحده.
-3. ⏳ اعتماد النمط، ثم التصنيفات والوسوم وبقية جداول اللوحة، كلٌّ بمراجعة مستقلة.
+3. ⏳ اعتماد النمط، ثم التصنيفات والوسوم وبقية جداول اللوحة، كلٌّ بمراجعة مستقلة. (قيس 2026-09-26: اللوحة في 8 شاشات — انظر §1 — والتصنيفات والوسوم لم تُنقل.)
 
 ## 8. RTL والاستجابة
 
@@ -296,7 +334,57 @@ selection: Record<string, string | null> = { status: null, author: null, categor
 
 ## 11. مثال
 
-> الأمثلة مع أجزائها في §7: لوحة الفلترة (`<app-filter-panel>` وخصائصها `facets`)، والمطبَّق (`<app-filter-bar appearance="inline">`)، وزرّ الترتيب؛ والشريط كاملًا مرسوم في §4. ⚠️ **غير موثّق بعد:** مثال مركّب بالكود للشريط والمطبَّق والجدول معًا.
+> الأمثلة مع أجزائها في §7: لوحة الفلترة (`<app-filter-panel>` وخصائصها `facets`)، والمطبَّق (`<app-filter-bar appearance="inline">`)، وزرّ الترتيب؛ والشريط كاملًا مرسوم في §4.
+
+المثال المركّب من [`articles.component.html`](../../../src/app/views/admin/blog/articles/articles.component.html) مختصرًا — الشريط، ثم المطبَّق، ثم الجدول و«لا نتائج» داخله:
+
+```html
+<app-table caption="قائمة المقالات" [bordered]="true">
+  <app-table-toolbar table-toolbar>
+    <app-search-field toolbar-filters label="البحث في المقالات" [hideLabel]="true"
+      placeholder="البحث بعنوان المقال" [(ngModel)]="blogName" (searchChange)="onSearch($event)" />
+    <app-filter-panel toolbar-filters [facets]="facets" [selected]="selection"
+      (selectedChange)="onFacetChange($event)" (cleared)="clearPanelFilters()" />
+
+    <ng-container toolbar-actions>
+      <button dsButton type="button" variant="secondary" [appMenuTriggerFor]="sortMenu"
+        [attr.aria-label]="'الترتيب: ' + sortLabel">
+        <ds-icon button-icon name="essential/sort" size="sm" />
+        {{ sortLabel }}
+        <ds-icon button-icon-end name="arrow/arrow-down-02" size="sm" />
+      </button>
+    </ng-container>
+  </app-table-toolbar>
+
+  <app-filter-bar table-toolbar appearance="inline" ariaLabel="الفلاتر المطبقة"
+    [applied]="appliedFilters" [resultCount]="resultCount" [resultNoun]="articleNoun"
+    (removed)="removeFacet($event)" (cleared)="clearPanelFilters()" />
+
+  <table>
+    …
+    <tbody>
+      @if (articles.length === 0) {
+        <tr><td colspan="8" class="ds-page__state-cell">
+          <app-empty-state variant="no-results" illustration="art"
+            title="لا توجد مقالات مطابقة" description="جرب إزالة أحد الفلاتر أو تغيير كلمة البحث.">
+            <img empty-illustration src="assets/illustrations/no-results.svg" alt="" />
+            <div empty-actions class="articles-no-results">
+              @for (filter of appliedFilters; track filter.key) {
+                <button dsButton type="button" variant="secondary" size="sm" (click)="removeFacet(filter.key)">
+                  <ds-icon button-icon name="essential/close-circle" size="sm" />
+                  إزالة فلتر {{ filter.label }}
+                </button>
+              }
+            </div>
+          </app-empty-state>
+        </td></tr>
+      }
+    </tbody>
+  </table>
+</app-table>
+```
+
+و`resultCount` في الشاشة `null` إلا مع شرط مطبَّق ونتائج وبعد التحميل. (وُثّق 2026-09-26 من الكود)
 
 ## 12. ممنوع
 

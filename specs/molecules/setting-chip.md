@@ -8,7 +8,7 @@ selector: ['<app-setting-chip>']
 source: ['src/app/shared/ui/setting-chip']
 origin: ['Design-System/components/setting-chip.md']
 keywords: ['رقاقة', 'رقاقة الإعداد', 'إعداد اختياري', 'خيارات جاهزة', 'حقل حر', 'setting chip', 'chip']
-last_verified: 2026-09-11
+last_verified: 2026-09-26
 ---
 
 # رقاقة الإعداد (Setting chip) — `<app-setting-chip>`
@@ -62,9 +62,11 @@ last_verified: 2026-09-11
 | Hover | `surface-hover` وحدّ `border-strong`؛ المضبوطة `surface-selected-bold` |
 | Focus | `--ds-focus-ring` |
 | Active (مفتوحة) | حدّ `border-brand` و`--ds-field-ring` |
-| Disabled | `surface-disabled` ونص `text-disabled` |
+| Disabled | `surface-disabled` ونص `text-disabled` — والحدّ `--ds-color-action-disabled-border` (وُثّق 2026-09-26 من الكود) |
 | Set (مضبوطة) | `brand-bg` وحدّ `brand-border` والقيمة مكتوبة |
 | Loading · Error · Success | لا تنطبق: الإعداد يُحفظ في النموذج لا على الخادم |
+
+وفي وضع الألوان القسرية (`forced-colors: active`) يصير حدّ المضبوطة والمفتوحة `Highlight`. (وُثّق 2026-09-26 من الكود)
 
 ## 6. التوكنز
 
@@ -78,24 +80,47 @@ last_verified: 2026-09-11
 
 وألوان الرقاقة واللوحة وقيمها في رسم التشريح ([§3](#3-التشريح)) وجدول الحالات ([§5](#5-الحالات)).
 
+**التوكنز كما يقرؤها الكود** (لا طبقة `--ds-setting-chip-*`؛ الدلالي مباشرة):
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| الرقاقة — الارتفاع · الحشوة · الفجوة | `--ds-button-height-sm` (و`--ds-touch-target-min` لمسًا) · `--ds-space-1` × `--ds-space-3` · `--ds-space-2` | 32 (44) · 4×12 · 8 |
+| الرقاقة — الحدّ · الاستدارة · التعبئة · النص | `--ds-color-border-default` · `--ds-radius-pill` · `--ds-color-surface-default` · `--ds-color-text-secondary` | `#C7C5CE` · دائرية · `#FFFFFF` · `#55525E` |
+| الخطّ | `--ds-font-size-md` · `--ds-font-weight-medium` · `--ds-line-height-snug`؛ والاسم أمام القيمة `regular` و`--ds-color-text-muted` | 14 · 500 · 1.45 |
+| الأيقونة | `--ds-color-text-muted`، والمضبوطة `--ds-color-text-brand` | `#686573` · `#6E2BA1` |
+| التمرير | `--ds-color-surface-hover` · حدّ `--ds-color-border-strong`؛ المضبوطة `--ds-color-surface-selected-bold` | `#F5F5F7` · `#AEAAB7` · `#F0E4FF` |
+| المضبوطة | `--ds-color-brand-bg` · `--ds-color-brand-border` · `--ds-color-text-brand` | `#F8F3FF` · `#E4CEFE` · `#6E2BA1` |
+| المفتوحة | حدّ `--ds-color-border-brand` · `box-shadow: var(--ds-field-ring)` (انظر §15) | `#6E2BA1` |
+| المعطّلة | `--ds-color-surface-disabled` · `--ds-color-action-disabled-border` · `--ds-color-text-disabled` | `#EAE9ED` · `#D9D8DE` · `#7E7A8A` |
+| التركيز | `--ds-focus-ring` | حلقة 2px بعد فجوة 2px |
+| اللوحة | عرض 20rem (ولا تتجاوز الشاشة ناقص `--ds-space-8`) · أقصى ارتفاع `--ds-filter-panel-max-block-size` · حشوة وفجوة `--ds-space-2` · `--ds-color-surface-raised` · حدّ `--ds-color-border-subtle` · `--ds-radius-lg` · `--ds-elevation-2` | 320px · `min(400px, 70vh)` · 8 · `#FFFFFF` · `#D9D8DE` · 12 |
+| عنوان اللوحة | `--ds-font-size-xs` · `medium` · `--ds-color-text-muted` · حشوة 8/12 | 12 · 500 |
+| الخيار | `--ds-button-height-md` (أدنى) · حشوة 8×12 · `--ds-radius-md` · 14 · التمرير `--ds-color-surface-hover` · المختار `--ds-color-surface-selected` + `--ds-color-text-brand` + `medium` | 40 · 8 |
+
+(وُثّق 2026-09-26 من الكود)
+
 ## 7. الواجهة البرمجية
 
 | الاسم | النوع | الافتراضي | |
 |---|---|---|---|
 | `label` | `string` | — | **إلزامي**. اسم الإعداد القصير: «الجمهور» |
 | `icon` | `string \| null` | `null` | اسم أيقونة من `src/icons/` |
-| `value` | `string` | `''` | القيمة الحالية؛ فارغةً تُعرض الرقاقة باسمها وحده |
-| `options` | `string[]` | `[]` | خيارات جاهزة أعلى اللوحة |
+| `value` | `string \| null` | `''` | القيمة الحالية؛ فارغةً (أو مسافات) تُعرض الرقاقة باسمها وحده |
+| `options` | `readonly string[]` | `[]` | خيارات جاهزة أعلى اللوحة |
 | `panelTitle` | `string` | `''` | عنوان اللوحة واسمها لقارئ الشاشة: «النبرة والأسلوب» |
 | `appearance` | `'default' \| 'add'` | `'default'` | `add` بلا لوحة |
 | `disabled` | `boolean` | `false` | |
-| `valueChange` | `string` | | عند ضغط خيار |
+| `valueChange` | `string` | | عند ضغط خيار — و`''` حين يُضغط الخيار المختار نفسه |
 | `activate` | `void` | | عند ضغط رقاقة `add` |
+| `close(restoreFocus = true)` | تابع عامّ | | يُغلق اللوحة من المحتوى المُسقَط («محتوى يُنهي الإعداد بنفسه») |
+
+(`string | null` و`readonly` و`close()` وُثّقت 2026-09-26 من الكود.)
 
 ## 8. السلوك ولوحة المفاتيح
 
 الحقل الحرّ مربوط **بالقيمة نفسها**: الخيار الجاهز يملؤه، وما يُكتب فيه يظهر على الرقاقة أثناء الكتابة.
 
+* **السهم ↓ على الرقاقة** يفتح اللوحة أيضًا، والتركيز يدخلها إلى الخيار المختار أو أوّل عنصر فيها. (وُثّق 2026-09-26 من الكود)
 * **الخيار يملأ ويُغلق.** والضغط على الخيار المختار يلغيه — طريق العودة إلى «بلا قيمة» بلا زرّ «مسح».
 * **Enter في الحقل الحرّ** يعتمد ما كُتب ويُغلق. (لا في مربع نصّ متعدّد الأسطر.)
 * **Escape** تُغلق اللوحة وحدها — تمنع افتراضيّها فلا تُغلق النافذة حولها — وتعيد التركيز إلى الرقاقة.
@@ -106,6 +131,8 @@ last_verified: 2026-09-11
 ## 9. الاستجابة
 
 > ⚠️ **غير موثّق بعد:** سلوك الرقاقة ولوحتها على الشاشة الضيّقة — الأصل يذكر ارتفاع 44px على اللمس وحده ([§6](#6-التوكنز)).
+
+**ما في الكود:** لا درج ولا شكل آخر للجوال — اللوحة نفسها عائمة بعرض 20rem لا يتجاوز الشاشة ناقص 32px (`calc(100vw - var(--ds-space-8))`)، وأقصى ارتفاعها `min(400px, 70vh)` وتتمرّر داخلها؛ تبعد 8px عن الرقاقة ولا تقترب من حافّة الشاشة دون 16px (`FloatingPanel`). والرقاقة لا تتجاوز عرض حاويها، وقيمتها تُقصّ عند 16rem. (وُثّق 2026-09-26 من الكود)
 
 ## 10. RTL
 
@@ -149,6 +176,12 @@ last_verified: 2026-09-11
 ## 15. الدَّين القائم
 
 > لا ينطبق — الأصل لا يسجّل دَينًا قائمًا لهذا المكوّن.
+
+### مراجعة 2026-09-26 مقابل الكود
+
+* ⚠️ تعارض (2026-09-26): §3 و§5 «مفتوحة: الحدّ `border-brand` + `--ds-field-ring`» · الكود يكتب `box-shadow: var(--ds-field-ring)`، و`--ds-field-ring` **لون** (`brand-100`) لا ظلّ — فالقيمة غير صالحة ويتجاهلها المتصفّح، والرقاقة المفتوحة تُرسم بحدّها البنفسجي وحده بلا إطار. (الحقل النصّي يكتبه `0 0 0 var(--ds-field-ring-width) var(--ds-field-ring)`.)
+* مُلئت §9، وأُكملت §6 و§7 و§8 من الكود.
+* قيس 2026-09-26: مستعمل في قالب واحد — نافذة «إنشاء مقال بالذكاء الاصطناعي» (`ai-article.component.html`).
 
 ## 16. روابط
 

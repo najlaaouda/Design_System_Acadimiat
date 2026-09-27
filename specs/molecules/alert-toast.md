@@ -13,7 +13,7 @@ last_verified: 2026-09-26
 
 # التنبيهات والإشعارات — `<app-alert>` · `<app-toast-host>`
 
-> يحل محل `class="alert"` — **182 استخدامًا** — وطبقة العرض في `SweetalertService`.
+> يحل محل `class="alert"` — كان **182 استخدامًا**، وبقي منها **9** في قوالب اللوحة (قيس 2026-09-26) — وطبقة العرض في `SweetalertService`.
 
 ## 1. متى تستخدمه
 
@@ -60,7 +60,25 @@ last_verified: 2026-09-26
 
 ### Alert
 
-> ⚠️ **غير موثّق بعد:** رسم أجزاء Alert وجدول «إلزامي؟» — الأصل يذكر من Alert مدخلاته (`heading` و`dismissible`، §7) ومنفذ `alert-actions` (§13) والشريط الجانبي (§10).
+```
+┌──┬──────────────────────────────────────────────┐ ← حدّ 1 بلون حدّ النيّة · استدارة 8 · حشوة 16
+│▐ │ [أيقونة]  عنوان قصير (heading)          [⊗] │ ← العنوان 14/600 وتحته 4 · الإغلاق 44×44
+│▐ │           نصّ التنبيه — المحتوى               │ ← 14 · text-secondary
+│▐ │           [أزرار alert-actions]              │ ← فوقها 12 · بينها 8
+└──┴──────────────────────────────────────────────┘
+ ↑ شريط البداية 3px بلون النيّة الصلب · بين الأيقونة والمحتوى والإغلاق 12
+```
+
+| الجزء | في الكود | ملاحظات |
+|---|---|---|
+| الحاوية | دائمًا | خلفية النيّة وحدّها، و`role="alert"` للخطر و`status` لغيره (§11) |
+| الأيقونة — منفذ `[alert-icon]` | اختياري | 20×20 بلون نصّ النيّة، `aria-hidden`؛ يختفي المنفذ إن فرغ |
+| العنوان — `heading` | اختياري | `<p>` لا عنوان في شجرة الصفحة |
+| النصّ — المحتوى الافتراضي | ✓ | |
+| الأزرار — منفذ `[alert-actions]` | اختياري | يختفي إن فرغ |
+| زرّ الإغلاق | مع `dismissible` وحده | زرّ الحوار: `essential/close-circle` بـ20، استدارة 8، `--ds-modal-close-*` (أُصلح 2026-09-27؛ كان محرف ✕) |
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 4. الأنواع والمقاسات
 
@@ -91,7 +109,15 @@ last_verified: 2026-09-26
 
 ### Alert
 
-> ⚠️ **غير موثّق بعد:** حالات Default · Hover · Focus · Active · Disabled لـ Alert وأزراره.
+| الحالة | الشكل |
+|---|---|
+| Default | كما في §3؛ الحاوية نفسها لا تتفاعل |
+| Hover — زرّ الإغلاق | لونه من `--ds-color-text-muted` إلى `--ds-color-text-primary`، بلا خلفية |
+| Focus — زرّ الإغلاق | `--ds-focus-ring` على `:focus-visible` |
+| Active · Disabled · Loading | لا يرسمها المكوّن |
+| الأزرار في `alert-actions` | حالاتها من `dsButton` نفسه ([`button.md`](../atoms/button.md)) |
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 6. التوكنز
 
@@ -114,26 +140,65 @@ last_verified: 2026-09-26
 | العنوان | `--ds-toast-title-size` · `-weight` · `-color` | 16 · 600 · `text-primary` |
 | الوصف | `--ds-toast-message-size` · `-color` | 14 · `text-secondary` |
 | الإغلاق | `--ds-modal-close-*` | زرّ الحوار نفسه: 44 · أيقونة 20 · استدارة 8 |
+| زرّ الإجراء | `--ds-control-height-sm` · `--ds-font-size-md` · `--ds-font-weight-semibold` · `--ds-color-text-brand` · `--ds-radius-md` | ارتفاع أدنى 36 · 14/600 · استدارة 8 (وُثّق 2026-09-26 من الكود) |
+| الأيقونة | `--ds-toast-icon` | 20 — معرّف في `tokens.css` ولا يقرؤه الكود: الأيقونة بـ`size="md"` (قيس 2026-09-26) |
 
 ### Alert
 
-> ⚠️ **غير موثّق بعد:** لا توكنز مكوّن خاصة بـ Alert (لا `--ds-alert-*`)، والأصل لا يذكر التوكنز الدلالية التي يقرؤها.
+لا طبقة `--ds-alert-*` في `tokens.css`؛ المكوّن يقرأ التوكنز الدلالية مباشرة:
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| الخلفية | `--ds-color-{info,success,warning,danger}-bg` | الدرجة 50 |
+| الحدّ | `--ds-color-{…}-border` · `--ds-border-width-sm` | الدرجة 200 · 1 |
+| شريط البداية | `--ds-color-{…}-solid` | الدرجة 700 · سماكة `3px` خام — لا توكن سماكة 3 |
+| الأيقونة | `--ds-color-text-{…}` · `--ds-icon-size-md` | الدرجة 700 · 20، وتنزل `2px` خام لتحاذي السطر الأول |
+| الاستدارة | `--ds-radius-md` | 8 |
+| الحشوة · الفجوة | `--ds-space-4` · `--ds-space-3` | 16 · 12 |
+| النصّ | `--ds-font-size-md` · `--ds-line-height-normal` · `--ds-color-text-primary` | 14 · 1.6 |
+| العنوان | `--ds-font-weight-semibold`، وتحته `--ds-space-1` | 600 · 4 |
+| الجسم | `--ds-color-text-secondary` | |
+| الأزرار | فجوة `--ds-space-2`، وفوقها `--ds-space-3` | 8 · 12 |
+| زرّ الإغلاق | `--ds-touch-target-min` · `--ds-radius-sm` · `--ds-color-text-muted` | 44 · 6 |
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 7. الواجهة البرمجية
 
 ### Alert
 
-| المُدخل | القيم |
+| المُدخل | القيم | الافتراضي |
+|---|---|---|
+| `tone` | `info` \| `success` \| `warning` \| `danger` | `info` |
+| `heading` | `string \| null` | `null` |
+| `dismissible` | `boolean` | `false` |
+| `dismissLabel` | `string` — اسم زرّ الإغلاق لقارئ الشاشة | `'إغلاق التنبيه'` |
+
+| المُخرج | متى |
 |---|---|
-| `tone` | `info` \| `success` \| `warning` \| `danger` |
-| `heading` | `string \| null` |
-| `dismissible` | `boolean` |
+| `dismissed` | ضُغط زرّ الإغلاق — المكوّن لا يُخفي نفسه، المستهلك يزيله |
+
+المنافذ: المحتوى الافتراضي (النصّ) · `[alert-icon]` · `[alert-actions]`.
+
+(صُحّح 2026-09-26 من الكود — انظر §15)
 
 ### Toast
 
-`ToastService` بالطرق `success` · `info` · `warning` · `error` (§4)، وخيار `action: { label, handler }` (§13).
+`ToastService` (`providedIn: 'root'`) بالطرق `success` · `info` · `warning` · `error` (§4)، وخيار `action: { label, handler }` (§13).
 
 `duration: 0` يبقي الإشعار حتى يغلقه المستخدم — للأخطاء التي تحمل إجراء إعادة محاولة.
+
+| العضو | التوقيع | |
+|---|---|---|
+| `success` · `info` · `warning` · `error` | `(message: string, options?: { heading?: string; action?: { label: string; handler: () => void }; duration?: number }) => number` | يعيد معرّف الإشعار. `duration` بالملّي ثانية، وافتراضيّه من §4 |
+| `dismiss` | `(id: number) => void` | يغلق إشعارًا ويلغي عدّه |
+| `dismissAll` | `() => void` | يغلق الكل |
+| `pause` · `resume` | `(id: number) => void` | يوقف العدّ ويستأنفه بما بقي — يستدعيهما المضيف عند المرور والتركيز (§8) |
+| `toasts` | `Signal<readonly Toast[]>` للقراءة | ما يرسمه المضيف |
+
+ضغط زرّ الإجراء يشغّل `handler` ثم يغلق الإشعار. و`<app-toast-host>` بلا مدخلات ولا مخرجات.
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 8. السلوك ولوحة المفاتيح
 
@@ -211,7 +276,7 @@ last_verified: 2026-09-26
 <app-alert tone="warning" heading="اشتراكك على وشك الانتهاء">
   ينتهي اشتراكك في 12 رمضان. جدّد الآن لتجنّب توقف الأكاديمية.
   <div alert-actions>
-    <app-button variant="primary" size="sm">تجديد الاشتراك</app-button>
+    <button dsButton type="button" variant="primary" size="sm">تجديد الاشتراك</button>
   </div>
 </app-alert>
 ```
@@ -248,14 +313,26 @@ this.toast.error('تعذر حفظ الدورة. تحقق من اتصالك وح�
 
 خطة الاستبدال في [`migration/PLAYBOOK.md`](../../migration/PLAYBOOK.md):
 
-1. `showSuccess` / `showError` / `toasterInfo` بوضع toast → `ToastService`. (2026-09-26: أُعيد رسم المكوّن وحده بطلب المستخدم؛ رسائل SweetAlert — نحو 700 استدعاء في 168 ملفًا في اللوحة — ما زالت بشكلها القديم وموضعها أعلى جهة البداية. ثم نُقلت صفحة الدورات ونافذة «دورة جديدة» بطلبه في اليوم نفسه: 15 رسالة، ونصوصها أُعيدت صياغتها — لا «تمت العملية»، والخطأ «تعذر … + ماذا تفعل». حوار تأكيد الحذف `_swal.delete` باقٍ حتى يُنقل مع الحوارات.)
+1. `showSuccess` / `showError` / `toasterInfo` بوضع toast → `ToastService`. (2026-09-26: أُعيد رسم المكوّن وحده بطلب المستخدم؛ رسائل SweetAlert — نحو 680 استدعاء في 171 ملفًا في اللوحة (قيس 2026-09-26: `showSuccess` · `showError` · `showWarning` · `showErrorUnknown` · `toasterInfo` · `invalidForm`؛ وكانت «نحو 700 في 168») — ما زالت بشكلها القديم وموضعها أعلى جهة البداية. ثم نُقلت صفحة الدورات ونافذة «دورة جديدة» بطلبه في اليوم نفسه: 15 رسالة، ونصوصها أُعيدت صياغتها — لا «تمت العملية»، والخطأ «تعذر … + ماذا تفعل». حوار تأكيد الحذف `_swal.delete` باقٍ حتى يُنقل مع الحوارات.)
 2. `delete` / `confirmAction` / `lock` → حوار تأكيد النظام.
 3. لا تُضاف استدعاءات SweetAlert جديدة.
 
+### مراجعة 2026-09-26 مقابل الكود
+
+* صُحّح 2026-09-26: كانت المواصفة تقول «182 استخدامًا» لـ`class="alert"`، والكود اليوم 9 في قوالب اللوحة (والتعليق أعلى `alert.component.ts` ما زال يقول 182).
+* صُحّح 2026-09-26: كان مثال Alert (§13) و«يستخدم» (§16) يذكران `<app-button>`، والكود `<button dsButton>` — المكوّن `<app-button>` أُزيل ([`button.md`](../atoms/button.md) §14).
+* صُحّح 2026-09-26: كانت §7 تذكر ثلاثة مدخلات لـAlert بلا افتراضي؛ الكود فيه أيضًا `dismissLabel` والمُخرج `dismissed` ومنفذ `[alert-icon]`.
+* صُحّح 2026-09-26: كانت «يُستخدم في» (§16) تقول إن Toast في صفحة الدورات ونافذة «دورة جديدة»؛ الكود يحقن `ToastService` في 42 ملفًّا في اللوحة (قيس 2026-09-26).
+* ✅ **أُصلح 2026-09-27:** زرّ إغلاق `<app-alert>` صار زرّ الحوار. **وكان:** ⚠️ تعارض (2026-09-26): المواصفة (`CLAUDE.md` الجذر، قرار 2026-09-15: زرّ الإغلاق هو زرّ `<app-modal>` — `essential/close-circle` 20 واستدارة 8 و`--ds-modal-close-*` — «لا محرف ✕») · الكود: زرّ إغلاق Alert (`dismissible`) محرف ✕ (`&#10005;`) باستدارة 6 (`--ds-radius-sm`) ولون `text-muted` بلا خلفية عند المرور. ولا شاشة في اللوحة تفعّل `dismissible` اليوم (قيس 2026-09-26).
+
 ## 16. روابط
 
-- **يستخدم:** [`<app-button>`](../atoms/button.md) في منفذ `alert-actions`
-- **يُستخدم في:** `<app-toast-host>` في قوقعة لوحة التحكم (§8). ورسائل Toast في [صفحة الدورات](../../../src/app/views/admin/products/courses/courses.component.ts) ونافذة «دورة جديدة» منذ 2026-09-26 (كانت SweetAlert). ⚠️ **غير موثّق بعد:** قائمة الشاشات التي تستعمل `<app-alert>`.
+- **يستخدم:** [`dsButton`](../atoms/button.md) في منفذ `alert-actions` · [`<ds-icon>`](../atoms/icon.md) في Toast
+- **يُستخدم في:** `<app-toast-host>` مركَّب مرة واحدة في [`admin.component.html`](../../../src/app/views/admin/admin.component.html) (§8). و`ToastService` في 42 ملفًّا في اللوحة، منها [صفحة الدورات](../../../src/app/views/admin/products/courses/courses.component.ts) ونافذة «دورة جديدة» منذ 2026-09-26 (كانت SweetAlert) (قيس 2026-09-26).
+  `<app-alert>` في 28 قالبًا في اللوحة (35 عنصرًا، أغلبها `tone="danger"`، ولا `tone="info"`) (قيس 2026-09-26):
+  - **فشل الحفظ أعلى نافذة (16):** `bankaccount-form-dialog` · `integration-form-dialog` · `gateway-form-dialog` · `settings-update-data-dialog` · `reminder-form-dialog` · `new-menu-link-dialog` · `category-dialog` · `new-domain-dialog` · `home-settings-dialog` · `category-mapping-dialog` · `admin-dialog` · `moderator-dialog` · `new-student-dialog` · `create-trainer-dialog` · `update-user-role-dialog` · `bio-dialog`
+  - **في صفحة (12):** `ai-article` · `manage-counts` · `finance-income` · `settings-academy-tab` · `site-domain-tab` · `site-email-subscriptions-tab` · `site-theme-tab` · `marketplace-performance` · `marketplace-policy` · `marketplace-settings` · `consultings` · `consulting-details`
+  - وخارج `views/admin`: `standalone/send-email-dialog`.
 - **ذو صلة:** [`notice-strip.md`](./notice-strip.md) · [`states.md`](../patterns/states.md) · [`modal-drawer.md`](../organisms/modal-drawer.md) · [`ux-writing.md`](../foundations/ux-writing.md)
 - **الكود:** [`shared/ui/alert/`](../../../src/app/shared/ui/alert/) · [`shared/ui/toast/`](../../../src/app/shared/ui/toast/)
 - **الأصل:** `Design-System/components/alert-toast.md` — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)

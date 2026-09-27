@@ -8,7 +8,7 @@ selector: ['<app-save-bar>']
 source: ['src/app/shared/ui/save-bar']
 origin: ['Design-System/components/save-bar.md']
 keywords: ['شريط الحفظ', 'حفظ', 'شريط ثابت', 'تذييل', 'save bar', 'sticky footer', 'action bar']
-last_verified: 2026-09-24
+last_verified: 2026-09-26
 ---
 
 # شريط الحفظ الثابت (Save bar) — `<app-save-bar>`

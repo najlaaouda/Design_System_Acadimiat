@@ -13,7 +13,7 @@ last_verified: 2026-09-26
 
 # الشارات والحالات — `<app-badge>` · `<app-status>`
 
-> يحل محل `class="badge"` — **111 استخدامًا** في لوحة التحكم.
+> يحل محل `class="badge"` — **111 استخدامًا** في لوحة التحكم. (قيس 2026-09-26: بقي 39 موضعًا بفئة `badge` في 26 قالبًا في `views/admin`؛ و`<app-status>` في 30 موضعًا في 21 قالبًا، و`<app-badge>` مباشرة في 10 قوالب وفي ثلاثة مكوّنات مشتركة: بطاقة الربط، والحساب البنكي، وشريط التوزيع.)
 
 ## 1. متى تستخدمه
 
@@ -36,7 +36,60 @@ last_verified: 2026-09-26
 
 ← النقطة والنص يترتبان عبر `flex` + `gap` — §10. والنقطة الملوّنة إضافة لا بديل عن النصّ — §11.
 
-> ⚠️ **غير موثّق بعد:** رسم أجزاء الشارة والحالة (الكبسولة، النقطة، النصّ) بمقاساتها.
+### `<app-status>` — الكبسولة المحايدة (وُثّقت 2026-09-26 من الكود المعتمد)
+
+```
+ ╭──────────────╮
+ │  ◉  منشور    │   ← كبسولة بيضاء بحدّ رفيع · النقطة ملوّنة بهالة · النصّ داكن
+ ╰──────────────╯
+```
+
+| الجزء | القيمة | التوكن |
+|---|---|---|
+| سطح الكبسولة | **أبيض** — لا رمادي ممتلئ، ولا لون الحالة | `--ds-color-surface-raised` |
+| الحدّ | 1px رمادي (`neutral-300`) | `--ds-border-width-sm` · `--ds-color-border-default` |
+| الاستدارة | كبسولة | `--ds-radius-pill` |
+| الحشوة (`md`، الافتراضي) | 4 أعلى وأسفل · 12 جانبًا | `--ds-space-1` · `--ds-space-3` |
+| الحشوة (`sm`) | 4 · 8 | `--ds-space-1` · `--ds-space-2` |
+| النصّ | 12 (`sm`: 10) · 500 · لون النصّ الأساسي | `--ds-font-size-xs` (`2xs`) · `--ds-font-weight-medium` · `--ds-color-text-primary` |
+| العرض الأدنى | 64 — فلا تتسنّن حافّة عمود الحالات | `--ds-table-badge-min-width` |
+| النقطة | 6×6 بلون الحالة (الدرجة 700؛ المحايدة 500) | — |
+| هالة النقطة | 3px من الدرجة 200 حولها — 6px وحدها تضيع بجوار نصّ 12 | `box-shadow` في المكوّن |
+| بين النقطة والنصّ | 4 + هامش 2 حول النقطة للهالة | `--ds-space-1` |
+
+`<app-status>` لا يرسم شيئًا بنفسه: يمرّر إلى `<app-badge>` نغمةَ الحالة من `STATUS_MAP` و`appearance="status"` و`[showDot]="true"` ومقاسه، ونصَّ الحالة محتوًى. فكل ما في الجدول أعلاه هو مظهر `status` في `<app-badge>` — انظر الشارة نفسها أدناه.
+
+**ليس هذا شكل الحالة:** كبسولة **رمادية ممتلئة** (`--ds-color-neutral-bg`) بلا حدّ ولا هالة — هذا شكل قديم (`status.component.ts` منفصل عن `app-badge`) بقي في نسخ سابقة من المشروع، وليس في النظام المعتمد. ولا كبسولة ملوّنة كاملة (`appearance="subtle"`) لحالة.
+
+### `<app-badge>` — الشارة نفسها (وُثّقت 2026-09-26 من الكود)
+
+```
+ ╭──────────────╮
+ │ [●] النصّ    │   ← span.ds-badge · النقطة اختيارية (showDot) · المحتوى مُسقَط
+ ╰──────────────╯
+```
+
+| الجزء | القيمة | التوكن |
+|---|---|---|
+| الكبسولة | `inline-flex` · وسط رأسي · `white-space: nowrap` | — |
+| الاستدارة | كبسولة | `--ds-radius-pill` |
+| الحدّ | 1px — شفّاف ما لم يلوّنه المظهر | `--ds-border-width-sm` |
+| الحشوة `md` (الافتراضي) | 4 أعلى وأسفل · 12 جانبًا | `--ds-space-1` · `--ds-space-3` |
+| الحشوة `sm` | 4 · 8 | `--ds-space-1` · `--ds-space-2` |
+| النصّ | 12 (`sm`: 10) · 500 · ارتفاع سطر 1.3 · بلا تباعد | `--ds-font-size-xs` (`--ds-font-size-2xs`) · `--ds-font-weight-medium` · `--ds-line-height-tight` |
+| بين الأجزاء | 4 — بين النقطة والنصّ، وبين أيقونة مُسقَطة والنصّ | `--ds-space-1` (`gap`) |
+| النقطة (`showDot`) | 6×6 دائرة بلون النصّ (`currentColor`) — وفي مظهر `status` بدرجة الحالة وهالتها (أعلاه) | — (قيمة `6px` في المكوّن) |
+
+**المظاهر الأربعة** (`appearance`):
+
+| المظهر | الخلفية | الحدّ | النصّ |
+|---|---|---|---|
+| `subtle` (الافتراضي) | خلفية النغمة الخافتة `--ds-color-<نغمة>-bg` | `--ds-color-<نغمة>-border` | نصّ النغمة (انظر §6) |
+| `solid` | لون النغمة الصلب `--ds-color-<نغمة>-solid` — و`accent` تدرّج 135° من `accent-solid` إلى `accent-solid-end` فوق لونه الصلب | شفّاف | `--ds-color-text-inverse` (أبيض) |
+| `outline` | شفّافة | `--ds-color-<نغمة>-border` | نصّ النغمة |
+| `status` | `--ds-color-surface-raised` لكل النغمات | `--ds-color-border-default` | `--ds-color-text-primary` · حدّ أدنى `--ds-table-badge-min-width` ووسط أفقي — ما يستعمله `<app-status>` |
+
+المستعمل منها (قيس 2026-09-26): `subtle` و`status` وحدهما. `solid` و`outline` بلا مستخدم في أي قالب.
 
 ## 4. الأنواع والمقاسات
 
@@ -246,7 +299,43 @@ last_verified: 2026-09-26
 
 القيم من [`tokens.css`](../../tokens/tokens.css). وحدّ الشارة الأدنى في خليّة الجدول `--ds-table-badge-min-width` — [`table.md`](../organisms/table.md) §6.
 
-> ⚠️ **غير موثّق بعد:** توكنز النغمات السبع بمظاهرها الثلاثة، ونقطة الحالة، ومقاسا `sm` و`md`.
+### النغمات السبع × المظاهر (وُثّق 2026-09-26 من الكود)
+
+لا طبقة `--ds-badge-*`: المكوّن يقرأ التوكنز الدلالية مباشرة.
+
+| النغمة | خلفية `subtle` | الحدّ (`subtle` · `outline`) | النصّ (`subtle` · `outline`) | خلفية `solid` |
+|---|---|---|---|---|
+| `neutral` | `--ds-color-neutral-bg` (`neutral-100`) | `--ds-color-neutral-border` (`neutral-300`) | `--ds-color-text-secondary` (`neutral-800`) · 6.31:1 | `--ds-color-neutral-solid` (`neutral-700`) |
+| `brand` | `--ds-color-brand-bg` (`brand-50`) | `--ds-color-brand-border` (`brand-200`) | `--ds-color-text-brand` (`brand-800`) · 7.63:1 | `--ds-color-brand-solid` (`brand-800`) |
+| `accent` | `--ds-color-accent-bg` (`accent-50`) | `--ds-color-accent-border` (`accent-200`) | `--ds-color-text-accent` (`accent-800`) · 7.63:1 | تدرّج `--ds-color-accent-solid` ← `--ds-color-accent-solid-end` (`accent-700` ← `accent-600`) |
+| `success` | `--ds-color-success-bg` (`success-50`) | `--ds-color-success-border` (`success-200`) | `--ds-color-text-success` (`success-700`) · 4.96:1 | `--ds-color-success-solid` (`success-700`) |
+| `warning` | `--ds-color-warning-bg` (`warning-50`) | `--ds-color-warning-border` (`warning-200`) | `--ds-color-text-warning` (`warning-700`) · 5.48:1 | `--ds-color-warning-solid` (`warning-700`) |
+| `danger` | `--ds-color-danger-bg` (`danger-50`) | `--ds-color-danger-border` (`danger-200`) | `--ds-color-text-danger` (`danger-700`) · 5.70:1 | `--ds-color-danger-solid` (`danger-700`) |
+| `info` | `--ds-color-info-bg` (`info-50`) | `--ds-color-info-border` (`info-200`) | `--ds-color-text-info` (`info-700`) · 5.29:1 | `--ds-color-info-solid` (`info-700`) |
+
+نصّ `solid` في النغمات كلها `--ds-color-text-inverse`. والنسب أعلاه نصّ `subtle` على خلفيته، محسوبة من قيم `tokens.css` (قيس 2026-09-26).
+
+### نقطة الحالة — مظهر `status`
+
+| النغمة | النقطة | الهالة (3px) |
+|---|---|---|
+| `success` | `--ds-success-700` | `--ds-success-200` |
+| `danger` | `--ds-danger-700` | `--ds-danger-200` |
+| `warning` | `--ds-warning-700` | `--ds-warning-200` |
+| `info` | `--ds-info-700` | `--ds-info-200` |
+| `brand` | `--ds-brand-700` | `--ds-brand-200` |
+| `neutral` | `--ds-neutral-500` | `--ds-neutral-200` |
+
+درجات أوّلية لا دلالية — فلا تنقلب في الوضع الداكن. و`accent` بلا قاعدة نقطة في هذا المظهر (ترث `currentColor`) — ولا حالة في `STATUS_MAP` بنغمة `accent`.
+
+### المقاسان
+
+| `size` | الحشوة | الخطّ |
+|---|---|---|
+| `md` | `--ds-space-1` · `--ds-space-3` (4 · 12) | `--ds-font-size-xs` (12) |
+| `sm` | `--ds-space-1` · `--ds-space-2` (4 · 8) | `--ds-font-size-2xs` (10) |
+
+والمشترك: `--ds-radius-pill` · `--ds-border-width-sm` · `--ds-font-weight-medium` · `--ds-line-height-tight` · فجوة `--ds-space-1`.
 
 ## 7. الواجهة البرمجية
 
@@ -255,15 +344,26 @@ last_verified: 2026-09-26
 | المُدخل | القيم | الافتراضي |
 |---|---|---|
 | `tone` | `neutral` \| `brand` \| `accent` \| `success` \| `warning` \| `danger` \| `info` | `neutral` |
-| `appearance` | `subtle` \| `solid` \| `outline` | `subtle` |
+| `appearance` | `subtle` \| `solid` \| `outline` \| `status` | `subtle` |
 | `size` | `sm` \| `md` | `md` |
 | `showDot` | `boolean` | `false` |
 
 `subtle` هو الافتراضي عمدًا: الشارات كثيرة في الجداول، والتعبئة الصلبة بأعداد كبيرة تُحدث ضجيجًا بصريًا يطمس تسلسل الصفحة.
 
+`status` هو ما يمرّره `<app-status>` — [§3](#3-التشريح). (صُحّح 2026-09-26: كانت المواصفة تذكر ثلاث قيم، والكود أربع.)
+
+المحتوى مُسقَط (`<ng-content>`)، ولا مُخرجات. المحدِّد `app-badge`.
+
 ### Status — المدخلات
 
-> ⚠️ **غير موثّق بعد:** جدول مدخلات `<app-status>`. الأمثلة في §4 تستعمل `status` (مفتاح من `STATUS_MAP`) و`size="sm"`؛ وفي `status.component.ts`: `status` إلزامي (`StatusKey`) و`size` (`'sm' | 'md'`، الافتراضي `'md'`).
+(وُثّق 2026-09-26 من الكود)
+
+| المُدخل | النوع | الافتراضي | الوصف |
+|---|---|---|---|
+| `status` | `StatusKey` — مفتاح من `STATUS_MAP` | — (**إلزامي**) | يحدّد النصّ والنغمة معًا |
+| `size` | `'sm'` \| `'md'` | `'md'` | يُمرَّر إلى `<app-badge>` |
+
+لا محتوى مُسقَط ولا مُخرجات: النصّ من الخريطة وحدها. المحدِّد `app-status`. ومفتاحٌ غير موجود في الخريطة يُعرض `inactive` — «غير نشط» بنقطة حمراء (`STATUS_MAP[this.status] ?? STATUS_MAP.inactive`).
 
 ## 8. السلوك ولوحة المفاتيح
 
@@ -310,7 +410,14 @@ last_verified: 2026-09-26
 
 ## 15. الدَّين القائم
 
-> لا ينطبق — لا بند له في [`TECHNICAL-DEBT.md`](../../TECHNICAL-DEBT.md). ما ينتظر الخادم أو الترحيل مذكور ⚠️ بجوار قراره في §4: REQ-010 · REQ-021 · REQ-022 · REQ-038 · REQ-043 · REQ-061، والشارة القديمة لكوبونات الدورات والباقات والاستشارات والمنتجات الرقمية (`getCouponStatusBadgeClass`).
+> لا ينطبق — لا بند له في [`TECHNICAL-DEBT.md`](../../TECHNICAL-DEBT.md). ما ينتظر الخادم أو الترحيل مذكور ⚠️ بجوار قراره في §4: REQ-010 · REQ-021 · REQ-022 · REQ-038 · REQ-043 · REQ-061، والشارة القديمة لكوبونات الدورات والباقات والاستشارات والمنتجات الرقمية (`getCouponStatusBadgeClass` — قيس 2026-09-26: ما زالت في `course-coupons` و`bundle-coupons` و`consulting-coupons-tab` و`dd-coupons`).
+
+**مراجعة 2026-09-26 مقابل الكود:**
+
+* `STATUS_MAP` مطابق للمواصفة مفتاحًا مفتاحًا (56 مفتاحًا بنصوصها ونغماتها — قيس 2026-09-26)، وتشريح `<app-status>` في §3 مطابق لأنماط `badge.component.ts`.
+* صُحّح 2026-09-26: كانت المواصفة تقول إن `appearance` ثلاث قيم، والكود أربع (`status`) — §7. (البند 40 في تعارضات `README.md`.)
+* وُثّق 2026-09-26 من الكود: تشريح `<app-badge>` ومظاهره الأربعة (§3)، وتوكنز النغمات والنقطة والمقاسين (§6)، ومدخلات `<app-status>` وسقوط المفتاح المجهول إلى `inactive` (§7).
+* ⚠️ تعارض (2026-09-26): `CLAUDE.md` الجذر — الفجوة بين الأيقونة والنصّ 8px «في كل مكان» (`--ds-space-2`) · الكود — `.ds-badge` بفجوة `--ds-space-1` (4px)، وبها تجلس أيقونة التاج بجوار نصّ الباقة في شارة `<app-badge tone="brand">` داخل بطاقة الربط (`connection-card.component.html`).
 
 ## 16. روابط
 

@@ -3,12 +3,12 @@ title: الحالات الفارغة والتحميل والخطأ
 name: states
 tier: pattern
 status: implemented
-components: ['<app-empty-state>', '<app-skeleton-group>', '<app-skeleton>', '<app-progress-bar>', '<app-button>']
+components: ['<app-empty-state>', '<app-skeleton-group>', '<app-skeleton>', '<app-progress-bar>', 'dsButton']
 source: ['src/app/shared/ui/empty-state', 'src/app/shared/ui/skeleton', 'src/app/shared/ui/progress-bar']
 origin: ['Design-System/components/states.md']
 keywords: ['حالة فارغة', 'تحميل', 'خطأ', 'empty', 'loading', 'error', 'skeleton']
 decisions: []
-last_verified: 2026-09-09
+last_verified: 2026-09-26
 ---
 
 # الحالات الفارغة والتحميل والخطأ — نمط
@@ -31,15 +31,73 @@ last_verified: 2026-09-09
 
 | المكوّن | دوره في النمط | ملفه |
 |---|---|---|
-| `<app-button [loading]="true">` | إجراء قصير داخل زر | [`button.md`](../atoms/button.md) |
+| `<button dsButton [loading]="true">` | إجراء قصير داخل زر | [`button.md`](../atoms/button.md) |
 | `<app-skeleton-group>` · `<app-skeleton>` | تحميل صفحة أو قائمة | [`shared/ui/skeleton/`](../../../src/app/shared/ui/skeleton/) — مواصفته هذا الملف |
-| `<app-progress-bar>` | عملية طويلة معلومة التقدم | [`shared/ui/progress-bar/`](../../../src/app/shared/ui/progress-bar/) |
+| `<app-progress-bar>` | عملية طويلة معلومة التقدم | [`shared/ui/progress-bar/`](../../../src/app/shared/ui/progress-bar/) — صفر استخدام في اللوحة (قيس 2026-09-26) |
 | `<app-empty-state>` | `variant`: `empty` · `no-results` · `error` · `no-access` | [`shared/ui/empty-state/`](../../../src/app/shared/ui/empty-state/) — مواصفته هذا الملف |
 | حوار التأكيد | الإجراءات الخطرة | [`modal-drawer.md`](../organisms/modal-drawer.md) |
 
+(صُحّح 2026-09-26: كانت المواصفة تقول `<app-button>`، والكود `<button dsButton>` — `<app-button>` أُزيل، [`button.md`](../atoms/button.md) §14.)
+
+### الواجهة البرمجية للمكوّنين
+
+`<app-empty-state>`:
+
+| المُدخل | النوع | الافتراضي | |
+|---|---|---|---|
+| `variant` | `'empty' \| 'no-results' \| 'error' \| 'no-access'` | `'empty'` | `error` يلوّن حاوية الأيقونة بالخطر ويضع `role="alert"`؛ والثلاثة الباقية بشكل واحد |
+| `title` | `string` | — | **مطلوب**. يُصيَّر `<h3>` دائمًا |
+| `description` | `string \| null` | `null` | |
+| `illustration` | `'icon' \| 'art'` | `'icon'` | نوع ما في منفذ `[empty-illustration]`: أيقونة في دائرة 96، أو رسمة 160 بلا خلفية |
+
+المنافذ: `[empty-illustration]` (أيقونة `<ds-icon>` أو `<img>` من `src/assets/illustrations/`) · `[empty-actions]` (أزرار `dsButton`). يختفي كلاهما إن فرغ.
+
+`<app-skeleton>`: `shape` (`'text' \| 'title' \| 'circle' \| 'rect'`، افتراضيًّا `'text'`) · `width` (أي وحدة CSS، `'100%'`) · `height` (`string \| null`، `null`). و`aria-hidden` دائمًا.
+
+`<app-skeleton-group>`: `loadingLabel` (`'جارٍ التحميل...'`) — النصّ المخفي الذي يُعلن.
+
+الاستعمال في اللوحة (قيس 2026-09-26): `<app-empty-state>` في 37 قالبًا (29 منها `illustration="art"`) · `<app-skeleton>` في 43.
+
+(وُثّق 2026-09-26 من الكود)
+
 ## 4. التشريح
 
-> ⚠️ **غير موثّق بعد:** رسم نصّي عام للنمط — البنى الخاصة بكل حالة مكتوبة معها في §5: أسئلة الحالة الفارغة الثلاثة («2. الحالة الفارغة»)، وبنية الخطأ («3. حالة الخطأ»)، وبنية حوار التأكيد («5. الإجراءات الخطرة»).
+البنى الخاصة بكل حالة مكتوبة معها في §5: أسئلة الحالة الفارغة الثلاثة («2. الحالة الفارغة»)، وبنية الخطأ («3. حالة الخطأ»)، وبنية حوار التأكيد («5. الإجراءات الخطرة»). وما يرسمه المكوّنان:
+
+### `<app-empty-state>` — عمود في الوسط
+
+```
+              ┌──────────┐
+              │  رسمة    │  ← 'art': 160×160 بلا خلفية · 'icon': دائرة 96 بـ surface-sunken (وبـ danger-bg في error)
+              └──────────┘     وتحتها 8 زيادة على الفجوة
+          لا توجد دورات بعد           ← <h3> 16/600 · text-primary · snug
+   أنشئ أول دورة وابدأ في بيعها لطلابك.   ← 14 · text-muted · أقصى عرض 62ch
+       [إنشاء دورة] [زرّ ثانٍ]         ← فوقها 16 زيادة · بينها 8 · تلتفّ في الوسط
+```
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| الحاوية | فجوة `--ds-space-2` · حشوة `--ds-space-12` / `--ds-space-6` | 8 · 48 / 24 (32 / 16 حتى 640) |
+| دائرة الأيقونة | `--ds-color-surface-sunken` · `--ds-color-text-muted` · `--ds-radius-pill` | 96px خام |
+| دائرة الأيقونة في `error` | `--ds-color-danger-bg` · `--ds-color-text-danger` | |
+| الرسمة (`art`) | بلا خلفية ولا استدارة | 160px خام |
+| العنوان | `--ds-font-size-lg` · `--ds-font-weight-semibold` · `--ds-color-text-primary` | 16 · 600 |
+| الوصف | `--ds-font-size-md` · `--ds-color-text-muted` · `--ds-line-height-normal` | 14 · `62ch` خام |
+| الأزرار | فجوة `--ds-space-2` · فوقها `--ds-space-4` | 8 · 16 |
+
+### `<app-skeleton-group>` · `<app-skeleton>`
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| المجموعة | عمود بفجوة `--ds-space-2` | 8 |
+| اللون · الوميض | `--ds-color-skeleton-base` · `--ds-color-skeleton-shimmer` | `neutral-100` · `neutral-200` |
+| `text` | ارتفاع `0.875rem` خام وهامش `0.25rem` فوق وتحت · `--ds-radius-xs` | 14 · 4 · 4 |
+| `title` | ارتفاع `1.25rem` خام · `--ds-radius-xs` | 20 · 4 |
+| `circle` | `--ds-radius-pill` · نسبة 1:1 | |
+| `rect` | `--ds-radius-md` | 8 |
+| الوميض | تدرّج يعبر من اليسار إلى اليمين كل `1.4s` خام، بلا توكن مدّة | |
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 5. الأنواع
 
@@ -74,10 +132,12 @@ last_verified: 2026-09-09
   description="أنشئ أول دورة وابدأ في بيعها لطلابك."
 >
   <div empty-actions>
-    <app-button variant="primary">إنشاء دورة</app-button>
+    <button dsButton type="button" variant="primary">إنشاء دورة</button>
   </div>
 </app-empty-state>
 ```
+
+(صُحّح 2026-09-26: كان المثال `<app-button>`، والكود `<button dsButton>`.)
 
 التفريق بين «فارغ» و«لا نتائج» ← §6.
 
@@ -91,6 +151,8 @@ last_verified: 2026-09-09
 * **أزرار رأس الصفحة تُخفى في الحالة الفارغة** وتظهر حين توجد بيانات، وتبقى تحت بحث بلا نتائج.
 
 (وُثّق 2026-09-26 من قرار المستخدم المحفوظ؛ المثال المنفّذ: صفحة المقالات.)
+
+صُحّح 2026-09-26: كانت المواصفة تجعل صفحة المقالات مثالًا منفّذًا للترتيب كاملًا بلوحته؛ والكود في [`articles.component.html`](../../../src/app/views/admin/blog/articles/articles.component.html) رسمة ← عنوان ووصف ← زرّان متجاوران («مقال جديد» `primary` و«إنشاء بالذكاء الاصطناعي» `ai`) **بلا لوحة** — «كانت تحتهما لوحة بأنماط الذكاء الثلاثة، وأُلغيت الأنماط مع نافذتها الجديدة (قرار المنتج 2026-09-11، الاتجاه «ج»)» كما يقول تعليق الكود. ولا شاشة في اللوحة ترسم لوحة 720 اليوم (قيس 2026-09-26). وإخفاء أزرار رأس الصفحة في الحالة الفارغة منفّذ فيها (`@if (hasArticles)`).
 
 ### 3. حالة الخطأ
 
@@ -147,7 +209,7 @@ last_verified: 2026-09-09
 
 | المدة/النطاق | المؤشر |
 |---|---|
-| إجراء قصير داخل زر | `<app-button [loading]="true">` |
+| إجراء قصير داخل زر | `<button dsButton [loading]="true">` |
 | تحميل صفحة أو قائمة | `<app-skeleton-group>` |
 | عملية طويلة معلومة التقدم | `<app-progress-bar>` مع نسبة |
 | عملية طويلة مجهولة التقدم | نص حالة + دوّار |
@@ -169,12 +231,20 @@ last_verified: 2026-09-09
 
 ## 8. RTL والاستجابة
 
-> ⚠️ **غير موثّق بعد:** سلوك الحالات في RTL وعلى الجوال — الأصل لا يذكرهما.
+ما يفعله المكوّنان:
+
+* **الحالة الفارغة في الوسط في الاتجاهين** (`text-align: center` — استثناء مذكور في الكود: كتلة قائمة بذاتها لا نصّ جارٍ)، والأزرار تلتفّ في الوسط، ولا خاصية اتجاه فيها.
+* **حتى 640:** حشوة الحالة الفارغة تنزل من 48 / 24 إلى 32 / 16، والوصف يلتفّ بعرض حاويته قبل حدّ `62ch`.
+* **وميض هيكل التحميل لا ينعكس:** يعبر من اليسار إلى اليمين في العربية والإنجليزية (`translateX` فيزيائي)، ويتوقّف مع `prefers-reduced-motion`.
+* عرض الهيكل من `width` الذي يمرّره المستهلك، فلا يتغيّر بالمقاس إلا بما تكتبه الشاشة.
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 9. إمكانية الوصول
 
 * **قارئ الشاشة** — الأشكال الرمادية لا تعني شيئًا له. `<app-skeleton-group>` يحمل `role="status"` و`aria-busy` ونصًا مخفيًا يعلن ما يُحمَّل.
 * **تقليل الحركة** — الوميض المتحرك مصدر إزعاج لمن يعانون حساسية الحركة، ويتوقف تحت `prefers-reduced-motion`.
+* **`variant="error"`** يضع `role="alert"` على الحالة، فيُعلن الخطأ حين يظهر؛ والبقية بلا دور. وحاوية الرسمة `aria-hidden`، وعنوان الحالة `<h3>` ثابت المستوى. (وُثّق 2026-09-26 من الكود)
 
 ## 10. النصوص
 

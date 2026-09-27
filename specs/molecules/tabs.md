@@ -8,7 +8,7 @@ selector: ['<app-tabs>', '<app-tab>', '<app-tab-nav>']
 source: ['src/app/shared/ui/tabs']
 origin: ['Design-System/components/tabs.md']
 keywords: ['تبويبات', 'تنقل', 'tabs', 'tab-nav', 'router tabs', 'قائمة الأقسام', 'vertical tabs', 'section nav']
-last_verified: 2026-09-13
+last_verified: 2026-09-26
 ---
 
 # التبويبات (Tabs) — `<app-tabs>` · `<app-tab-nav>`
@@ -150,6 +150,8 @@ readonly sections: readonly TabNavItem[] = [
 
 حلقة التركيز **داخلية** (`outline-offset` سالب): السكّة حاوية ممرَّرة، والحلقة الخارجية على مقطع ملتصق بحافّتها تُقتطع فتختفي.
 
+**ما لا يرسمه الكود:** لا ضغط (`:active`) ولا تعطيل ولا تحميل ولا خطأ ولا نجاح — لا مدخل لها في `<app-tab>` ولا في `TabNavItem`، ولا قاعدة لها في `_tabs-theme.scss`. والمرور على المفتوح لا يغيّره (`:hover:not(.ds-tabs__tab--active)`). وحالات العمودي على الديسكتوب (خلفية المرور، والمفتوح بثلاث إشارات وشريط) في جدول [§4](#قائمة-الأقسام-العمودية--orientationvertical). (وُثّق 2026-09-26 من الكود)
+
 ## 6. التوكنز
 
 القيم من [`tokens.css`](../../tokens/tokens.css):
@@ -172,10 +174,52 @@ readonly sections: readonly TabNavItem[] = [
 | الشريط المنزلق (العمودي) | `--ds-tab-indicator` · `--ds-tab-indicator-size` · `--ds-tab-indicator-radius` | `var(--ds-color-border-brand)` · `3px` · `var(--ds-radius-pill)` |
 | صفّ القائمة العمودية | `--ds-tab-min-height` | `var(--ds-control-height-md)` |
 | عرض العمود | `--ds-tab-nav-vertical-width` | `16rem` (256px) |
+| نصّ المقطع | `--ds-font-size-md` · `--ds-line-height-tight` | 14px · 1.3 |
+| حلقة التركيز | `--ds-focus-ring-width` · `--ds-color-focus-ring` · `--ds-focus-ring-offset` (سالبًا) | 2px · `var(--ds-brand-700)` · −2px |
+| انتقال المقطع | `--ds-duration-fast` · `--ds-easing-standard` | 140ms · `cubic-bezier(0.2, 0, 0, 1)` |
+
+الصفوف الثلاثة الأخيرة (وُثّق 2026-09-26 من الكود): توكنز عامة يقرؤها `_tabs-theme.scss` مباشرة، لا طبقة `--ds-tab-*` لها.
 
 ## 7. الواجهة البرمجية
 
-> ⚠️ **غير موثّق بعد:** جدول المدخلات والمخرجات. المدخلات تظهر في الأمثلة وحدها: `items` · `ariaLabel` · `orientation` في `<app-tab-nav>`، و`[(selectedIndex)]` · `ariaLabel` في `<app-tabs>`، و`label` في `<app-tab>`، وحقول `TabNavItem` (`label` · `link` · `exact` · `icon`) — [§13](#13-مثال) و[§4](#قائمة-الأقسام-العمودية--orientationvertical).
+(وُثّق 2026-09-26 من الكود — [`tabs.component.ts`](../../../src/app/shared/ui/tabs/tabs.component.ts) · [`tab.component.ts`](../../../src/app/shared/ui/tabs/tab.component.ts) · [`tab-nav.component.ts`](../../../src/app/shared/ui/tabs/tab-nav.component.ts))
+
+### `<app-tabs>` — `TabsComponent`
+
+| الاسم | النوع | الافتراضي | الوصف |
+|---|---|---|---|
+| `selectedIndex` (`@Input`) | `number` | `0` | رقم التبويب المفتوح. ضبطه من الخارج لا يُطلق `selectedIndexChange` |
+| `selectedIndexChange` (`@Output`) | `EventEmitter<number>` | — | يُطلق حين يختار المستخدم تبويبًا آخر (نقر، أسهم، `Home`/`End`)، ولا يُطلق إن اختار المفتوح نفسه. مع `selectedIndex` يصنعان `[(selectedIndex)]` |
+| `ariaLabel` (`@Input`) | `string` | `''` | اسم `tablist`. فارغًا لا تُكتب `aria-label` أصلًا — غير مفروض في الكود (بخلاف `app-tab-nav`) |
+
+المحتوى: أبناء `<app-tab>` (`@ContentChildren`)، ويُعاد بناء الشريط إن تغيّروا.
+
+### `<app-tab>` — `TabComponent`
+
+| الاسم | النوع | الافتراضي | الوصف |
+|---|---|---|---|
+| `label` (`@Input`) | `string` | `''` | نصّ التبويب — نصّ عادي وحده، لا قالب |
+
+`active` حقل يضبطه `<app-tabs>` ولا يُربط من الخارج. المعرّفات تُولَّد (`app-tab-N-tab` · `app-tab-N-panel`). **كل اللوحات تُرسم** ويُخفى غير المفتوح بسمة `hidden` — لا تحميل كسول.
+
+### `<app-tab-nav>` — `TabNavComponent`
+
+| الاسم | النوع | الافتراضي | الوصف |
+|---|---|---|---|
+| `items` (`@Input({ required: true })`) | `readonly TabNavItem[]` | `[]` | الروابط بترتيبها. تُتتبَّع بـ`label`، فالاسم لا يتكرّر في الشريط الواحد |
+| `ariaLabel` (`@Input({ required: true })`) | `string` | `''` | اسم معلَم `<nav>` |
+| `orientation` (`@Input`) | `TabNavOrientation` = `'horizontal' \| 'vertical'` | `'horizontal'` | `vertical` يضيف للمضيف الصنف `ds-tab-nav--vertical` |
+
+لا مخرجات: التنقّل بـ`routerLink`، والمفتوح من `routerLinkActive`.
+
+**`TabNavItem`**
+
+| الحقل | النوع | إلزامي؟ | الوصف |
+|---|---|---|---|
+| `label` | `string` | نعم | النصّ الظاهر |
+| `link` | `string \| readonly unknown[]` | نعم | يُمرَّر إلى `routerLink` كما هو |
+| `exact` | `boolean` | لا | `paths: 'exact'`، وإلا `'subset'`. وفي الحالتين `queryParams` و`fragment` و`matrixParams`: `'ignored'` |
+| `icon` | `string` | لا | اسم من `src/icons/`. يُرسم في `orientation="vertical"` وحده، وعلى ≥ 768px وحده |
 
 ## 8. السلوك ولوحة المفاتيح
 
@@ -185,9 +229,13 @@ readonly sections: readonly TabNavItem[] = [
 
 لوحة المفاتيح لكلٍّ من المكوّنين في جدول [§4 مكوّنان، لا واحد](#مكوّنان-لا-واحد)، وخلل اتجاه الأسهم في [§10](#10-rtl).
 
+**`app-tabs` — التفعيل تلقائي:** السهم و`Home`/`End` ينقل التركيز **ويختار** في الحركة نفسها، فتتبدّل اللوحة مع كل ضغطة، ويدور من الأخير إلى الأول وبالعكس. والمفتوح وحده في ترتيب `Tab` (`tabindex="0"`، والباقي `-1`). (وُثّق 2026-09-26 من الكود)
+
 ## 9. الاستجابة
 
 السكّة تتمرّر أفقيًّا **وحدها** على الجوال — لا تُكدَّس رأسيًّا. التكديس يحوّل شريطًا يُمسح بنظرة إلى قائمة تُقرأ سطرًا سطرًا، ويدفع المحتوى تحت الطيّة.
+
+`app-tab-nav` الأفقي يمرّر سكّته وحدها حتى يظهر المفتوح: عند كل تنقّل، وكلما تغيّر عرض السكّة. لا `scrollIntoView` — ذاك يمرّر كل حاوية فوقه فتنزاح الصفحة جانبًا على الجوال. و`app-tabs` لا يفعل ذلك. والمضيف `min-inline-size: 0` و`max-inline-size: 100%`، فيبقى داخل صفّ مرن بعرض ما يتّسع له وتتمرّر السكّة داخله. (وُثّق 2026-09-26 من الكود)
 
 ## 10. RTL
 
@@ -195,7 +243,7 @@ readonly sections: readonly TabNavItem[] = [
 
 `app-tab-nav` لا يحتاج منطق انعكاس: التنقّل فيه بـ`Tab` لا بالأسهم.
 
-> ⚠️ **خلل قائم في `app-tabs`:** الأسهم مربوطة بـ`arrowright → +1` ثابتًا، فالتنقّل معكوس في العربية. المواصفة: السهم الأيسر ينتقل للتبويب **التالي** في RTL. لم يُصلح بعد.
+> ⚠️ **خلل قائم في `app-tabs`:** الأسهم مربوطة بـ`arrowright → +1` ثابتًا، فالتنقّل معكوس في العربية. المواصفة: السهم الأيسر ينتقل للتبويب **التالي** في RTL. لم يُصلح بعد. (قيس 2026-09-26: ما زال قائمًا — [`tabs.component.ts`](../../../src/app/shared/ui/tabs/tabs.component.ts) السطران 53–54.)
 
 ## 11. إمكانية الوصول
 
@@ -258,16 +306,27 @@ readonly tabs: readonly TabNavItem[] = [
 
 ### الشاشات التي تنتظر النقل
 
-13 شاشة ما زالت ترسم القائمة القديمة `nav flex-column nav-pills` (جرد 2026-09-12)، وتُنقل شاشةً شاشة: الرسائل · المشرف · صفحة المستخدم · تفاصيل الدورة · الباقة · المنتج الرقمي · الاستشارة · منتج الكوتشينج · متابعة الكوتشينج · العرض · الموقع · بنك الملفات · لوحة البداية. وقائمة صفحة الإعدادات معلّقة في قالبها — الإعدادات تُفتح من القائمة الجانبية.
+12 شاشة (قيس 2026-09-26؛ جرد 2026-09-12 كان 13) ما زالت ترسم القائمة القديمة `nav flex-column nav-pills`، وتُنقل شاشةً شاشة: الرسائل · المشرف · صفحة المستخدم · تفاصيل الدورة · الباقة · المنتج الرقمي · الاستشارة · منتج الكوتشينج · متابعة الكوتشينج · العرض · الموقع · بنك الملفات. و«لوحة البداية» لم تعد بينها. وقائمة صفحة الإعدادات معلّقة في قالبها — الإعدادات تُفتح من القائمة الجانبية. (القائمتان في `page-edit/sidebar/edit-menu` و`page-edit-v2/sidebar/edit-menu` تحملان الصنف نفسه، وهما قائمتا بلوكات تُسحب لا أقسام.)
 
 > **عدّادات الرسائل** («الوارد 3») لا يدعمها الوضع بعد: تُعرض قرارًا عند نقل شاشة الرسائل، لا تُضاف قبل مستخدم.
 
+**الوضع العمودي بلا مستعمل في شاشة حقيقية** (قيس 2026-09-26): `orientation="vertical"` في المعاينة `/admin/design-system/section-nav` وحدها.
+
+**`app-tabs` بلا `ariaLabel`** في ثلاث شاشات (قيس 2026-09-26)، و§11 يقول إنه مطلوب — والكود لا يفرضه في `app-tabs`: [`poll.component.html`](../../../src/app/views/admin/main-features/polls/poll/poll.component.html) السطر 33 · [`lecture-file.component.html`](../../../src/app/views/admin/products/courses/course-details/edit-lecture/lecture-file/lecture-file.component.html) السطر 42 · [`dd-new-content-dialog.component.html`](../../../src/app/views/admin/products/digital-downloads/dd-details/dd-content-tab/dd-new-content-dialog/dd-new-content-dialog.component.html) السطر 12.
+
 وخلل اتجاه الأسهم في `app-tabs` في [§10](#10-rtl).
+
+### سجلّ المراجعة (2026-09-26)
+
+- صُحّح 2026-09-26: كانت المواصفة تقول «13 شاشة» على القائمة القديمة ومنها «لوحة البداية»، والكود 12 بلا «لوحة البداية».
+- صُحّح 2026-09-26: كان «يُستخدم في» ([§16](#16-روابط)) يذكر المقال («أقسام المقال») مثالًا لـ`app-tabs`، والكود: المقالات لا تستعمله؛ وحلّ محلّه جرد المستعملين.
+- مُلئ 2026-09-26 من الكود: [§7](#7-الواجهة-البرمجية) كاملًا، وما لا يرسمه الكود في [§5](#5-الحالات)، والتفعيل التلقائي في [§8](#8-السلوك-ولوحة-المفاتيح)، والتمرير إلى المفتوح في [§9](#9-الاستجابة)، وثلاثة صفوف في [§6](#6-التوكنز).
+- البند 34 في تعارضات [`README.md`](../../README.md) — تحقّق 2026-09-26 مقابل الكود: الكود يطابق هذا الملف في النقاط الثلاث — الشكل مقطّع (سكّة وقرص، لا خطّ سفلي)، و`app-tabs` بـ`selectedIndex` بلا رابط، و`app-tab-nav` بـ`Tab` بلا أسهم والمفتوح فيه من الرابط. الطرف الآخر ([`page-structure.md`](../patterns/page-structure.md)) هو الذي يصف غير ما في الكود؛ لم يُعدَّل من هنا.
 
 ## 16. روابط
 
 - **يستخدم:** [`icon.md`](../atoms/icon.md) (أيقونة القائمة العمودية، `icon` في العنصر)
-- **يُستخدم في:** الأصل لا يسرد المستعملين؛ أمثلته من صفحة المستخدمين (`app-tab-nav` — «أقسام المستخدمين») والمقال (`app-tabs` — «أقسام المقال»)، والشاشات التي تنتظر النقل في [§15](#15-الدَّين-القائم)
+- **يُستخدم في** (قيس 2026-09-26، `src/app/views/admin`): `app-tab-nav` في 5 شاشات — إدارة المستخدمين · التقارير والإحصائيات · روابط الموقع · صفحتا «الأداء» في المتجر (`marketplace-orders` و`marketplace-performance`) — ومعاينة القائمة العمودية `/admin/design-system/section-nav`؛ `app-tabs` في 5 — تقييم المنتج (`poll`) · السلات المتروكة · الهوية والعلامة التجارية (اختيار الألوان) · ملف الدرس · نافذة محتوى المنتج الرقمي. والشاشات التي تنتظر النقل في [§15](#15-الدَّين-القائم)
 - **ذو صلة:** [`page-layout.md`](../organisms/page-layout.md#الشريط-الثابت) (الالتصاق تحت الرأس) · [`segmented.md`](./segmented.md) · [`filtering.md`](../patterns/filtering.md) · [`shelf-tabs.md`](../organisms/shelf-tabs.md) · [`sidebar.md`](../organisms/sidebar.md) · [`page-structure.md`](../patterns/page-structure.md) · [`page-naming.md`](../patterns/page-naming.md)
 - **الكود:** [`shared/ui/tabs/`](../../../src/app/shared/ui/tabs/) · **التوكنات:** `--ds-tab-*` في [`tokens/tokens.css`](../../tokens/tokens.css)
 - **الأصل:** `Design-System/components/tabs.md` — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)

@@ -8,7 +8,7 @@ selector: ['<app-page-header>', '.ds-canvas', '.content-body']
 source: ['src/app/views/admin/components/base/base.component.scss', 'src/app/views/admin/components/base/base.component.html', 'src/app/shared/ui/page-header', 'src/app/shared/ui/canvas-sticky']
 origin: ['Design-System/components/page-layout.md']
 keywords: ['حشوة الصفحة', 'هوامش', 'رأس الصفحة', 'عنوان', 'وصف', 'page padding', 'page header', 'layout']
-last_verified: 2026-09-10
+last_verified: 2026-09-26
 ---
 
 # تخطيط الصفحة (Page layout) — `<app-page-header>`
@@ -300,6 +300,25 @@ last_verified: 2026-09-10
 | العنصر | التوكن | القيمة |
 |---|---|---|
 | طبقة ما يلتصق — لا يعلوها شيء من محتوى الصفحة | `--ds-z-sticky` | 1020 |
+| ارتفاعات الملتصق المنشورة على `.ds-canvas__scroll` | `--ds-canvas-sticky-header` · `--ds-canvas-sticky-tabs` · `--ds-canvas-sticky-filters` | تُقاس في المتصفح (`publishCanvasStickyHeight`) — لا في `tokens.css` |
+| الفراغ والخطّ تحت التبويبات في الوضع المضغوط | `--ds-canvas-sticky-tabs-gap` | `--ds-space-3` + `--ds-border-width-sm` (13) — تكتبه القشرة على منطقة التمرير فينزل به شريط أدوات الجدول (وُثّق 2026-09-26 من الكود) |
+
+### الكانفاس
+
+(وُثّق 2026-09-26 من الكود — [`base.component.scss`](../../../src/app/views/admin/components/base/base.component.scss))
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| خلفية ما حول السطح | `--ds-color-surface-page` | رمادي الصفحة |
+| السطح | `--ds-color-surface-raised` | أبيض |
+| حدّ السطح | `--ds-border-width-sm` · `--ds-color-border-subtle` | 1px — «الفصل يصنعه الحدّ لا الظلّ» |
+| استدارة السطح | `--ds-radius-xl` | 16px |
+| الهامش حول السطح | `--ds-space-2` | 8 من طرف النهاية ومن الأسفل، و8 بعد الشريط الجانبي من طرف البداية |
+| إزاحة الشريط الجانبي | `--ds-sidebar-width` + `--ds-space-2` · المطويّ `--ds-sidebar-width-collapsed` + 2 × `--ds-space-2` | 272 + 8 · 96 + 16 — وتحت 768px `--ds-space-2` وحده |
+| الفاصل بارتفاع الشريط العلوي | `--ds-app-header-height` | 64px |
+| حشوة سطر فتات الخبز | `--ds-space-4` أعلى · `--ds-page-padding-inline` جانبًا · 0 أسفل | 16 · 24 (16 جوال) · 0 |
+| إشعارات الحساب | `--ds-color-warning-bg` · حدّ `--ds-color-warning-border` · `--ds-radius-xl` | |
+| حركة إزاحة الطيّ | `--ds-duration-fast` · `--ds-easing-standard` | |
 
 ### رأس الصفحة
 
@@ -324,6 +343,13 @@ last_verified: 2026-09-10
 ## 7. الواجهة البرمجية
 
 مُدخلا `<app-page-header>` (`title` · `description`) ومنافذه (`[page-actions]` · `[page-title-badges]` · `[page-media]` · `[page-breadcrumbs]` · المنفذ الافتراضي) في جدول [§3 التشريح](#3-التشريح)، وأمثلتها في [§4](#رأس-الصفحة--app-page-header) و[§13](#13-مثال).
+
+| المُدخل | النوع | الافتراضي | |
+|---|---|---|---|
+| `title` | `string` | — | **إلزامي** — نصّ `<h1>` |
+| `description` | `string \| null` | `null` | بلا قيمة لا يُرسم `<p>` الوصف |
+
+بلا مخرجات. والوضع المضغوط صنف `ds-page-header--compact` يضعه المكوّن على نفسه داخل الكانفاس، وتقرؤه قاعدة الفاصل في القشرة. (وُثّق 2026-09-26 من الكود)
 
 والقشرة لا مُدخلات لها: الصفحة تبدأ بـ `<div class="content-body">` فتحصل على الحشوة ([§4 حشوة الصفحة](#حشوة-الصفحة))، وكل عنصر ملتصق ينشر ارتفاعه بـ `publishCanvasStickyHeight()` ([§4 الشريط الثابت](#الشريط-الثابت)).
 
@@ -447,18 +473,25 @@ last_verified: 2026-09-10
 
 ### الانتشار
 
-المكوّن في **18 شاشة**: المستخدمون، والمدونة بشاشاتها الخمس، وقسم المنتجات كلّه (2026-09-10) — قوائم الدورات والباقات والاستشارات والمنتجات الرقمية ومنتجات الكوتشينج ومتابعاته، وصفحة تفاصيل كلٍّ منها. بقية الصفحات ما زالت ترسم عنوانها يدويًّا (`<h2 class="font-w600 mr-auto">` داخل `.form-head`) بأوزان متفاوتة (500 و600) وهوامش فيزيائية. مسجّل تحت `DEBT-013` في [`TECHNICAL-DEBT.md`](../../TECHNICAL-DEBT.md).
+المكوّن في **45 شاشة** (قيس 2026-09-26 — ملفات `views/admin` التي فيها `<app-page-header>`؛ كان 18 في 2026-09-10): المستخدمون، والمدونة بشاشاتها، وقسم المنتجات كلّه — قوائم الدورات والباقات والاستشارات والمنتجات الرقمية ومنتجات الكوتشينج ومتابعاته وصفحة تفاصيل كلٍّ منها — ثم لوحة التحكم، وإدارة الملفات، والمعاملات المالية، والتطبيقات وتفاصيلها، والطلبات، والاستطلاعات، وتبويبات الإعدادات الأربعة، وشاشات الموقع (السلات المتروكة، التصنيفات، الكوبونات وتفاصيلها، النطاق، اشتراكات البريد، الروابط، الصفحات، الثيم)، والمتجر بشاشاته الستّ، واشتراكات الأكاديمية. و`.form-head` ما زال في **73 ملفًا** من قوالب `views/admin` (قيس 2026-09-26). بقية الصفحات ما زالت ترسم عنوانها يدويًّا (`<h2 class="font-w600 mr-auto">` داخل `.form-head`) بأوزان متفاوتة (500 و600) وهوامش فيزيائية. مسجّل تحت `DEBT-013` في [`TECHNICAL-DEBT.md`](../../TECHNICAL-DEBT.md).
 
 ### حدود معلومة — الشريط الثابت
 
 * **الصفحات برأس قديم** (`.form-head` · `<h2 class="font-w600">`) لا يلتصق رأسها ولا تبويباتها — تلتحق عند نقلها إلى `app-page-header` (`DEBT-013`). فتات الخبز ثابت فيها.
 * **رؤوس أعمدة الجدول** لا تلتصق بالكانفاس: `.ds-table__scroller` حاوية تمرير أفقي، والملتصق يلتصق بأقرب حاوية تمرير. `[stickyHeader]` يبقى كما هو داخل الجدول.
+* **الوضع المضغوط:** الفراغ والخطّ تحت التبويبات خارج صندوقها (`clip-path` يكشف 13px من خلفيتها الممتدّة، والخطّ في آخرها)، فلا يدخلان في ارتفاعها المنشور — وتضيفهما القشرة لشريط أدوات الجدول بـ `--ds-canvas-sticky-tabs-gap`. والتبويبات العمودية (`.ds-tab-nav--vertical`) خارج هذه القاعدة. (وُثّق 2026-09-26 من الكود)
 * **وما التصق داخل الجدول تحت ما التصق بالكانفاس** (أُصلح 2026-09-14): منطقة الجدول طبقة معزولة (`isolation: isolate`). كان صفّ الإجمالي والرؤوس الملتصقان بأعلاها على `--ds-z-sticky` نفسه وبعد الرأس والتبويبات وشريط الأدوات في الشجرة — فحين تتمرّر الصفحة ويصعد الجدول تحت الشريط كانت ترتسم فوقها: الإجمالي فوق عنوان الصفحة، والرؤوس فوق شريط الأدوات (سجل المسحوبات، كروم وفايرفوكس). الآن تمرّ تحتها كبقية الصفوف.
+
+### مراجعة 2026-09-26 — المواصفة مقابل الكود
+
+- صُحّح 2026-09-26: كانت المواصفة تقول إن `<app-page-header>` في 18 شاشة، والكود فيه 45 (§15 الانتشار).
+- أُضيف من الكود: جدول مُدخلَي الرأس (§7)، وجدول توكنز الكانفاس، و`--ds-canvas-sticky-tabs-gap` (§6).
+- ⚠️ تعارض (2026-09-26): المواصفة ([`radius.md`](../foundations/radius.md) §2): «`--ds-radius-xl` لا يستعمله أي مكوّن بعد — استعماله قرار نظام» · الكود: سطح الكانفاس وإشعارات الحساب بـ `--ds-radius-xl` (16) في `base.component.scss` (ومعهما الشريط الجانبي المطويّ — التعارض 4 في فهرس README).
 
 ## 16. روابط
 
 - **يستخدم:** [`button.md`](../atoms/button.md) · [`badge-status.md`](../atoms/badge-status.md) (`<app-status>`) · [`alert-toast.md`](../molecules/alert-toast.md) (`<app-alert>`) · [`notice-strip.md`](../molecules/notice-strip.md) · [`save-bar.md`](./save-bar.md)
-- **يُستخدم في:** 18 شاشة — [§15 الانتشار](#الانتشار)
+- **يُستخدم في:** 45 شاشة (قيس 2026-09-26) — [§15 الانتشار](#الانتشار)
 - **ذو صلة:** [`page-structure.md`](../patterns/page-structure.md) · [`page-naming.md`](../patterns/page-naming.md) · [`tabs.md`](../molecules/tabs.md) (الالتصاق تحت الرأس) · [`table.md`](./table.md) (`app-table-toolbar`) · [`breadcrumb.md`](../molecules/breadcrumb.md) · [`states.md`](../patterns/states.md) · [`modal-drawer.md`](./modal-drawer.md) · [`spacing.md`](../foundations/spacing.md)
 - **الكود:**
   - **الحشوة:** [`views/admin/components/base/base.component.scss`](../../../src/app/views/admin/components/base/base.component.scss) — قشرة اللوحة

@@ -8,7 +8,7 @@ selector: ['<ds-icon>']
 source: ['src/app/shared/ui/icon', 'src/icons']
 origin: ['Design-System/components/icon.md']
 keywords: ['أيقونة', 'icon', 'svg', 'ds-icon']
-last_verified: 2026-09-09
+last_verified: 2026-09-26
 ---
 
 # الأيقونة — `<ds-icon>`
@@ -19,11 +19,11 @@ last_verified: 2026-09-09
 
 ### المصدر
 
-**`src/icons/` هي مجموعة أيقونات المنتج** — ١١٨٨ أيقونة SVG في ٣٤ مجلّد تصنيف. كل ملف:
+**`src/icons/` هي مجموعة أيقونات المنتج** — 1192 أيقونة SVG في 34 مجلّد تصنيف (قيس 2026-09-26؛ كانت المواصفة تقول 1188 — أُضيفت بعدها `essential/close` و`essential/grip-horizontal` و`essential/tick` في 2026-09-10، و`support-like-question/star-filled` في 2026-09-21). كل ملف:
 
 | | |
 |---|---|
-| المقاس | 24×24 (`viewBox="0 0 24 24"`) |
+| المقاس | 24×24 (`viewBox="0 0 24 24"`) — إلا ملفّين (قيس 2026-09-26): `computers-devices-electronics/mobile` (16×20) و`design-tools/recovery-convert` (20×20). المولِّد يحفظ `viewBox` الملف حين يخالف `0 0 24 24`، والمكوّن يرسمه به |
 | اللون | `stroke="currentColor"` — لا لون مثبَّت في أي ملف |
 | السُّمك | 1.5 |
 | الاسم | مسار الملف بلا الامتداد: `weather/sun` · `arrow/logout-01` · `content-edit/document` |
@@ -98,8 +98,10 @@ src/icons/**/*.svg  →  scripts/generate-icons.js  →  icons.generated.ts  →
 |---|---|---|---|
 | `name` | `string` | — (مطلوب) | `تصنيف/اسم` كما في `src/icons/` |
 | `size` | `'sm' \| 'md' \| 'lg' \| 'inherit'` | `md` | من `--ds-icon-size-*` (16/20/24) |
-| `label` | `string \| null` | `null` | اسم لقارئ الشاشة. غيابه = أيقونة زخرفية |
-| `directional` | `boolean` | `false` | ينعكس أفقيًّا في RTL |
+| `label` | `string \| null` | `null` | اسم لقارئ الشاشة. غيابه = أيقونة زخرفية. النصّ الفارغ يُعامَل `null` |
+| `directional` | `boolean` (يقبل السمة العارية) | `false` | ينعكس أفقيًّا في RTL. `directional` بلا قيمة = `true`، و`"false"` نصًّا = `false` |
+
+**ما يكتبه المكوّن** (وُثّق 2026-09-26 من الكود): `inline-size` و`block-size` و`--ds-icon-glyph` مضمّنة على المضيف من `size` (ولا شيء منها مع `inherit`) · `aria-hidden="true"` بلا `label`، و`role="img"` + `aria-label` معه · `<svg focusable="false">` بـ`viewBox` الملف. واسمٌ غير موجود في السجلّ المولَّد يرسم فراغًا ويطبع خطأً في وحدة التحكّم وقت التطوير وحده (مرّة لكل اسم).
 
 الاستيراد: `import { DsIconComponent } from 'src/app/shared/ui/icon/ds-icon.component';`
 
@@ -167,6 +169,8 @@ src/icons/**/*.svg  →  scripts/generate-icons.js  →  icons.generated.ts  →
 
 [`icon.directive.ts`](../../../src/app/shared/ui/icon/icon.directive.ts) يرسم محارف Font Awesome على `<i>`. **لا يُستعمل في كود جديد.** بقي لأن في المنتج ~٢٢٦٥ استخدامًا لـ`<i class="fa-…">` لم يُرحَّل، والخطّ ما زال محمَّلًا لأجلها. تُحذف الطبقة كلها — الموجّه والخطّ و`icon-names.generated.ts` — عند آخر شاشة تُرحَّل.
 
+> قيس 2026-09-26: نحو **1660** عنصر `<i>` بفئة `fa…` في قوالب `src/app` (منها 1381 في `views/admin`) — العدّ بطريقة غير طريقة الرقم أعلاه، فلا يُقرأ فرقهما ترحيلًا. والموجِّه `[dsIcon]` نفسه **بلا مستخدم** في أي قالب (يرد اسمه في تعليق واحد في `header.component.html`).
+
 ### بوابة القبول
 
 | البند | الحالة |
@@ -188,6 +192,12 @@ src/icons/**/*.svg  →  scripts/generate-icons.js  →  icons.generated.ts  →
 - [ ] حذف خطّ Font Awesome و`icon.directive.ts` عند آخر شاشة.
 - [ ] حذف `shared/constants/icons.ts` — كود ميت.
 - [ ] مراجعة تصميمية لأسماء بديلة لا نظير دقيق لها في المجموعة (جرس بشرطة مثلًا).
+
+### مراجعة 2026-09-26 مقابل الكود
+
+* صُحّح 2026-09-26: كانت المواصفة تقول 1188 أيقونة كلها 24×24، والمجلد 1192 منها ملفّان بمقاس آخر — §1. (`CLAUDE.md` الجذر ما زال يقول 1,188 و`iconography.md` 1,189 — البند 46 في تعارضات `README.md`.)
+* وُثّق 2026-09-26 من الكود: قبول `directional` سمةً عارية، ومعاملة `label` الفارغ، وما يكتبه المكوّن على المضيف — §7.
+* المُدخلات الأربعة والمحدِّد `ds-icon` وقاعدة الانعكاس (`:host-context([dir='rtl'])`) مطابقة للكود.
 
 ## 16. روابط
 

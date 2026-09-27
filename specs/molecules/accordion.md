@@ -8,7 +8,7 @@ selector: ['<app-accordion>', '<app-accordion-panel>']
 source: ['src/app/shared/ui/accordion']
 origin: ['Design-System/components/accordion.md']
 keywords: ['طيّ', 'أكورديون', 'أسئلة شائعة', 'لوحات', 'accordion']
-last_verified: 2026-09-19
+last_verified: 2026-09-26
 ---
 
 # الطيّ (Accordion) — `<app-accordion>` · `<app-accordion-panel>`
@@ -90,6 +90,16 @@ last_verified: 2026-09-19
 | حشوة الجسم | `--ds-accordion-body-padding` | 16 (12 تحت 640) |
 | ظلّ المفتوحة | `--ds-accordion-shadow-open` | `elevation-1` |
 
+وفي الكود أيضًا (وُثّق 2026-09-26 من الكود):
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| ارتفاع الرأس الأدنى | `--ds-touch-target-min` | 44 |
+| بين محتوى الرأس والسهم | `--ds-space-2` | 8 |
+| حشوة الرأس الجانبية حتى 640 | `--ds-space-3` | 12 |
+| حركة الظلّ وخلفية الرأس والسهم | `--ds-duration-fast` · `--ds-easing-standard` — تتوقّف مع `prefers-reduced-motion` | 140ms |
+| الوضع الداكن | `--ds-accordion-header-bg` ← `surface-default` · `-hover` ← `surface-hover` | |
+
 ## 7. الواجهة البرمجية
 
 | المكوّن | الاسم | النوع | الافتراضي | |
@@ -99,6 +109,7 @@ last_verified: 2026-09-19
 | `app-accordion-panel` | `disabled` | `boolean` | `false` | الرأس لا يفتح بنفسه ولا سهم له — حين يحمل الرأس أزراره الخاصّة |
 | `app-accordion-panel` | `[panelHeader]` | محتوى مُسقَط | — | محتوى الرأس |
 | `app-accordion-panel` | `expandedChange` · `opened` · `closed` | أحداث | — | تُطلق في التبديل اليدوي والخارجي معًا |
+| `app-accordion-panel` | `exportAs` | `appAccordionPanel` | — | مرجع القالب: `#panel="appAccordionPanel"` ثم `panel.toggle()` · `open()` · `close()` · `isOpen` (وُثّق 2026-09-26 من الكود) |
 
 ## 8. السلوك ولوحة المفاتيح
 
@@ -146,13 +157,14 @@ last_verified: 2026-09-19
 
 ## 15. الدَّين القائم
 
-* أربع شاشات في بانيَي الصفحات (`page-edit` و`page-edit-v2`) تتجاوز حشوة الرأس بـ`::ng-deep` و`!important` بقيم خام لتكثيفه في عمودها الضيّق. لذلك **بقيت أسماء الفئات `app-accordion-panel*`** لا `ds-*`: تغييرها يُسقط تجاوزها صامتًا. تُنظَّف مع نقل البانيَين.
+* أربع شاشات في بانيَي الصفحات (`page-edit` و`page-edit-v2`) تحمل قواعد `::ng-deep` و`!important` بقيم خام (`3.65rem` · `0.45rem 0.65rem` · `0.75rem`) على رأس اللوحة وجسمها لتكثيفهما في عمودها الضيّق — **وهي قواعد ميتة لا تُطبَّق**: تكتب `.group-item-panel > .app-accordion-panel__header` والصنف على المضيف `<app-accordion-panel>`، والرأس حفيده لا ابنه (المضيف ← `div.app-accordion-panel` ← الرأس). فرؤوس البانيَين بحشوة النظام. و**بقيت أسماء الفئات `app-accordion-panel*`** لا `ds-*` لأن تغييرها لا يصلح تلك القواعد ويضيف ضجيجًا. تُنظَّف مع نقل البانيَين.
+  صُحّح 2026-09-26: كانت المواصفة تقول إن هذه القواعد «تتجاوز حشوة الرأس» وإن تغيير الأسماء «يُسقط تجاوزها صامتًا»؛ والكود (تعليق `accordion-panel.component.scss`، وقيس بنية القالب) يقول إنها ميتة.
 * لا حركة فتح/طيّ للجسم (يظهر ويختفي فورًا) — إضافتها تحتاج قياس ارتفاع المحتوى، وهي مؤجّلة.
 
 ## 16. روابط
 
 - **يستخدم:** [`<ds-icon>`](../atoms/icon.md) — `arrow/arrow-down-02`
-- **يُستخدم في:** أسئلة شائعة · أقسام دورة · عناصر مجموعة في باني الصفحات (`page-edit` و`page-edit-v2`)
+- **يُستخدم في:** أسئلة شائعة · أقسام دورة · عناصر مجموعة في باني الصفحات (`page-edit` و`page-edit-v2`) — 11 قالبًا (قيس 2026-09-26): `course-sections` · `course-comments` · `settings-static-words` · `site-bio-tab` · `marketplace-settings` · وفي `page-edit`: `edit-faq` · `edit-images-group` · `edit-text-image-group` · `edit-videos-group` · وفي `page-edit-v2`: `edit-faq` · `edit-text-image-group`
 - **ذو صلة:** [`collapsible-card.md`](./collapsible-card.md) · [`card.md`](./card.md) · [`tabs.md`](./tabs.md) · [`notice-strip.md`](./notice-strip.md) · [`detail-panel.md`](../organisms/detail-panel.md)
 - **الكود:** `src/app/shared/ui/accordion/accordion-panel.component.ts` — [المجلد](../../../src/app/shared/ui/accordion/)
 - **الأصل:** `Design-System/components/accordion.md` · **القرار:** 2026-09-19 (نقل المكوّن الموروث — بديل `mat-accordion` — إلى سطح النظام). **الواجهة البرمجية لم تتغيّر**، فالشاشات التي تستعمله لم تُمسّ. — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)

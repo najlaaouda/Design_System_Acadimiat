@@ -8,7 +8,7 @@ selector: ['FloatingPanel', '[dsFocusTrap]']
 source: ['src/app/shared/ui/overlay']
 origin: ['Design-System/components/overlay.md']
 keywords: ['لوحة عائمة', 'قائمة منبثقة', 'حبس التركيز', 'overlay', 'floating panel', 'popover', 'focus trap', 'dsFocusTrap', 'FloatingPanel']
-last_verified: 2026-09-10
+last_verified: 2026-09-26
 ---
 
 # اللوحة العائمة وحبس التركيز — `FloatingPanel` · `[dsFocusTrap]`
@@ -24,7 +24,7 @@ last_verified: 2026-09-10
 | | `FloatingPanel` | `dsFocusTrap` |
 |---|---|---|
 | **ما يفعله** | يرسم قالبًا في `body` ملاصقًا لزرّه: تحته، أو فوقه إن لم يتّسع، ويُدفع داخل الشاشة، ويتبع التمرير وتغيّر الحجم | يُبقي Tab داخل العنصر، وينقل التركيز إلى أوّله عند الظهور، ويعيده إلى ما كان عليه عند الزوال |
-| **يستعمله** | [`app-menu`](./menu.md) · [لوحة الفلترة ورقاقته](../patterns/filtering.md) | [`app-drawer`](../organisms/modal-drawer.md#drawer) |
+| **يستعمله** | [`app-menu`](./menu.md) · [لوحة الفلترة ورقاقته](../patterns/filtering.md) · [حقل التاريخ](./date-field.md) · [حقل الفترة](./date-range-field.md) · [رقاقة الإعداد](./setting-chip.md) · [زرّ «الأعمدة»](../organisms/table-columns.md) (قيس 2026-09-26) | [`app-drawer`](../organisms/modal-drawer.md#drawer) · [`app-sheet`](../organisms/sheet.md) (قيس 2026-09-26) |
 | **كان** | `Overlay` + `TemplatePortal` من `@angular/cdk` | `cdkTrapFocus` من `@angular/cdk` |
 
 ## 2. متى لا تستخدمه
@@ -50,8 +50,10 @@ last_verified: 2026-09-10
 | الموضع | القيمة | لماذا |
 |---|---|---|
 | الطبقة | `--ds-z-popover` (1060) | فوق الحوار (1055) والدرج. كانت طبقة المكتبة 1000، فتُفتح قائمة داخل حوار خلفه |
-| المسافة عن الزرّ | 4px | |
-| أدنى فراغ عن الشاشة | 16px في لوحة الفلترة · 0 في القائمة والرقاقة | اللوحة عريضة بعمودين؛ القائمة صغيرة تُدفع إلى الحافّة بلا ضرر |
+| المسافة عن الزرّ | 4px — و8px في رقاقة الإعداد | الافتراضي 4؛ `setting-chip` يمرّر 8 (قيس 2026-09-26) |
+| أدنى فراغ عن الشاشة | 16px في لوحة الفلترة وحقلَي التاريخ والفترة ورقاقة الإعداد وزرّ «الأعمدة» · 0 في القائمة ورقاقة الفلتر | اللوحة عريضة بعمودين؛ القائمة صغيرة تُدفع إلى الحافّة بلا ضرر (قيس 2026-09-26) |
+
+المسافة وأدنى الفراغ أرقام بالبكسل يمرّرها كل مستهلك في خيارات `FloatingPanel` — لا توكن لهما. والطبقة تُكتب مضمَّنةً على الحاوية: `z-index: var(--ds-z-popover)`. (وُثّق 2026-09-26 من الكود)
 
 ## 7. الواجهة البرمجية
 
@@ -65,6 +67,9 @@ last_verified: 2026-09-10
 | `offset` | px | `4` | المسافة بين الزرّ واللوحة |
 | `viewportMargin` | px | `0` | أدنى فراغ عن حافّة الشاشة |
 
+* `new FloatingPanel(anchor: HTMLElement, options?: FloatingPanelOptions)` — لا يرسم شيئًا بعد: ينشئ الحاوية `div.ds-floating-panel` (`position: fixed`) ولا يُلحقها. (وُثّق 2026-09-26 من الكود)
+* `attach(template, viewContainerRef, injector?)` — يُنشئ القالب من `ViewContainerRef` المستهلك (و`injector` اختياري يصل إلى ما فيه)، ويرسمه قبل القياس، ويُلحق الحاوية بـ `body`، ثم يبدأ تتبّع التمرير وتغيّر حجم النافذة وحجمها. يعيد `EmbeddedViewRef`. (وُثّق 2026-09-26 من الكود)
+* `dispose()` — يوقف التتبّع، ويهدم العرض، ويزيل الحاوية. (وُثّق 2026-09-26 من الكود)
 * `element` — العنصر الذي يحوي اللوحة في `body`، يفحص به المستهلك «داخلها أم خارجها».
 * `updatePosition()` — إعادة حساب يدوية. نادرًا: الموضع يتبع التمرير وتغيّر حجم النافذة وحجم اللوحة بنفسه.
 * **على المستهلك:** الإغلاق بالنقر خارجها، وEscape، والتركيز — لأنها تختلف بين القائمة واللوحة.
@@ -72,6 +77,8 @@ last_verified: 2026-09-10
 ### `dsFocusTrap`
 
 يعمل ما دام العنصر معروضًا، فيوضع على عنصر داخل `@if`: يلتقط التركيز عند إنشائه ويعيده عند هدمه.
+
+بلا مُدخلات ولا مخرجات. عند الإنشاء (في المتصفح وحده) يحفظ العنصر المركَّز، ويضيف عنصرَي حراسة (`span[data-ds-focus-sentinel]`، `tabindex="0"`) في طرفَي العنصر، وينقل التركيز إلى أوّل عنصر قابل للتنقّل ظاهرٍ فيه — أو إلى العنصر نفسه إن خلا. وعند الهدم يزيل الحارسين ويعيد التركيز إلى ما حفظه إن بقي في الصفحة. «القابل للتنقّل»: الروابط، والأزرار والحقول غير المعطّلة، و`iframe`، والوسائط بأدوات تحكّم، و`contenteditable`، و`[tabindex]` ما عدا `-1` — ما لم يكن مخفيًّا أو داخل `[inert]`. (وُثّق 2026-09-26 من الكود)
 
 ## 8. السلوك ولوحة المفاتيح
 
@@ -99,7 +106,7 @@ last_verified: 2026-09-10
 ## 11. إمكانية الوصول
 
 * القائمة تنقل التركيز إلى أوّل بند عند الفتح وتعيده إلى الزرّ عند الإغلاق بلوحة المفاتيح.
-* الدرج: التركيز داخله ما دام مفتوحًا، ويعود إلى ما فتحه (WCAG 2.4.3).
+* الدرج والنافذة بملء الشاشة: التركيز داخلهما ما داما مفتوحين، ويعود إلى ما فتحهما (WCAG 2.4.3).
 * عنصرا الحراسة `aria-hidden` ومخفيّان بصريًّا — لا يُقرآن ولا يُريان.
 
 ## 12. النصوص
@@ -135,12 +142,17 @@ panel.dispose();
 
 ## 15. الدَّين القائم
 
-> لا ينطبق — لا دَين مسجَّل له في الأصل. وما بقي على طبقة CDK خارجه (قائمة إشعارات الرأس، `ConfirmOverlayService`…) مذكور في [`modal-drawer.md` § طبقات الظهور](../organisms/modal-drawer.md#طبقات-الظهور).
+> لا ينطبق — لا دَين مسجَّل له في الأصل. وما بقي على طبقة CDK خارجه (قائمة إشعارات الرأس…) مذكور في [`modal-drawer.md` § طبقات الظهور](../organisms/modal-drawer.md#طبقات-الظهور).
+
+**مراجعة 2026-09-26 — المواصفة مقابل الكود:**
+
+- صُحّح 2026-09-26: كانت المواصفة تقول إن `FloatingPanel` يستعمله القائمة ولوحة الفلترة ورقاقته، و`dsFocusTrap` الدرج وحده؛ والكود يستعمل الأوّل أيضًا في حقلَي التاريخ والفترة ورقاقة الإعداد وزرّ «الأعمدة»، والثاني في النافذة بملء الشاشة. وكانت المسافة عن الزرّ «4px» وحدها، ورقاقة الإعداد تمرّر 8.
+- صُحّح 2026-09-26: كانت المواصفة تعدّ `ConfirmOverlayService` فيما بقي على طبقة CDK، والكود يفتحه عبر `CustomDialogService` ([`modal-drawer.md`](../organisms/modal-drawer.md) §4).
 
 ## 16. روابط
 
 - **يستخدم:** لا شيء — بلا مكتبة
-- **يُستخدم في:** [`menu.md`](./menu.md) · [`filtering.md`](../patterns/filtering.md) — لوحة الفلترة ورقاقته · [`modal-drawer.md`](../organisms/modal-drawer.md#drawer) — الدرج · [`sheet.md`](../organisms/sheet.md) — `dsFocusTrap`
+- **يُستخدم في:** [`menu.md`](./menu.md) · [`filtering.md`](../patterns/filtering.md) — لوحة الفلترة ورقاقته · [`date-field.md`](./date-field.md) · [`date-range-field.md`](./date-range-field.md) · [`setting-chip.md`](./setting-chip.md) · [`table-columns.md`](../organisms/table-columns.md) · [`modal-drawer.md`](../organisms/modal-drawer.md#drawer) — الدرج · [`sheet.md`](../organisms/sheet.md) — `dsFocusTrap`
 - **ذو صلة:** [`tooltip.md`](../atoms/tooltip.md) — موضعة الفقاعة على النهج نفسه · [`z-index.md`](../foundations/z-index.md)
 - **الكود:** [`shared/ui/overlay/`](../../../src/app/shared/ui/overlay/) — [`floating-panel.ts`](../../../src/app/shared/ui/overlay/floating-panel.ts) · [`focus-trap.directive.ts`](../../../src/app/shared/ui/overlay/focus-trap.directive.ts) · الاختبار [`overlay.spec.ts`](../../../src/app/shared/ui/overlay/overlay.spec.ts)
 - **الأصل:** `Design-System/components/overlay.md` — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)

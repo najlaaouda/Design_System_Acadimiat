@@ -8,7 +8,7 @@ selector: ['.social-card']
 source: ['src/app/views/admin/main-features/settings/settings-media-tab']
 origin: ['Design-System/components/social-link-card.md']
 keywords: ['بطاقة حساب التواصل', 'روابط التواصل الاجتماعي', 'منصّة', 'لون العلامة', 'social link', 'social media']
-last_verified: 2026-09-16
+last_verified: 2026-09-26
 ---
 
 # بطاقة حساب التواصل — social-link-card
@@ -81,6 +81,18 @@ last_verified: 2026-09-16
 
 **اللون هو الحالة.** ولذلك لا شارة `<app-status>` في البطاقة ولا فلتر «المضافة / غير المضافة» فوق الشبكة (قرار المنتج 2026-09-16): الشبكة تُقرأ بلمحة، وشارةٌ في كل بطاقة تكرّر ما قاله اللون.
 
+وفي الكود أيضًا (وُثّق 2026-09-26 من الكود):
+
+| الحالة | الشكل |
+|---|---|
+| أثناء حفظ منصّة | البطاقة بشفافية `0.6`، و«تعديل» و«حذف» معطَّلان، و«إضافة الرابط» بحالة `loading` |
+| تمرير فوق «حذف» | لون `--ds-color-text-danger` — عند المرور وحده |
+| تمرير فوق الفتح ↗ | `--ds-color-surface-hover` |
+| تمرير فوق النسخ | `--ds-color-surface-sunken` ونصّ `text-primary` |
+| تركيز الفتح والنسخ | `--ds-focus-ring` |
+| المعرّف | `@` قبله إلا لواتساب (رقم لا اسم)؛ ورابط بشكل غير معتاد يُعرض عنوانه كما هو بلا تخمين (`handleOf` في `social-platforms.ts`) |
+| فوق الشبكة | عدّاد لا فلتر في رأس `<app-card>`: «**{{ addedCount }}** من {{ platforms.length }} حسابًا مضافًا» (قرار المستخدم 2026-09-16 في تعليق القالب) |
+
 ← التحميل والخطأ: `<app-skeleton-group>` و`<app-empty-state variant="error">` في [بقيّة القطع](#بقيّة-القطع--كلّها-من-النظام).
 
 ## 6. التوكنز
@@ -109,6 +121,8 @@ last_verified: 2026-09-16
 
 ← توكنز النظام في البطاقة (`--ds-color-surface-hover` · `--ds-neutral-400`) في [الحالتان](#الحالتان).
 
+وفي `settings-media-tab.component.scss` قيم خام غير لونَي العلامة (قيس 2026-09-26): ارتفاع الرأس الأدنى `76px`، والشعار `40px`، وزرّ الفتح `32px`، وزرّ النسخ `24px`، وتدرّج شعار إنستغرام `#f58529 → #dd2a7b → #8134af`، وشفافية الحفظ `0.6`. والباقي توكنز: البطاقة `surface-default` بحدّ `border-subtle` واستدارة `--ds-radius-lg` (12)، والرأس حشوة 16 وفجوة 12، والتذييل حشوة 12 / 16 وفجوة 8 وفاصل `divider`، والمعرّف 14/600، واسم المنصّة والرابط 12 `text-muted` (الرابط بخط `--ds-font-family-mono`).
+
 ## 7. الواجهة البرمجية
 
 > لا ينطبق — البطاقة ليست مكوّنًا له مدخلات؛ هي خاصّة بشاشتها ([§1](#ما-هي)).
@@ -127,7 +141,15 @@ last_verified: 2026-09-16
 
 ## 10. RTL
 
-> ⚠️ **غير موثّق بعد:** الأصل لا يذكر RTL — اتجاه الرابط والمعرّف `@…` داخل السطر العربي، وانعكاس سهم الفتح `arrow/export-arrow-02` أو ثباته.
+ما يفعله الكود:
+
+* **المعرّف `@…` LTR** (`direction: ltr` على نصّه)، وعمود المعرّف واسم المنصّة يحاذي أبناءه على بداية السطر، وكلٌّ بعرض محتواه — فيبدأ المعرّف اللاتيني والاسم العربي من الحرف نفسه يمينًا في العربية.
+* **اسم المنصّة في مكان المعرّف** (غير المضاف) يعود إلى اتجاه الصفحة (`direction: inherit`).
+* **الرابط LTR** بسمة `dir="ltr"` و`direction: ltr` و`text-align: start`، ويُقصّ بـ«…».
+* **سهم الفتح `arrow/export-arrow-02` لا ينعكس** — بلا `directional`.
+* الصفّ والتذييل بخصائص منطقية وflex، فالشعار في البداية وزرّ الفتح والأفعال في النهاية في الاتجاهين.
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 11. إمكانية الوصول
 
@@ -145,7 +167,49 @@ last_verified: 2026-09-16
 
 ## 13. مثال
 
-> ⚠️ **غير موثّق بعد:** مثال كود — البطاقة قالب داخل `settings-media-tab.component.html` لا مكوّن يُستدعى؛ والرسم في [§3](#3-التشريح).
+البطاقة قالب داخل `settings-media-tab.component.html` لا مكوّن يُستدعى — هذا القالب مختصرًا:
+
+```html
+<app-card heading="حسابات التواصل" description="الحسابات التي تظهر أيقوناتها في موقعك."
+  padding="none" [hasHeaderActions]="true">
+  <span card-actions class="social-page__count"><b>{{ addedCount }}</b> من {{ platforms.length }} حسابًا مضافًا</span>
+
+  <div class="social-grid">
+    @for (p of platforms; track p.key) {
+      <article class="social-card" [class.social-card--off]="!isAdded(p)" [class.social-card--saving]="isSaving(p)"
+        [style.--social-brand]="p.brand" [style.--social-tint]="p.tint">
+        <div class="social-card__top">
+          <span class="social-card__logo" aria-hidden="true"><i class="fa-brands {{ p.icon }}"></i></span>
+          <span class="social-card__id">…المعرّف واسم المنصّة…</span>
+          @if (isAdded(p)) {
+            <a class="social-card__open" [href]="publicUrlOf(p)" target="_blank" rel="noopener noreferrer"
+              [attr.aria-label]="'فتح حساب ' + p.name + ' في نافذة جديدة'">
+              <ds-icon name="arrow/export-arrow-02" size="sm" />
+            </a>
+          }
+        </div>
+        <div class="social-card__foot">
+          @if (isAdded(p)) {
+            <span class="social-card__link">
+              <span class="social-card__url" dir="ltr">{{ valueOf(p) }}</span>
+              <button type="button" class="social-card__copy" [attr.aria-label]="'نسخ رابط ' + p.name" (click)="copy(p)">
+                <ds-icon name="design-tools/copy" size="sm" />
+              </button>
+            </span>
+            <span class="social-card__actions">…«تعديل» و«حذف» dsButton tertiary sm iconOnly…</span>
+          } @else {
+            <span class="social-card__empty">لا يظهر في موقعك</span>
+            <button dsButton type="button" variant="secondary" size="sm" [loading]="isSaving(p)"
+              (click)="openLinkDialog(p)">إضافة الرابط</button>
+          }
+        </div>
+      </article>
+    }
+  </div>
+</app-card>
+```
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 14. ممنوع
 
@@ -153,7 +217,9 @@ last_verified: 2026-09-16
 
 ## 15. الدَّين القائم
 
-> لا ينطبق — لا دَين مذكور في الأصل.
+> لا دَين مذكور في الأصل.
+
+* ⚠️ تعارض (2026-09-26): المواصفة (§11 «هدف اللمس 44 في التذييل»، و[`CLAUDE.md`](../../CLAUDE.md) §5: «هدف اللمس 44 على الأقل ولو كان المرسوم أصغر») · الكود: زرّ النسخ 24×24 وزرّ الفتح 32×32 بلا امتداد لهدفهما — التذييل وحده بارتفاع 44، لا الزرّان.
 
 ## 16. روابط
 

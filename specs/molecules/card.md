@@ -8,7 +8,7 @@ selector: ['<app-card>']
 source: ['src/app/shared/ui/card']
 origin: ['Design-System/components/card.md']
 keywords: ['بطاقة', 'card']
-last_verified: 2026-09-09
+last_verified: 2026-09-26
 ---
 
 # البطاقة — `<app-card>`
@@ -17,7 +17,7 @@ last_verified: 2026-09-09
 
 ## 1. متى تستخدمه
 
-يحل محل `class="card"` — **1224 استخدامًا** في لوحة التحكم، وهو أكثر نمط Bootstrap تكرارًا.
+يحل محل `class="card"` — **1224 استخدامًا** في لوحة التحكم، وهو أكثر نمط Bootstrap تكرارًا. (قيس 2026-09-26: بقي في قوالب اللوحة 561 صنفًا من `card` و`card-header` و`card-body` و`card-footer`، منها 207 `class="card"` في 122 ملفًّا؛ و`<app-card>` في 28 قالبًا.)
 
 ## 2. متى لا تستخدمه
 
@@ -37,7 +37,27 @@ last_verified: 2026-09-09
 
 ## 3. التشريح
 
-> ⚠️ **غير موثّق بعد:** رسم الأجزاء وجدولها. الأصل يسمّي الأجزاء من المدخلات وحدها — الرأس (`heading` و`description` و`[card-actions]`) والجسم والتذييل (`[card-footer]`) — في [§7](#7-الواجهة-البرمجية).
+```
+┌───────────────────────────────────────────────┐ ← <section> · surface-raised · استدارة 12 · يقصّ ما يخرج
+│ عنوان البطاقة (h2)            [card-actions]  │ ← الرأس: حشوة 16 / 20 · فجوة 16 · تحته فاصل divider
+│ الوصف تحت العنوان                              │   العنوان 16/600 · الوصف 12 text-muted وفوقه 4
+├───────────────────────────────────────────────┤
+│ الجسم (المحتوى الافتراضي)                      │ ← حشوة بحسب `padding`: 0 · 12 · 20 · 24
+├───────────────────────────────────────────────┤
+│                              [card-footer]    │ ← التذييل: surface-page · حشوة 12 / 20 · الأزرار في النهاية بفجوة 8
+└───────────────────────────────────────────────┘
+```
+
+| الجزء | يظهر حين | ملاحظات |
+|---|---|---|
+| الرأس | `heading` أو `hasHeaderActions` | `headerTone="muted"` يلوّنه `surface-page` |
+| العنوان | `heading` | `<h2>` دائمًا (§11) |
+| الوصف | `description` **مع رأس ظاهر** | وحده بلا `heading` ولا `hasHeaderActions` لا يُرسم |
+| إجراءات الرأس — `[card-actions]` | `hasHeaderActions` | لا تنكمش، بفجوة 8 |
+| الجسم | دائمًا | |
+| التذييل — `[card-footer]` | `hasFooter` | |
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 4. الأنواع والمقاسات
 
@@ -51,7 +71,7 @@ last_verified: 2026-09-09
 
 ## 5. الحالات
 
-> ⚠️ **غير موثّق بعد:** حالات البطاقة. الأصل يذكر حلقة التركيز للبطاقة القابلة للنقر وحدها ([§8](#8-السلوك-ولوحة-المفاتيح)).
+لا يرسم المكوّن أيّ حالة: لا Hover ولا Focus ولا Active ولا Disabled ولا Loading ولا Error — `<app-card>` حاوية `<section>` ساكنة، وما فيها من أزرار وحقول يحمل حالاته. حلقة التركيز للبطاقة القابلة للنقر ([§8](#8-السلوك-ولوحة-المفاتيح)) ليست في المكوّن: البطاقة القابلة للنقر تُبنى في الشاشة على `<a>` أو `<button>`. (وُثّق 2026-09-26 من الكود)
 
 ## 6. التوكنز
 
@@ -59,7 +79,25 @@ last_verified: 2026-09-09
 >
 > (CLAUDE.md — Design System First، المرجع السريع في [`PLAYBOOK.md`](../../migration/PLAYBOOK.md) الخطوة 0)
 
-> ⚠️ **غير موثّق بعد:** جدول توكنز المكوّن — السطح والحدّ والظلّ لكل `appearance`، والحشوة لكل `padding`، وسطح الرأس في `headerTone="muted"`. لا طبقة `--ds-card-*` في `tokens.css` ولا جدول في الأصل؛ والأصل يذكر `--ds-color-surface-page` للرأس الرمادي ([§7](#7-الواجهة-البرمجية)) و`--ds-space-4` لحشوة الجوال ([§9](#9-الاستجابة)).
+لا طبقة `--ds-card-*` في `tokens.css`؛ المكوّن يقرأ التوكنز الدلالية مباشرة:
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| السطح | `--ds-color-surface-raised` | أبيض |
+| الاستدارة | `--ds-radius-lg` | 12 |
+| `bordered` | حدّ `--ds-border-width-sm` `--ds-color-border-subtle`، بلا ظلّ | 1 · `neutral-200` |
+| `raised` | الحدّ نفسه + `--ds-elevation-1` | |
+| `flat` | بلا حدّ، والخلفية شفّافة | |
+| الرأس | حشوة `--ds-space-4` / `--ds-space-5` · فجوة `--ds-space-4` · فاصل `--ds-color-divider` | 16 / 20 · 16 |
+| الرأس `muted` | `--ds-color-surface-page` | `neutral-50` |
+| العنوان | `--ds-font-size-lg` · `--ds-font-weight-semibold` · `--ds-line-height-snug` · `--ds-color-text-primary` | 16 · 600 |
+| الوصف | `--ds-font-size-xs` · `--ds-color-text-muted`، وفوقه `--ds-space-1` | 12 · 4 |
+| إجراءات الرأس | فجوة `--ds-space-2` | 8 |
+| الجسم `none` · `sm` · `md` · `lg` | `0` · `--ds-space-3` · `--ds-space-5` · `--ds-space-6` | 0 · 12 · 20 · 24 |
+| التذييل | `--ds-color-surface-page` · حشوة `--ds-space-3` / `--ds-space-5` · فجوة `--ds-space-2` · فاصل `--ds-color-divider` | 12 / 20 · 8 |
+| حتى 640 | الجسم `md` و`lg` ← `--ds-space-4`؛ حشوة الرأس والتذييل الجانبية ← `--ds-space-4` | 16 |
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 7. الواجهة البرمجية
 
@@ -68,10 +106,12 @@ last_verified: 2026-09-09
 | `appearance` | `bordered` \| `raised` \| `flat` | `bordered` |
 | `headerTone` | `default` \| `muted` | `default` — `muted` رأس رمادي (`--ds-color-surface-page`، لون التذييل) والجسم أبيض؛ يميّز الكتلة في نموذج طويل. أول استعمال: إعدادات المدونة (2026-09-10) |
 | `padding` | `none` \| `sm` \| `md` \| `lg` | `md` |
-| `heading` | `string \| null` | |
-| `description` | `string \| null` | |
-| `hasHeaderActions` | `boolean` | فعّلها مع `[card-actions]` |
-| `hasFooter` | `boolean` | فعّلها مع `[card-footer]` |
+| `heading` | `string \| null` | `null` |
+| `description` | `string \| null` | `null` — يُرسم داخل الرأس وحده (§3) |
+| `hasHeaderActions` | `boolean` | `false` — فعّلها مع `[card-actions]` |
+| `hasFooter` | `boolean` | `false` — فعّلها مع `[card-footer]` |
+
+المنافذ: المحتوى الافتراضي (الجسم) · `[card-actions]` · `[card-footer]`. (وُثّق 2026-09-26 من الكود)
 
 `padding="none"` للبطاقة التي تحتوي جدولًا يمتد حتى حوافها.
 
@@ -87,7 +127,7 @@ last_verified: 2026-09-09
 
 ## 9. الاستجابة
 
-* الحشو يقل على الجوال (`--ds-space-4`).
+* الحشو يقل على الجوال (`--ds-space-4`) — في الكود حتى 640 (`max-width: 640px`)، للجسم `md` و`lg` وحدهما، و`sm` يبقى 12. (وُثّق 2026-09-26 من الكود)
 * رأس البطاقة يلتف حتى لا تُقصّ الإجراءات.
 * في الشبكات: 3–4 أعمدة على سطح المكتب، عمودان على اللوحي، عمود واحد على الجوال.
 
@@ -144,7 +184,7 @@ last_verified: 2026-09-09
 ## 16. روابط
 
 - **يستخدم:** —
-- **يُستخدم في:** [`social-link-card.md`](./social-link-card.md) (`<app-card padding="none">`)
+- **يُستخدم في:** [`social-link-card.md`](./social-link-card.md) (`<app-card padding="none">`) · 28 قالبًا في اللوحة (قيس 2026-09-26)
 - **ذو صلة:** [`collapsible-card.md`](./collapsible-card.md) (سطح البطاقة نفسه) · [`accordion.md`](./accordion.md) · [`connection-card.md`](./connection-card.md) (شبكة بطاقات الربط) · [`page-layout.md`](../organisms/page-layout.md) (`<app-page-header>`) · [`PLAYBOOK.md`](../../migration/PLAYBOOK.md)
 - **الكود:** [`src/app/shared/ui/card/`](../../../src/app/shared/ui/card/) · **المُحدِّد:** `<app-card>`
 - **الأصل:** `Design-System/components/card.md` — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)

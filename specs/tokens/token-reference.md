@@ -674,6 +674,7 @@ brand: { 800: ref('brand-800') }   // → "var(--ds-brand-800)"
 | `--ds-upload-*` | 46 | [`upload.md`](../molecules/upload.md) |
 | `--ds-breadcrumb-*` | 12 | [`breadcrumb.md`](../molecules/breadcrumb.md) |
 | `--ds-notice-strip-*` | 4 | [`notice-strip.md`](../molecules/notice-strip.md) |
+| `--ds-toast-*` | 21 | [`alert-toast.md`](../molecules/alert-toast.md) (أُضيفت 2026-09-26) |
 | `--ds-distribution-*` | 7 | [`distribution-bar.md`](../molecules/distribution-bar.md) |
 | `--ds-accordion-*` | 15 | [`accordion.md`](../molecules/accordion.md) |
 | `--ds-tab-*` | 19 | [`tabs.md`](../molecules/tabs.md) |
@@ -688,9 +689,13 @@ brand: { 800: ref('brand-800') }   // → "var(--ds-brand-800)"
 | `--ds-save-bar-*` | 2 | [`save-bar.md`](../organisms/save-bar.md) |
 | `--ds-shelf-*` | 2 | [`shelf-tabs.md`](../organisms/shelf-tabs.md) |
 | `--ds-filter-panel-*` | 3 | [`filtering.md`](../patterns/filtering.md) |
-| **المجموع** | **310** | |
+| **المجموع** | **331** | |
 
-> ⚠️ ثلاث بادئات لا تذكر مواصفتُها الأصلية توكنزها بعد: `--ds-distribution-*` (`distribution-bar.md`)، و`--ds-shelf-*` (`shelf-tabs.md`)، و`--ds-avatar-*` (لا مواصفة أصلية؛ `avatar.md` جديدة).
+> **قيس 2026-09-26** على `tokens.css` (الأسماء المعرَّفة بلا تكرار، في `:root` والداكن وقواعد الوسائط معًا): كل بادئة مكوّن فيه لها صفّ هنا، وكل عدد في الجدول مطابق. البادئات الأخرى في الملف أسس لها أقسامها أعلاه: `--ds-page-padding-*` · `--ds-container-max` · `--ds-prose-max` (§14.3) · `--ds-filetype-*` (§14.4) · `--ds-channel-*` (§14.5) · `--ds-control-height-*` · `--ds-touch-target-min` (§14) · `--ds-icon-size-*` (§14.2) · `--ds-focus-*` (§7).
+>
+> صُحّح 2026-09-26: كان الجدول بلا صفّ لـ`--ds-toast-*` (21 توكنًا، أُضيفت اليوم) ومجموعه 310؛ صار 331.
+>
+> صُحّح 2026-09-26: كان هنا «⚠️ ثلاث بادئات لا تذكر مواصفتُها الأصلية توكنزها بعد: `--ds-distribution-*` (`distribution-bar.md`)، و`--ds-shelf-*` (`shelf-tabs.md`)، و`--ds-avatar-*`» — والمواصفات الثلاث تذكرها اليوم في §6 من كلٍّ منها (السبعة كلها في `distribution-bar.md`، و`--ds-shelf-selected-*` في `shelf-tabs.md`، والسبعة في `avatar.md`).
 
 ### توكنز مكوّنات يسمّيها قرار في CLAUDE.md
 
@@ -727,6 +732,7 @@ brand: { 800: ref('brand-800') }   // → "var(--ds-brand-800)"
 |---|---|---|
 | `--ds-canvas-sticky-header` · `-tabs` · `-filters` | `page-layout.md` · `segmented.md` | متغيّرات ينشرها ما يلتصق بأعلى الكانفاس بارتفاعه («وينشر `--ds-canvas-sticky-filters`») |
 | `--ds-table-total-offset` | `table.md` | «`<app-table>` يقيس صفّ الإجمالي… ويضع ارتفاعه في `--ds-table-total-offset`… و`--ds-table-total-height` (44) احتياطٌ قبل القياس» |
+| `--ds-toast-inset-inline-start` · `--ds-toast-wash-angle` | `alert-toast.md` | متغيّران يضبطهما الكود (قيس 2026-09-26): الأول في `src/styles.scss` على `body.ds-admin-session` بعرض الشريط الجانبي (ممتدًّا ومطويًّا وعلى الجوال)، واحتياطه في المكوّن `--ds-space-6`؛ والثاني في `toast-host.component.ts` — `90deg`، و`270deg` تحت `[dir="rtl"]` |
 | `--ds-save-bar-lift` | `save-bar.md` | «بقدر الشريط وهامش الكانفاس تحته» — ترفع الأيقونتين العائمتين (قرار المنتج 2026-09-24) |
 | `--ds-icon-glyph` | `icon.md` · `sidebar.md` · CLAUDE.md | يضبطه المستهلك مع `size="inherit"` (§14.2) |
 | `--ds-button-ai-fill` · `--ds-button-ai-edge-start/end` | `button.md` | طبقتا زرّ الذكاء، «مسجَّلة نوعًا `<color>` عبر `@property`» في `button.component.scss` |

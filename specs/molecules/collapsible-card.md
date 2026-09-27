@@ -8,7 +8,7 @@ selector: ['<app-collapsible-card>']
 source: ['src/app/shared/ui/collapsible-card']
 origin: ['Design-System/components/collapsible-card.md']
 keywords: ['بطاقة تُطوى', 'طيّ', 'قسم اختياري', 'سهم بلا ساق', 'collapsible', 'card']
-last_verified: 2026-09-11
+last_verified: 2026-09-26
 ---
 
 # البطاقة التي تُطوى (Collapsible card) — `<app-collapsible-card>`
@@ -59,7 +59,19 @@ last_verified: 2026-09-11
 
 ## 6. التوكنز
 
-> ⚠️ **غير موثّق بعد:** جدول توكنز المكوّن — لا طبقة `--ds-collapsible-*` في `tokens.css`. القيم التي يذكرها الأصل (السطح والحدّ والاستدارة والحشوات ولون السهم) في [§3](#3-التشريح) و[§5](#5-الحالات).
+لا طبقة `--ds-collapsible-*` في `tokens.css`؛ المكوّن يقرأ التوكنز الدلالية مباشرة:
+
+| العنصر | التوكن | القيمة |
+|---|---|---|
+| السطح · الحدّ · الاستدارة | `--ds-color-surface-raised` · `--ds-border-width-sm` `--ds-color-border-subtle` · `--ds-radius-lg` | أبيض · 1 · 12 |
+| الزرّ | ارتفاع أدنى `--ds-touch-target-min` · حشوة `--ds-space-4` / `--ds-space-5` · فجوة `--ds-space-3` · استدارة `--ds-radius-lg` | 44 · 16 / 20 (الجانبية 16 حتى 640) · 12 · 12 |
+| العنوان | `--ds-font-size-lg` · `--ds-font-weight-semibold` · `--ds-line-height-snug` | 16 · 600 |
+| السهم | `--ds-color-text-muted`، والمرور `--ds-color-text-primary` · مقاس `<ds-icon>` الافتراضي | 20 |
+| حركة السهم | `--ds-duration-fast` · `--ds-easing-standard` — تتوقّف مع `prefers-reduced-motion` | 140ms |
+| الجسم | حشوة `--ds-space-5` (و`--ds-space-4` حتى 640) · فاصل `--ds-color-divider` فوقه | 20 (16) |
+| التركيز | `--ds-focus-ring` | |
+
+(وُثّق 2026-09-26 من الكود)
 
 ## 7. الواجهة البرمجية
 
@@ -116,7 +128,7 @@ last_verified: 2026-09-11
 ## 16. روابط
 
 - **يستخدم:** [`<ds-icon>`](../atoms/icon.md) — `arrow/arrow-down-02`
-- **يُستخدم في:** «مقترحات أسفل المقال» في نافذة المقال — أوّل استعمال
+- **يُستخدم في:** «مقترحات أسفل المقال» في نافذة المقال — أوّل استعمال، وما زال الوحيد (`manage-articles`، قيس 2026-09-26)
 - **ذو صلة:** [`card.md`](./card.md) · [`accordion.md`](./accordion.md) · [`optional-field.md`](./optional-field.md)
 - **الكود:** `src/app/shared/ui/collapsible-card/collapsible-card.component.ts` — [المجلد](../../../src/app/shared/ui/collapsible-card/)
 - **الأصل:** `Design-System/components/collapsible-card.md` · **القرار:** 2026-09-11 (طلب المنتج «مثل أكورديون، سهم بلا عمود، مغلق ويفتح»). — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)

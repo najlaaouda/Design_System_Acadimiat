@@ -4,11 +4,11 @@ name: table
 tier: organism
 group: data-display
 status: implemented
-selector: ['<app-table>', '[appTableTotal]', 'tr[appTableGroup]', '<app-table-bar>', '<app-table-range>', '<app-paginator>']
+selector: ['<app-table>', '[appTableTotal]', 'tr[appTableGroup]', '<app-table-bar>', '<app-table-range>', '<app-table-toolbar>', '<app-table-selection-bar>', '<app-paginator>', '[appSort]', '[appSortHeader]']
 source: ['src/app/shared/ui/table']
 origin: ['Design-System/components/table.md']
 keywords: ['جدول', 'ترقيم', 'صفوف', 'table', 'pagination']
-last_verified: 2026-09-09
+last_verified: 2026-09-26
 ---
 
 # الجدول — `<app-table>`
@@ -17,7 +17,7 @@ last_verified: 2026-09-09
 
 ## 1. متى تستخدمه
 
-يحل محل `class="table"` و`table-responsive` — **367 استخدامًا** في لوحة التحكم.
+يحل محل `class="table"` و`table-responsive` — **كانت 367 استخدامًا** في لوحة التحكم. الباقي منها اليوم 23 `class="table …"` و63 `table-responsive` في 42 ملفًّا، و`<app-table>` في 48 موضعًا في 33 ملفًّا (قيس 2026-09-26).
 
 **قبل إضافة أي عمود اسأل (UI-10):** هل يحتاج المستخدم هذه المعلومة **في هذا السياق**؟ العمود الذي يُقرأ نادرًا مكانه صفحة التفاصيل لا الجدول.
 
@@ -28,6 +28,26 @@ last_verified: 2026-09-09
 ## 3. التشريح
 
 المكوّن غلاف حول جدول HTML **دلالي حقيقي**. لا يُستبدل `<table>` بـ `div`، لأن قارئ الشاشة يعتمد بنية الجدول ليعلن «صف 3 من 40، عمود السعر».
+
+### الأجزاء والمقاسات كما يرسمها الكود
+
+> وُثّق 2026-09-26 من الكود ([`table.component.ts`](../../../src/app/shared/ui/table/table.component.ts)).
+
+```
+<app-table>                         ← [bordered] (افتراضيًّا true): سطح surface-raised · حدّ border-width-sm بـborder-subtle · استدارة 12 · overflow: clip
+├── [table-toolbar]                 ← فتحة: <app-table-toolbar> وما يرافقه (<app-filter-bar>، سطر مجموع) فوق الرأس
+├── .ds-table__scroller             ← منطقة التمرير الأفقي: tabindex=0 · role=region · aria-label=caption · container-type: inline-size · isolation: isolate
+│   └── <table>                     ← عرض 100% · border-collapse · خط 14 · text-primary
+│       ├── <thead> th              ← ارتفاع --ds-table-header-height (40) · حشوة أفقية --ds-table-cell-padding-inline (16) · 12/600 · text-secondary · سطح surface-raised · حدّ سفلي border-width-md (2) بـborder-default · بلا التفاف
+│       └── <tbody> td              ← حشوة --ds-table-cell-padding-block/-inline (16/16) · line-height snug · حدّ سفلي border-width-sm بـdivider · وسط رأسيًّا · الارتفاع من المحتوى لا height
+└── .ds-table__selection            ← فتحة [table-selection]: شريط التحديد، لاصق بأسفل النافذة (sticky · inset-block-end 0 · --ds-z-sticky)
+```
+
+* `<caption>` إن وُجد: حشوة 16 × 20، خط 16/600، `text-primary`، محاذاة `start`.
+* داخل `[bordered]` يسقط الحدّ السفلي لآخر صفّ: حدّ البطاقة يُغلق الجدول.
+* `density="compact"`: حشوة الخليّة 8 × 12 والرأس حشوة أفقية 12.
+* `[stickyHeader]`: منطقة التمرير بحدّ أقصى `70vh` وتمرير رأسي، والرأس `sticky` بـ`--ds-z-sticky`.
+* `[zebra]`: الصفوف الزوجية `surface-page`.
 
 ### صف الإجمالي — `[appTableTotal]`
 
@@ -52,7 +72,11 @@ last_verified: 2026-09-09
 
 **الحساب على المستهلك لا المكوّن.** خادم مرقَّم لا يعرف المجموع ما لم يُرسله، وجمع الصفحة المعروضة وحدها يعطي رقمًا خاطئًا يبدو صحيحًا.
 
+**شكل الصفّ في الكود** (وُثّق 2026-09-26 من الكود): كل خليّة بارتفاع `--ds-table-total-height` (44) وحشوة 8 × 16، خط 14/600، سطح `--ds-table-total-bg` ونصّ `--ds-table-total-fg`، وحدّ سفلي `border-width-sm` بـ`--ds-table-total-border`، بلا التفاف. وخليّة `ds-table__numeric` فيه LTR بأرقام متساوية العرض ومحاذاة `end` كعمودها.
+
 **صفّ ملخّص لا مجموع عمود** (سجل المسحوبات 2026-09-14): حين يحمل الصفّ أرقامًا من الخادم لا تجمع عمودًا — «مسحوباتي في الفترة» و«أجور التحويل البنكي» — يكون **خليّة واحدة بعرض الصفّ** (`<td [attr.colspan]="columns">`) والأرقام سطرًا واحدًا بجوار أسمائها. تحت عمود «المبلغ» يُقرأ الرقم مجموعَ ذلك العمود وهو ليس كذلك، واسمٌ طويل في خليّة العمود الأول يوسّع ذلك العمود فيُقصّ آخر الجدول. ويبقى الصفّ سطرًا واحدًا: ارتفاعه `--ds-table-total-height` هو ما تُزاح به الرؤوس الملتصقة تحته.
+
+> **صُحّح 2026-09-26 من الكود:** سجل المسحوبات لم يعد يكتب هذا الملخّص صفًّا في الجدول. منذ 2026-09-17 (طلب المنتج — رأس `finance-history.component.html`) هو سطرٌ في منطقة الأدوات (`<div class="fin-history__total-line" table-toolbar>`) فوق الجدول والمخطط معًا، لأن «جدول / مخطط» يتبادلان المكان تحته. ولا شاشة في اللوحة تستعمل `[appTableTotal]` ولا `[hasTotalRow]` اليوم (قيس 2026-09-26).
 
 ### عنوان القسم — `tr[appTableGroup]`
 
@@ -91,9 +115,18 @@ last_verified: 2026-09-09
 
 الخطّ عنصر زائف لا حدّ: الحدّ يزيح المحتوى 2px، والخطّ يغطّي الحدّ السفلي بين صفوف القسم فلا ينقطع داخله. والعنوان يعرف أنه مفتوح وله صفوف (`ds-table__group-cell--open`)، والصفوف يضع المستهلك صنفيها. ومنطقي (`inset-inline-start`) فيقع يمينًا في العربية. ورجّح المنتج الأبيض على الرمادي (Mercury، Quicken، Monarch) وعلى البنفسجي الفاتح (لون صفّ الإجمالي نفسه).
 
+**بقية الأجزاء في الكود** (وُثّق 2026-09-26 من الكود — [`table-group.component.ts`](../../../src/app/shared/ui/table/table-group.component.ts)):
+
+* الخليّة `<th scope="colgroup">` بارتفاع `--ds-table-group-height` (40) وحشوة أفقية 16 بلا رأسية، وحدّ أعلى `border-width-sm` بـ`border-default` وحده.
+* في داخلها غلاف لاصق ببداية منطقة التمرير بعرض `100cqi` ناقص 16 من كل جهة، فيبقى الاسم والمجموع ظاهرين في جدول يُمرَّر أفقيًّا.
+* زرّ الطيّ بارتفاع اللافتة كلّها (هدف اللمس)، والاسم فيه 14/600، والسهم `fa-light fa-angle-down` بـ`--ds-icon-size-sm` بلون `text-muted` — يدور 90° حين يُطوى ليشير إلى بداية السطر (−90 في LTR و+90 في RTL). والتركيز `--ds-focus-ring` باستدارة `radius-sm`.
+* العدّاد 12 عادي `text-muted` بأرقام متساوية العرض؛ والمجموع 14/600 `text-primary`، LTR معزول. بين الاسم والعدّاد 12، وبين العدّاد والمجموع 16.
+
 #### مجموع القسم — `total` و`countLabel`
 
 > **مطبَّق 2026-09-13** — أوّل مستهلك: سجل المسحوبات (`/admin/finance/history`)، من فيجما node 249:302.
+>
+> **(قيس 2026-09-26):** لا مستهلك لـ`tr[appTableGroup]` اليوم في الكود كلّه — سجل المسحوبات صار جدولًا مسطّحًا «بلا تجميع بالشهر ولا طيّ» منذ 2026-09-17 (طلب المنتج، رأس `finance-history.component.html`). المكوّن باقٍ بمدخلاته كما هنا.
 
 ```html
 <tr appTableGroup label="مايو 2026" [count]="3" countLabel="3 تحويلات" total="$45,150.00"
@@ -117,6 +150,8 @@ last_verified: 2026-09-09
 
 الشريط `aria-hidden` والرقم هو ما يُقرأ — تكرارهما إعلان مزدوج. لا `role="progressbar"`: هذه قيمة مقروءة في جدول لا عملية جارية. القيم خارج المدى تُقصّ إلى 0–100.
 
+**في الكود** (وُثّق 2026-09-26 من الكود): المسار يتمدّد بأدنى عرض 48px وبارتفاع `--ds-table-bar-height` (6)، والتعبئة بعرض النسبة المقرّبة إلى عدد صحيح؛ والرقم بعده بفجوة 12، خط 12 `text-secondary`، LTR بأرقام متساوية العرض ومحاذاة `end` وعرض أدنى `5ch`. قيمة غير رقمية تُعرض 0%. يستعمله «نظرة عامة» في `/admin/dashboard` (قيس 2026-09-26).
+
 ### المدى التاريخي — `<app-table-range>`
 
 ```html
@@ -126,6 +161,56 @@ last_verified: 2026-09-09
 **عمود واحد لا عمودان.** `startdate` و`enddate` منفصلين يأكلان العرض مرتين ويُقرآن رقمين لا مدى.
 
 **«بلا نهاية» حالة أولى لا استثناء** — خانة فارغة يقرأها المستخدم «بيانات ناقصة» لا «مفتوحة». غيّر النص بـ `[openLabel]`.
+
+**في الكود** (وُثّق 2026-09-26 من الكود): «من — إلى» سطرًا واحدًا بلا التفاف وفجوة 8، والتاريخان `dir="ltr"` بأرقام متساوية العرض، والشرطة `—` و«بلا نهاية» بلون `text-muted`. بلا `from` يُعرض `openLabel` وحده. لا شاشة في اللوحة تستعمله بعد (قيس 2026-09-26).
+
+### شريط الأدوات — `<app-table-toolbar>`
+
+> وُثّق 2026-09-26 من الكود ([`table-toolbar.component.ts`](../../../src/app/shared/ui/table/table-toolbar.component.ts)). المستعملون: 20 ملفًّا (قيس 2026-09-26).
+
+يوضع في فتحة `[table-toolbar]` من `<app-table>`، فيعلو الرأس داخل القشرة نفسها:
+
+```
+[ البحث · الفترة · الفلتر ]  ← [toolbar-filters] في طرف البداية        [toolbar-actions] في طرف النهاية →  [ تصدير · الأعمدة ]
+```
+
+* الشريط: حشوة 12 × 16، سطح `--ds-table-toolbar-bg`، حدّ سفلي `border-width-sm` بـ`--ds-table-toolbar-border`، وفجوة 12 بين السطرين و16 بين الطرفين حين يلتفّ.
+* مجموعة الحقول لا تنكمش، وفجوتها `--ds-table-toolbar-gap-fields` (12). `<app-search-field>` و`<app-date-range-field>` فيها بعرض ثابت `--ds-table-toolbar-search-width` (320، في `inline-size` لا في `flex-basis` وحده)، و`<app-filter-chip>` و`<app-filter-panel>` بعرض محتواهما بعد البحث.
+* مجموعة الأفعال بفجوة `--ds-table-toolbar-gap-actions` (8)، تُدفع إلى طرف النهاية بـ`margin-inline-start: auto`، ولا تتجاوز عرض الشريط فتلتفّ.
+* ≤ 768px: الحقول تأخذ السطر كاملًا والفلتر بجوار البحث فيه (قرار المنتج 2026-09-24)، والحقل يملأ ما يبقى بأدنى نصف السطر، والأفعال في سطر تحته من البداية.
+
+### شريط التحديد — `<app-table-selection-bar>`
+
+> وُثّق 2026-09-26 من الكود ([`table-selection-bar.component.ts`](../../../src/app/shared/ui/table/table-selection-bar.component.ts)). المستعملون: 12 ملفًّا (قيس 2026-09-26).
+
+يوضع في فتحة `[table-selection]`، فيجلس أسفل الصفوف ويلتصق بأسفل النافذة ما دام الجدول أطول منها. لا يُرسم أصلًا حين `count` صفر.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ تم تحديد 2 من 48 عميلًا                [أفعال]  إلغاء التحديد │
+└──────────────────────────────────────────────────────────────┘
+```
+
+* سطح مقلوب `--ds-table-selection-bg` ونصّ `--ds-table-selection-fg`، استدارة `--ds-table-selection-radius` (12)، هامش 12 من كل جهة، حشوة 8 × 16، وفجوة 16.
+* العدّ 14/600 في طرف البداية؛ الأفعال (فتحة `[bar-actions]`) ثم «إلغاء التحديد» في طرف النهاية بفجوة 8.
+* «إلغاء التحديد» زرّ بشكل رابط: 14 بخطّ تحته، حشوة 8، وتركيزه إطار `border-width-md` بلون النصّ وإزاحة 2px (الحلقة الافتراضية تختفي على الداكن).
+* الفعل الهدّام داخله بـ`data-tone="danger"` يأخذ `--ds-table-selection-danger-fg`.
+* ≤ 640px: العدّ سطرًا والأفعال سطرًا تحته بعرض كامل.
+* المعدود بأربع صيغ عربية (`SelectionNoun`): 1 مفرد · 2 مثنّى · 3–10 جمع · 11 فأكثر مفرد منصوب — ويتبع **العدد الكلّي** حين يُعرف.
+
+### المرقِّم — `<app-paginator>`
+
+> وُثّق 2026-09-26 من الكود ([`paginator.component.ts`](../../../src/app/shared/ui/table/paginator.component.ts)). بديل `<mat-paginator>` بالشكل نفسه — **ليس على توكنز النظام بعد** (§15).
+
+```
+عدد العناصر: [10 ▾]      1 - 10 من 40      [«] [‹ السابق] [التالي ›] [»]
+```
+
+* سطر واحد يلتفّ، محاذاته `flex-end`، فجوته `1.5rem`، حشوة رأسية `0.5rem`، خط `0.875rem` بلون `#555`.
+* القائمة `<select>` أصلية بحدّ `#ced4da` واستدارة `0.25rem`.
+* أزرار التنقّل دوائر `2rem` بلا حدّ، تمريرها `rgba(0, 0, 0, 0.05)`، والمعطّل شفافية `0.35`. أيقوناتها `fa-light fa-angle-*` (Font Awesome)، مثبّتة لاتجاه RTL: «السابق» `angle-right` و«التالي» `angle-left`.
+* زرّا الأولى والأخيرة يظهران بـ`[showFirstLastButtons]` وحده.
+* يُخفى (`display: none` ويبقى مركّبًا) حين `length ≤ 5` وهو في الصفحة الأولى.
 
 ## 4. الأنواع والمقاسات
 
@@ -140,8 +225,12 @@ last_verified: 2026-09-09
 | `ds-table__nowrap` | خليّة لا يلتفّ محتواها — تُوسّع عمودها بدل كسره سطرين |
 | `ds-table__col-grow` | عمود واحد يبتلع الفراغ الزائد، فتلتصق بقيّة الأعمدة |
 | `ds-table__col-equal` | عمودان أو أكثر يتقاسمون الفراغ **بالتساوي** |
+| `ds-table__select` | عمود خانة الاختيار في طرف البداية: عرض `--ds-table-select-width` (60)، حشوة أفقية 12، بلا التفاف (وُثّق 2026-09-26 من الكود) |
+| `ds-table__row--active` (على `<tr>`) | الصفّ المعروض الآن في لوحة التفاصيل: خطّ في بداية أوّل خليّة بعرض `--ds-table-active-bar-width` (4) ولون `--ds-color-border-brand` — غير `aria-selected` («مختار لفعل قادم») (وُثّق 2026-09-26 من الكود) |
 
 **النصّ الطويل في خليّة:** سطران ثم «…» بـ`ds-page__clamp-2` (شاشات المدونة، `views/admin/blog/blog-page.scss`) ومعه `[appTooltip]` و`[appTooltipIfTruncated]="true"` فيظهر النصّ كاملًا عند المرور والتركيز إن قُصّ فقط. عرضه ثابت بطول سطره، والعمود المقصوص **لا يأخذ `col-grow`**: الفراغ لبقيّة الأعمدة. سطر اسم التصنيف والوسم `--ds-table-clamp-line-length` (60ch)، وسطر عنوان المقال `--ds-table-title-line-length` (281px، من Figma — قرار المنتج 2026-09-11).
+
+(قيس 2026-09-26): `ds-page__clamp-2` في 11 شاشة. ثلاث منها — المقالات والاستطلاعات والدورات — تعيد ضبط `--ds-table-clamp-line-length` في ورقتها إلى `min(var(--ds-table-title-line-length), 50vw)`، والباقي على 60ch. والأداة نفسها معرَّفة مرّتين: `blog-page.scss` و`site-page.scss` (DEBT-015).
 
 (قرار المنتج 2026-09-21 — [CLAUDE.md](../../../CLAUDE.md)):
 
@@ -182,6 +271,8 @@ The one exception is a table inside a narrow container (a card that is half the 
 | القيمة | نصٌّ يُحدَّد ويُقرأ، لا زرّ | قيمةٌ تُنسخ بنقرها لا شيء يقول ذلك قبل النقر |
 | النتيجة | رسالة «تم نسخ …»، وعند الفشل «تعذر نسخ … انسخه من الجدول يدويًا.» | النسخ لا يُرى؛ بلا رسالة لا يعرف المستخدم أنه وقع |
 | `dir="ltr"` | على نصّ القيمة اللاتينية لا على الخليّة | على الخليّة يقلب محاذاة البداية فينفصل العمود عن الصفّ |
+
+**في الكود** (وُثّق 2026-09-26 من الكود): `.ds-table__copyable` سطرٌ مرن بفجوة 8. و`.ds-table__copy-button` مربّع 24×24 (`--ds-space-6`) بلا حدّ ولا خلفية، بلون `text-muted` واستدارة `radius-sm`؛ تمريره `surface-sunken` و`text-primary`، وتركيزه `--ds-focus-ring`. لا مساحة لمس ممتدّة حوله — انظر ⚠️ في §15.
 
 **المستعملون:** البريد والموبايل في جداول المستخدمين (الطلاب، المدربون، المدراء، المشرفون، العملاء المحتملون)، ومرجع التحويل في سجل المسحوبات (2026-09-14)، ورقم الطلب والبريد والموبايل في الطلبات (2026-09-15).
 
@@ -254,6 +345,26 @@ get isEmptyCoupon(): boolean {
 > لا توجد دورات مطابقة لبحثك
 > لا نتائج لـ «التسويق». جرب كلمة بحث أقصر أو تأكد من كتابة الكلمة بشكل صحيح.
 
+### حالات الصفّ والأدوات كما يرسمها الكود
+
+> وُثّق 2026-09-26 من الكود ([`table.component.ts`](../../../src/app/shared/ui/table/table.component.ts)).
+
+| الحالة | الشكل |
+|---|---|
+| تمرير على الصفّ | خلاياه `surface-hover`، وتظهر `.ds-table__hover-action` فيه (شفافية 0 ← 1 في `--ds-duration-fast` بـ`--ds-easing-standard`، بلا حركة مع `prefers-reduced-motion`) |
+| تركيز داخل الصفّ | كالتمرير: `:focus-within` يُظهر أفعاله؛ والزرّ نفسه يظهر بـ`:focus-visible` |
+| قائمة ⋯ مفتوحة | الزرّ الذي فتحها يبقى ظاهرًا (`aria-expanded="true"`) ولو خرج المؤشّر من الصفّ |
+| لمس (`hover: none`) | أفعال التمرير ظاهرة دائمًا |
+| مختار (`aria-selected="true"`) | خلاياه `surface-selected` |
+| معروض في لوحة التفاصيل (`ds-table__row--active`) | خطّ `--ds-color-border-brand` بعرض 4 في بدايته |
+| تركيز منطقة التمرير | `--ds-focus-ring` |
+| زرّ النسخ / المقبض: تمرير | `surface-sunken` و`text-primary` |
+| زرّ النسخ / المقبض: تركيز | `--ds-focus-ring` |
+| المقبض: ضغط | مؤشّر `grabbing` |
+| أثناء السحب | الصفّ فراغٌ `surface-sunken` بإطار `outline` `border-width-sm` بـ`border-strong` ومحتوى مخفي؛ وبالسهمين `surface-sunken` وحده (§8) |
+| جدول أعرض من حاويته، والصفّ ممرور أو فيه التركيز أو قائمته مفتوحة (`hover: hover`) | خليّة `ds-table__actions` تلتصق بحافّة النهاية بـ`--ds-z-raised`؛ وبلا مرور تأخذ سطح `surface-raised` |
+| المرقِّم: زرّ معطّل | شفافية `0.35` ومؤشّر `not-allowed` (قيمة خام — §15) |
+
 ## 6. التوكنز
 
 القيم من [`tokens.css`](../../tokens/tokens.css) § الجدول.
@@ -308,6 +419,69 @@ get isEmptyCoupon(): boolean {
 
 و`[hasTotalRow]` — §3 «صف الإجمالي». ومدخلات `tr[appTableGroup]` و`<app-table-bar>` و`<app-table-range>` في أقسامها في §3.
 
+### الواجهة كاملةً من الكود
+
+> وُثّق 2026-09-26 من الكود — كل ما يلي موجود في [`shared/ui/table/`](../../../src/app/shared/ui/table/).
+
+**`<app-table>`**
+
+| الاسم | النوع | الافتراضي | |
+|---|---|---|---|
+| `caption` | `string` | — (**إلزامي**) | `aria-label` لمنطقة التمرير |
+| `stickyHeader` | `boolean` | `false` | |
+| `density` | `'default' \| 'compact'` | `'default'` | |
+| `zebra` | `boolean` | `false` | |
+| `hasTotalRow` | `boolean` | `false` | |
+| `bordered` | `boolean` | `true` | يلفّ الجدول ببطاقة (سطح وحدّ واستدارة 12). `false` حين تكون قشرة الصفحة سطحًا أبيض واحدًا — لا بطاقة داخل بطاقة |
+| فتحة `[table-toolbar]` | محتوى | — | فوق الرأس داخل القشرة: `<app-table-toolbar>` وما يرافقه |
+| فتحة `[table-selection]` | محتوى | — | أسفل الصفوف لاصقًا: `<app-table-selection-bar>` |
+
+**`tr[appTableTotal]`** — بلا مدخلات؛ يضيف الصنف `ds-table__total`.
+
+**`tr[appTableGroup]`**
+
+| الاسم | النوع | الافتراضي | |
+|---|---|---|---|
+| `label` | `string` | — (**إلزامي**) | اسم القسم |
+| `count` | `number` | — (**إلزامي**) | عدد صفوفه؛ 0 ولا يُحذف |
+| `countLabel` | `string \| null` | `null` | العدد بمعدوده |
+| `total` | `string \| null` | `null` | مجموع القسم كما يُعرض |
+| `colspan` | `number` | — (**إلزامي**) | بعد إسقاط عمود التجميع |
+| `expanded` | `boolean` | `true` | ثنائي الاتجاه مع `expandedChange` |
+| `controls` | `string \| null` | `null` | لـ`aria-controls` |
+| `(expandedChange)` | `boolean` | مخرج | عند الطيّ والفتح |
+
+**`<app-table-bar>`** — `percent: number` (**إلزامي**).
+**`<app-table-range>`** — `from: string | null` (`null`) · `to: string | null` (`null`) · `openLabel: string` (`'بلا نهاية'`).
+**`<app-table-toolbar>`** — بلا مدخلات؛ فتحتان: `[toolbar-filters]` و`[toolbar-actions]`.
+
+**`<app-table-selection-bar>`**
+
+| الاسم | النوع | الافتراضي | |
+|---|---|---|---|
+| `count` | `number` | `0` (**إلزامي**) | صفر = لا شريط في DOM |
+| `totalCount` | `number \| null` | `null` | المجموع المطابق؛ `null` يذكر العدد وحده |
+| `itemNoun` | `SelectionNoun` | — (**إلزامي**) | `{ singular, dual, plural, accusative }` |
+| `label` | `string \| null` | `null` | نصّ جاهز يغلب الصيغة |
+| `(cleared)` | `void` | مخرج | «إلغاء التحديد» |
+| فتحة `[bar-actions]` | محتوى | — | أفعال الاختيار |
+
+**`<app-paginator>`**
+
+| الاسم | النوع | الافتراضي | |
+|---|---|---|---|
+| `length` | `number` | `0` | |
+| `pageSize` | `number` | `10` | |
+| `pageIndex` | `number` | `0` | |
+| `pageSizeOptions` | `number[]` | `[10, 25, 50, 100]` | |
+| `showFirstLastButtons` | `boolean` | `false` | |
+| `ariaLabel` | `string` | `'الصفحات'` | اسم المجموعة `role="group"` |
+| `(page)` | `PageEvent` | مخرج | `{ pageIndex, pageSize, length, previousPageIndex? }` — شكل `PageEvent` في Material |
+
+**الفرز:** `[appSort]` (`exportAs: 'appSort'`) ومخرجه `(appSortChange)` بـ`SortState` = `{ active: string; direction: 'asc' | 'desc' | '' }`. و`[appSortHeader]` على `<th>` ومدخله المعرّف نفسه (`appSortHeader="…"`، افتراضيًّا فارغ). كل ضغطة تدور: تصاعدي ← تنازلي ← بلا فرز.
+
+**`TableDataSource<T>`** — بديل `MatTableDataSource` بالشكل نفسه: `data` · `filter` · `filteredData` · `paginator` · `sort` · `connect()` · `disconnect()`، و`filterPredicate` الافتراضي بحثٌ في نصّ الصفّ كلّه بأحرف صغيرة.
+
 ## 8. السلوك ولوحة المفاتيح
 
 ### الفرز والفلترة والترقيم
@@ -315,8 +489,10 @@ get isEmptyCoupon(): boolean {
 * **الفرز** — عبر [`sort.directive.ts`](../../../src/app/shared/ui/table/sort.directive.ts) القائم. رأس العمود القابل للفرز زر، وحالة الفرز معلنة بـ `aria-sort`.
   * **الواجهة البرمجية (وُثّقت 2026-09-26 من الكود):** `[appSort]` على `<table>` أو أيّ أصل للخلايا — بديل `matSort`، ويُطلق `(appSortChange)` بـ`SortState`. و`[appSortHeader]` على `<th>` — بديل `mat-sort-header`، بلا معرّف عمود في كل استعمالات اللوحة (10 شاشات)، فالضغط يبدّل حالة فرز واحدة مشتركة لا فرزًا بحسب العمود؛ حُفظ هذا السلوك كما كان ولم «يُصلَح». الاتجاه في `aria-sort` وحده.
   * ⚠️ **لا سهم ظاهر لاتجاه الفرز** — الحالة تصل قارئ الشاشة ولا تُرى. يحتاج قرار تصميم (أيقونة من `src/icons` بجوار عنوان العمود).
+  * **ما يفعله الكود فعلًا** (وُثّق 2026-09-26 من الكود): `[appSortHeader]` يضيف إلى `<th>` مستمع نقر والصنف `app-sort-header` (مؤشّر يد وبلا تحديد نصّ — `src/styles.scss`)، ولا يجعله زرًّا: لا `role` ولا `tabindex` ولا مفتاح. و`aria-sort` يُكتب حين يكون للعمود معرّف وحده، والشاشات العشر بلا معرّف (قيس 2026-09-26) — فلا `aria-sort` في أيٍّ منها. والشاشات العشر كلها جداول `tw-` موروثة، لا `<app-table>`. انظر ⚠️ في §15.
 * **الفلترة** — النمط المعتمد في [`filtering.md`](../patterns/filtering.md): مفتاح حالة فوق الجدول، وزرّ «فلترة» في الشريط يفتح لوحة بعمودين، والمطبَّق رقائق عبر [`<app-filter-bar>`](../../../src/app/shared/ui/filter-bar/) — مرئية دائمًا.
 * **الترقيم** — عبر [`<app-paginator>`](../../../src/app/shared/ui/table/paginator.component.ts) القائم. **يظهر فقط حين يزيد عدد الصفوف عن 5** (قرار 2026-09-11). القاعدة داخل المكوّن، فلا تكتب الشاشة شرط `> 5` بنفسها. يبقى مركّبًا ويُخفى، فلا يعود رقم الصفحة إلى الأولى، ولا يُخفى خارج الصفحة الأولى. والشاشة تخفيه بنفسها في التحميل والخطأ فقط.
+  * **في الكود** (وُثّق 2026-09-26 من الكود): تغيير حجم الصفحة يُبقي أوّل صفّ معروض في الصفحة الجديدة (`pageIndex = floor(start / size)`)، والانتقال خارج المدى يُقصّ ولا يُطلق حدثًا. والمدى «1 - 10 من 40»، و«0 من 0» بلا صفوف. المستعملون: 46 ملفًّا (قيس 2026-09-26).
 
 ### الإجراءات الجماعية
 
@@ -358,6 +534,8 @@ get isEmptyCoupon(): boolean {
 | ما يتبع المؤشّر | نسخة الصفّ نفسه مرفوعة مائلة بشارة موضعها — بلا `*dsSortablePreview`. سطحها عالمي في `src/styles.scss` (`.ds-sortable-preview`) | النسخة تُلحق بـ `body`، خارج المكوّن؛ والصفّ كاملًا أوضح من بطاقة باسمه (قرار 2026-09-10) |
 | الفراغ | الصفّ نفسه بصنف `ds-sortable-item--placeholder`، رماديّ لا بلون العلامة — تنسيقه في `<app-table>` | لا `<tr>` ثانٍ يُدرج في `<tbody>`، والصفّ يحفظ ارتفاعه فلا يقفز الجدول |
 | `[sortableDisabled]` | أثناء التحميل | لا سحب فوق هيكل عظمي |
+
+**المقاسات في الكود** (وُثّق 2026-09-26 من الكود): الخليّة `ds-table__drag` بعرض `--ds-touch-target-min` (44) وحشوة أفقية 8 وتوسيط؛ والمقبض 32×32 (`--ds-space-8`) باستدارة `--ds-radius-control` (12) ولون `text-muted` ومؤشّر `grab`.
 
 **فشل الحفظ يعيد الترتيب السابق** — ترتيب معروض لم يُحفظ يَعِد بما لم يقع. والإفلات في الموضع نفسه لا يرسل طلبًا.
 
@@ -482,14 +660,20 @@ get isEmptyCoupon(): boolean {
 
 ## 15. الدَّين القائم
 
-* `<app-paginator>` — «⏳ يحتاج ترقية» في جدول المكوّنات في [`README.md`](../../README.md).
+* `<app-paginator>` — «⏳ يحتاج ترقية» في جدول المكوّنات في [`README.md`](../../README.md). (وُثّق 2026-09-26 من الكود) ما يحتاجها: ورقته [`paginator.component.scss`](../../../src/app/shared/ui/table/paginator.component.scss) قيم خام لا توكنز (`#555` · `#333` · `#ced4da` · `#fff` · `rgba(0, 0, 0, 0.05)` · `1.5rem` · `0.875rem` · `0.35`)، وخصائص فيزيائية (`width`/`height`)، وأيقونات Font Awesome (`fa-light fa-angle-*`) مثبّتة لاتجاه RTL فلا تنعكس في LTR — §3 «المرقِّم».
 * [`DEBT-015`](../../TECHNICAL-DEBT.md) — ثلاث نسخ من أدوات `.ds-page*`، والرابعة على الطريق (منها `.ds-page__clamp-2` المستعملة للنصّ الطويل في §4).
 * [`DEBT-012`](../../TECHNICAL-DEBT.md) — منجز 2026-09-10 (§8 «إعادة الترتيب بالسحب»).
+* صُحّح 2026-09-26: كانت المواصفة تقول إن صفّ الملخّص في سجل المسحوبات خليّةٌ بعرض الصفّ داخل الجدول (2026-09-14)، والكود منذ 2026-09-17 سطرٌ في منطقة الأدوات `[table-toolbar]` فوق الجدول والمخطط — §3.
+* صُحّح 2026-09-26: كان §1 يقول «367 استخدامًا» لـ`class="table"` و`table-responsive`، والباقي اليوم 23 و63 — §1.
+* صُحّح 2026-09-26: كانت المواصفة تذكر سجل المسحوبات مستهلكًا لـ`tr[appTableGroup]`، ولا مستهلك له اليوم (الجدول مسطّح منذ 2026-09-17) — §3.
+* ⚠️ تعارض (2026-09-26): المواصفة «رأس العمود القابل للفرز زر، وحالة الفرز معلنة بـ`aria-sort`» (§8 · §11) · الكود `<th appSortHeader>` بمستمع نقر وحده — لا يصله التركيز ولا يُفعَّل بلوحة المفاتيح، و`aria-sort` لا يُكتب لأن الشاشات العشر بلا معرّف عمود.
+* ⚠️ تعارض (2026-09-26): المواصفة «`.ds-table__copy-button` — `design-tools/copy` عارية بهدف لمس كامل» (§4) · الكود مربّع 24×24 (`--ds-space-6`) بلا مساحة لمس ممتدّة، دون `--ds-touch-target-min` (44). وكذلك مقبض السحب 32×32 داخل خليّة بعرض 44.
+* ⚠️ تعارض (2026-09-26): قاعدة الأيقونات «`src/icons/` أولًا» ([`iconography.md`](../foundations/iconography.md)) · الكود يرسم سهم عنوان القسم (`fa-light fa-angle-down`) وأسهم المرقِّم (`fa-light fa-angle-*`) بـFont Awesome لا بـ`<ds-icon>`.
 
 ## 16. روابط
 
 - **يستخدم:** [`badge-status.md`](../atoms/badge-status.md) (`<app-status>`) · [`states.md`](../patterns/states.md) (`<app-empty-state>` · `<app-skeleton-group>`) · [`sortable.md`](../molecules/sortable.md) · [`menu.md`](../molecules/menu.md) · [`tooltip.md`](../atoms/tooltip.md) · [`button.md`](../atoms/button.md) · [`icon.md`](../atoms/icon.md)
-- **يُستخدم في:** `/admin/blog` (المقالات والتصنيفات والوسوم) · `/admin/finance/history` (سجل المسحوبات) · الطلبات · تفاصيل الكوبون · جداول المستخدمين · `/admin/products/courses`
+- **يُستخدم في:** `/admin/blog` (المقالات والتصنيفات والوسوم) · `/admin/finance/history` (سجل المسحوبات) · الطلبات · تفاصيل الكوبون · جداول المستخدمين · `/admin/products/courses` · `/admin/dashboard` (`<app-table-bar>` في «نظرة عامة») — و`<app-table>` في 33 ملفًّا إجمالًا (قيس 2026-09-26)
 - **ذو صلة:** [`table-columns.md`](./table-columns.md) · [`filtering.md`](../patterns/filtering.md) · [`checkbox-radio-switch.md`](../atoms/checkbox-radio-switch.md) · [`distribution-bar.md`](../molecules/distribution-bar.md)
 - **الكود:** [`src/app/shared/ui/table/`](../../../src/app/shared/ui/table/)
 - **الأصل:** `Design-System/components/table.md` — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)

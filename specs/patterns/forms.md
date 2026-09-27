@@ -3,10 +3,10 @@ title: النماذج
 name: forms
 tier: pattern
 status: approved
-components: ['app-form-field', 'app-phone-input', 'app-modal']
+components: ['app-form-field', 'app-phone-field', 'app-phone-input', 'app-modal']
 origin: ['Design-System/components/input-and-form.md#قواعد-إلزامية', 'Design-System/components/input-and-form.md#تخطيط-النموذج', 'Design-System/components/input-and-form.md#التحقق', 'CLAUDE.md — Required and optional fields — every form, every dialog', 'CLAUDE.md — Two fields side by side ⇒ a wider dialog']
 decisions: ['2026-09-10 — «(مطلوب إدخاله)» على كل حقل ولو كانت كل حقول النموذج مطلوبة', '2026-09-13 — أُكِّد: لا يُطفأ التعليم في نموذج جديد، والسطر العامّ في وصف النافذة إضافةً لا بدلًا', '2026-09-13 — «إضافة حساب بنكي»: IBAN وSwift حقلان متجاوران في نافذة xl', 'غير مؤرَّخ — CLAUDE.md: Required and optional fields — every form, every dialog', 'غير مؤرَّخ — CLAUDE.md: Two fields side by side ⇒ a wider dialog']
-last_verified: 2026-09-10
+last_verified: 2026-09-26
 ---
 
 # النماذج — نمط
@@ -26,7 +26,8 @@ last_verified: 2026-09-10
 | المكوّن | دوره في النمط | ملفه |
 |---|---|---|
 | `<app-form-field>` | كل حقل: التسمية، علامة «(مطلوب إدخاله)» / «(اختياري)»، النص المساعد، رسالة الخطأ | [`input-and-form.md`](../molecules/input-and-form.md) |
-| `<app-phone-input>` (القديم) | حقل الجوال الذي يحمل تسميته بنفسه — له `requiredMark` خاصّ (§7) | [`phone.md`](../molecules/phone.md) |
+| `<app-phone-field>` | حقل الموبايل في اللوحة: يُسقَط داخل `<app-form-field>`، فعلامة الإلزام والتسمية والرسالة من الحاوي كأيّ حقل | [`phone.md`](../molecules/phone.md) |
+| `<app-phone-input>` (القديم) | حقل الجوال الذي يحمل تسميته بنفسه — له `requiredMark` خاصّ (§7). **خارج اللوحة وحدها** (قيس 2026-09-26) | [`phone.md`](../molecules/phone.md) |
 | `<app-modal size="xl">` | النافذة حين يتجاور حقلان في صفّ واحد | [`modal-drawer.md`](../organisms/modal-drawer.md#الأحجام) · [`dialogs.md`](./dialogs.md) |
 
 ## 4. التشريح
@@ -84,7 +85,13 @@ last_verified: 2026-09-10
 * «(مطلوب إدخاله)» مخفية عن قارئ الشاشة (`aria-hidden`)، لأن `aria-required` يعلن الإلزام أصلًا والاثنان معًا يُسمعانه مرّتين. و`aria-required` يبقى على الحقل حتى مع `[requiredMark]="false"`.
 * «(اختياري)» تُقرأ لقارئ الشاشة — لا سمة تعلن الاختياري غيرها.
 
+الكود يطابق هذا: `form-field.component.html` يرسم «(مطلوب إدخاله)» بـ`aria-hidden="true"` متى `required && requiredMark`، وإلا «(اختياري)» متى `optional` (بلا `aria-hidden`)، و`.ds-field__mark` بوزن 400 و`--ds-color-text-muted`. ونصوص الخطأ في حوارات اللوحة المبنيّة عليه كلها «أدخل …» أو «اختر …» للقوائم (قيس 2026-09-26).
+
+> ✅ **أُصلح 2026-09-27:** نافذة ربط التطبيقات تُظهر «(مطلوب إدخاله)» (`[requiredMark]="!connected"` — يسقط مع «(اختياري)» حين يُعرض حساب مربوط للقراءة)، فلا `[requiredMark]="false"` في `views/admin`. **وكان:** ⚠️ تعارض (2026-09-26): القاعدة (2026-09-10، أُكِّدت 2026-09-13) «لا يُطفأ التعليم في نموذج جديد» · الكود: نافذة ربط التطبيقات ([`integration-form-dialog.component.html`](../../../src/app/views/admin/main-features/integrations/integration-form-dialog/integration-form-dialog.component.html)) تمرّر `[requiredMark]="false"` لكل حقولها، بتعليق «حقل واحد مطلوب في كل نافذة: (مطلوب إدخاله) عليه تكرار بلا فائدة» — وهو الموضع الوحيد في `views/admin`.
+
 **حقل الجوال (`app-phone-input`)** يحمل تسميته بنفسه، فله المُدخلان نفسهما بفرق واحد: `requiredMark` فيه `'text' | 'none' | 'star'`، وافتراضيّه `'star'` **مؤقّتًا**. الحقل مستخدم في 17 ملفًا، وتغيير افتراضيّه وحده يجمع في النموذج الواحد نجمةً على بقية الحقول وكلمةً على الجوال. صفحة المستخدمين نُقلت (`text` و`none`)، والبقية تُنقل مع نماذجها ثم يُحذف `'star'`.
+
+> صُحّح 2026-09-26: كانت المواصفة تقول إن `app-phone-input` مستخدم في 17 ملفًا وإن صفحة المستخدمين نُقلت إلى `text` و`none` فيه. والكود اليوم: **11 قالبًا، كلها خارج اللوحة** (الموقع العام، الدفع، التسجيل، ملف المتعلّم)، **ولا أحد منها يمرّر `requiredMark`** — فكلها على `'star'`. وفي `views/admin` لا استعمال له: حوارات المستخدمين وبقية نماذج اللوحة انتقلت إلى `<app-phone-field>` داخل `<app-form-field>`، فعلامتها «(مطلوب إدخاله)» من الحاوي كأيّ حقل ([`phone.md`](../molecules/phone.md)).
 
 ### تخطيط النموذج
 
@@ -133,6 +140,8 @@ last_verified: 2026-09-10
 |---|---|
 | الموبايل | أدخل رقم موبايل صحيحًا. |
 | البريد | أدخل بريدًا إلكترونيًا صحيحًا، مثل: name@domain.com |
+
+> ⚠️ تعارض (2026-09-26): النصّ «معتمد حرفيًا» · حوار «تحديث البيانات» في الإعدادات ([`settings-update-data-dialog.component.ts`](../../../src/app/views/admin/main-features/settings/settings-update-data-dialog/settings-update-data-dialog.component.ts) السطر 30) يكتب «أدخل بريدًا إلكترونيًا صحيحًا.» بلا المثال. (حوارات المستخدمين تكتبه كاملًا — `user-dialog-form.ts`.)
 
 | ✅ | ❌ |
 |---|---|

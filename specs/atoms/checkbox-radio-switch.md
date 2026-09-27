@@ -8,12 +8,12 @@ selector: ['<app-checkbox>', '<app-radio>', '[appRadioGroup]', '<app-toggle>']
 source: ['src/app/shared/ui/checkbox', 'src/app/shared/ui/radio', 'src/app/shared/ui/toggle']
 origin: ['Design-System/components/checkbox-radio-switch.md']
 keywords: ['اختيار', 'تبديل', 'مربع اختيار', 'checkbox', 'radio', 'switch', 'toggle', 'رقاقة', 'chip']
-last_verified: 2026-09-23
+last_verified: 2026-09-26
 ---
 
 # الاختيار والتبديل (Checkbox, Radio & Switch) — `<app-checkbox>` · `<app-radio>` · `<app-toggle>`
 
-> أيّها تستخدم، والقواعد المشتركة. يحل محل `class="form-check"` — **125 استخدامًا** في لوحة التحكم.
+> أيّها تستخدم، والقواعد المشتركة. يحل محل `class="form-check"` — **125 استخدامًا** في لوحة التحكم. (قيس 2026-09-26 في `views/admin`: بقي 113 موضعًا بفئة `form-check…` في 37 قالبًا؛ و`<app-checkbox>` في 72 موضعًا، و`<app-radio>` في 35، و`appRadioGroup` في 15، و`<app-toggle>` في 32.)
 
 ## 1. متى تستخدمه
 
@@ -79,6 +79,7 @@ last_verified: 2026-09-23
 * **2–5 مقاطع**، كلٌّ كلمة أو كلمتان. فوقها فالخاصية مكانها لوحة الفلترة.
 * الوزن واحد للمقاطع كلّها: تثقيل المختار يوسّعه فتزحف جيرانه. والمختار يُقرأ بالقرص الأبيض وظلّه ولون النصّ.
 * السكّة (`.app-radio-group--segmented`) عامّة في `src/styles.scss`: الموجِّه بلا أنماط، ومضيفه في قالب المستهلك.
+* **المستعمل (قيس 2026-09-26):** ثلاث شاشات وخمس مجموعات — فلتر حالة الربط في صفحة التطبيقات · «حجم النص» و«مؤشر التركيز» في «الإعدادات العامة» (تسري فور الاختيار) · «نوع الخصم» و«مدة صلاحية الخصم» في نافذة تذكير السلة المتروكة (`reminder-form-dialog`، تُحفظ مع زرّ النافذة — انظر [§15](#15-الدَّين-القائم)).
 
 توكنزه في [§6](#المفتاح-المقطّع--appearancesegmented)، وسلوكه حين تضيق الشاشة في [§9](#9-الاستجابة). ومكوّن المفتاح المقسّم لطريقة عرض واحدة («كمبيوتر / جوال») ملفه [`segmented.md`](../molecules/segmented.md).
 
@@ -106,6 +107,7 @@ last_verified: 2026-09-23
 * **المختارة لا تغمق عند المرور** (قرار المنتج 2026-09-18): الضغط عليها لا يفعل شيئًا — هي المختارة أصلًا — والتغميق يُقرأ درجةً ثانية للاختيار. والمرور على غير المختارة باقٍ: الضغط عليها يبدّل الاختيار. (يخالف رقاقة الإعداد، التي يعني المرور عليها «أستطيع فتحك».)
 * الشكل شكل [رقاقة الإعداد](../molecules/setting-chip.md) نفسه بقيمها — فلا شكلان للرقاقة في المنتج. والفرق أن تلك تفتح لوحة، وهذه تختار قيمة.
 * التسمية تُكتب فوق الصفّ وتُربط بـ `aria-labelledby`: المجموعة لا تُسقَط داخل `<app-form-field>` (الحقل يُسقط عنصر التحكّم حين يوفّر `FORM_FIELD_CONTROL` وحده)، وقيم التسمية قيم `.ds-field__label` نفسها.
+* **المستعمل (قيس 2026-09-26):** قالبان — نافذة الكوبون (`site-coupon-modal`) وتبويب «البيانات» في الدورة (`course-info-tab`).
 
 توكنزها في [§6](#الرقاقة--appearancechip)، وسلوكها حين تضيق الشاشة في [§9](#9-الاستجابة).
 
@@ -122,6 +124,7 @@ last_verified: 2026-09-23
 * خلفية المختار `surface-selected` لا لون الزرّ: بطاقة بلون الزرّ تُقرأ زرًّا، ويفقد نصّها تباينه.
 * **النقر في أي موضع من البطاقة يختارها**: الـ `label` يمتدّ فوقها بطبقة شفّافة، فلا معالج نقر. ولذلك لا يوضع داخل البطاقة عنصر تفاعلي (زرّ، رابط، طيّ) — الطبقة تغطّيه.
 * ⛔ لا تُستعمل لقائمة قصيرة بلا أوصاف: بطاقات لكلمة واحدة تُطيل القائمة بلا معلومة.
+* **المستعمل (قيس 2026-09-26):** ثلاثة قوالب — «تغيير الصلاحية» (`update-user-role-dialog`) · إنشاء مقال بالذكاء الاصطناعي (`ai-article`) · «رابط جديد» في روابط الموقع (`new-menu-link-dialog`).
 
 توكنزها في [§6](#البطاقة--appearancecard).
 
@@ -164,7 +167,29 @@ last_verified: 2026-09-23
 
 تُعلن بـ `aria-checked="mixed"` — وهي ليست `false`، والفرق يهم قارئ الشاشة.
 
-> ⚠️ **غير موثّق بعد:** جدول حالات المربّع (Checkbox) — الأصل يوثّق شكل الراديو وحده، والمربّع «ما زال 22px بشكله القديم». وحالات Loading · Error · Success للعناصر الثلاثة لا يذكرها الأصل. حالات المفتاح في [`switch.md`](./switch.md#5-الحالات).
+### شكل المربّع (Checkbox)
+
+(وُثّق 2026-09-26 من الكود — `checkbox.component.scss`)
+
+| الحالة | المربّع (22×22، استدارة `--ds-radius-sm` = 6) | العلامة |
+|---|---|---|
+| غير محدَّد | حدّ `--ds-button-border-width` (1px) بلون `--ds-color-action-secondary-border` (`neutral-300`) على `--ds-color-field-bg` | — |
+| مرور (غير معطَّل) | الحدّ `--ds-color-action-primary-bg` (`brand-800`) | — |
+| محدَّد | ممتلئ `--ds-color-action-primary-bg` حدًّا وخلفية — ولا لون مرور خاصّ به | ✓ 14×14 بلون `--ds-color-action-primary-text`، تظهر بالشفافية |
+| وسطى (indeterminate) | ممتلئ كالمحدَّد | شرطة 10×2 مستديرة بلون `action-primary-text`، والعلامة تُخفى |
+| معطَّل | حدّ `--ds-color-action-disabled-border` (`neutral-200`) على `--ds-color-surface-disabled` · التسمية `text-disabled` · `not-allowed` | — |
+| محدَّد + معطَّل | بنفسجي كالمحدَّد، ويبهت بـ`--ds-opacity-disabled` (0.5) | ✓ |
+| تركيز | `--ds-focus-ring` على المربّع المرسوم عبر `:focus-within` | |
+
+* الانتقال: الحدّ والخلفية وشفافية العلامة بـ`--ds-duration-fast` `--ds-easing-standard`.
+* العلامة ✓ `<svg>` مكتوب داخل قالب المكوّن (مسار 20×20) لا `<ds-icon>`، والمقاسات 22 و14 و10×2 قيم مكتوبة في SCSS المكوّن لا توكنز.
+* حدّ غير المحدَّد `neutral-300` تباينه 1.71:1 على الأبيض (قيس من قيم `tokens.css`) — والراديو رُفع حدّه إلى `text-muted` (5.68:1) لأن 1.4.11 يطلب 3:1 ([شكل الراديو](#شكل-الراديو)). تعليق الكود يعلّل اختيار المربّع: «الحدّ نفسه الذي يحمله الزرّ الثانوي: عرضًا ولونًا».
+
+### Loading · Error · Success
+
+(وُثّق 2026-09-26 من الكود) لا يرسم أيٌّ من العناصر الثلاثة (`<app-checkbox>` · `<app-radio>` · `<app-toggle>`) حالة تحميل أو خطأ أو نجاح: لا مُدخل لها، ولا قاعدة `ng-invalid` أو `aria-invalid` في أنماطها. رسالة الخطأ في نماذج الراديو تكتبها الشاشة تحت المجموعة (كـ`reminder-form__error` في نافذة تذكير السلة).
+
+> ⚠️ **غير موثّق بعد:** هل يلزم العناصرَ الثلاثة شكلٌ للخطأ (حدّ أحمر؟) وللحفظ الجاري في المفتاح — قرار لم يُتّخذ. حالات المفتاح في [`switch.md`](./switch.md#5-الحالات).
 
 ## 6. التوكنز
 
@@ -172,8 +197,9 @@ last_verified: 2026-09-23
 
 | الموضع | التوكن |
 |---|---|
-| السكّة | `--ds-color-surface-sunken` · حشوة `--ds-space-1` · استدارة `--ds-radius-control` (12) |
-| المقطع | ارتفاع `--ds-button-height-sm` (32؛ 44 على اللمس) · حشوة `--ds-space-3` · استدارة `--ds-radius-md` (8 = 12 − 4) |
+| السكّة | `--ds-color-surface-sunken` · حشوة `--ds-space-1` · استدارة `--ds-radius-control` (12) · فجوة بين المقاطع `--ds-space-1` · `overflow-x: auto` بلا شريط تمرير |
+| المقطع | ارتفاع `--ds-button-height-sm` (32؛ 44 على اللمس) · حشوة `--ds-space-3` · استدارة `--ds-radius-md` (8 = 12 − 4) · حدّ 1px شفّاف دائمًا (يُلوَّن في التباين القسري وحده) · وزن `--ds-font-weight-medium` |
+| المعطَّل | `--ds-color-text-disabled` |
 | الخامل | `--ds-color-text-muted` ← المرور `text-primary` |
 | المختار | `--ds-color-surface-default` · `--ds-elevation-1` · `text-primary` |
 | التركيز | `--ds-focus-ring` على المقطع كلّه |
@@ -201,7 +227,7 @@ last_verified: 2026-09-23
 |---|---|
 | الحشوة | `--ds-space-2` · `--ds-space-4` |
 | الاستدارة | `--ds-radius-lg` |
-| الحدّ | `--ds-border-width-sm` · `--ds-color-border-default` ← المرور `border-strong` ← المختار `border-brand` |
+| الحدّ | `--ds-border-width-sm` · `--ds-color-border-default` ← المرور `border-strong` ← المختار `border-brand` ← المعطَّل `border-subtle` |
 | الخلفية | `--ds-color-surface-default` ← المختار `surface-selected` ← المعطَّل `surface-disabled` |
 | بين بطاقتين | `--ds-space-3` |
 | اسم الخيار ← وصفه | 0 — فراغ السطرين يفصلهما (جُرّب 8px ثم 4px فبدتا واسعتين) — والبطاقة كلّها هدف اللمس (`--ds-touch-target-min`)، فلا يُفرض 44px على سطر الاسم |
@@ -211,11 +237,65 @@ last_verified: 2026-09-23
 
 توكنز الراديو في كل حالة في جدول «شكل الراديو» — [§5](#شكل-الراديو). وتوكنز المفتاح (`--ds-switch-*`) في [`switch.md` §6](./switch.md#6-التوكنز).
 
-> ⚠️ **غير موثّق بعد:** توكنز المربّع (Checkbox) — لم يُنقل إلى شكل جديد بعد.
+قطر الراديو `--ds-icon-size-md` (20) عبر متغيّر المكوّن `--app-radio-size`، والنقطة `8px` قيمة مكتوبة في `--app-radio-dot-size`. (وُثّق 2026-09-26 من الكود)
+
+### المربّع (Checkbox)
+
+(وُثّق 2026-09-26 من الكود) لا طبقة `--ds-checkbox-*`: المكوّن يقرأ الدلالية مباشرة، ومقاساته مكتوبة.
+
+| الموضع | التوكن / القيمة |
+|---|---|
+| المربّع | 22×22 (مكتوب) · `--ds-radius-sm` (6) |
+| الحدّ | `--ds-button-border-width` (1px) · `--ds-color-action-secondary-border` ← المرور والمحدَّد `--ds-color-action-primary-bg` ← المعطَّل `--ds-color-action-disabled-border` |
+| الخلفية | `--ds-color-field-bg` ← المحدَّد `--ds-color-action-primary-bg` ← المعطَّل `--ds-color-surface-disabled` |
+| العلامة والشرطة | `--ds-color-action-primary-text` · 14×14 و10×2 (مكتوبة) · الشرطة `--ds-radius-pill` |
+| المحدَّد المعطَّل | `--ds-opacity-disabled` |
+| الصفّ | فجوة `--ds-space-2` · ارتفاع أدنى `--ds-touch-target-min` |
+| التسمية | `--ds-font-size-md` · `--ds-line-height-normal` · `--ds-color-text-primary` ← المعطَّل `--ds-color-text-disabled` |
+| التركيز | `--ds-focus-ring` |
+| الحركة | `--ds-duration-fast` · `--ds-easing-standard` |
 
 ## 7. الواجهة البرمجية
 
-`appRadioGroup` والاسم المشترك `name` — [§13](#13-مثال). والمُدخل `appearance` على المجموعة (`segmented` · `chip` · `card`) — [§4](#4-الأنواع-والمقاسات). و`[indeterminate]` للمربّع — [§5](#الحالة-الوسطى-indeterminate).
+`appRadioGroup` والاسم المشترك `name` — [§13](#13-مثال). والمُدخل `appearance` على المجموعة (`plain` الافتراضي · `segmented` · `chip` · `card`) — [§4](#4-الأنواع-والمقاسات). و`[indeterminate]` للمربّع — [§5](#الحالة-الوسطى-indeterminate).
+
+(الجداول الثلاثة وُثّقت 2026-09-26 من الكود. مدخلات المفتاح في [`switch.md` §7](./switch.md#7-الواجهة-البرمجية).)
+
+### `<app-checkbox>`
+
+| | الاسم | النوع | الافتراضي |
+|---|---|---|---|
+| مُدخل | `checked` | `boolean` | `false` |
+| مُدخل | `indeterminate` | `boolean` | `false` — يُكتب على العنصر الأصلي بعد كل فحص تغيير |
+| مُدخل | `disabled` | `boolean` | `false` |
+| مُدخل | `ariaLabel` | `string \| null` | `null` |
+| مُدخل | `ariaDescribedby` | `string \| null` | `null` — معرّف وصف خارج المربع |
+| مُخرج | `checkedChange` | `boolean` | — (لا `change`: الاسم كان يصطدم بحدث `change` الأصلي الصاعد من `<input>` فيُستدعى المعالج مرّتين — تعليق الكود) |
+
+ويعمل مع `ngModel` و`formControlName` (`ControlValueAccessor`).
+
+### `<app-radio>`
+
+| | الاسم | النوع | الافتراضي |
+|---|---|---|---|
+| مُدخل | `value` | `any` | — |
+| مُدخل | `checked` | `boolean` | `false` — للاستعمال بلا مجموعة؛ داخل المجموعة يُحسب من قيمتها |
+| مُدخل | `disabled` | `boolean` | `false` — أو معطَّل بتعطيل المجموعة |
+| مُدخل | `name` | `string \| null` | `null` ← اسم المجموعة ← معرّف الخيار نفسه |
+| مُدخل | `ariaLabel` | `string \| null` | `null` |
+| مُخرج | `checkedChange` | `boolean` (دائمًا `true`) | — |
+| مُخرج | `change` | قيمة الخيار (`value`) | — |
+| منفذ | `[radioDetail]` | محتوى مُسقَط | — [الوصف](#الوصف--radiodetail) |
+
+### `[appRadioGroup]`
+
+| | الاسم | النوع | الافتراضي |
+|---|---|---|---|
+| مُدخل | `appearance` | `'plain'` \| `'card'` \| `'segmented'` \| `'chip'` | `'plain'` |
+| مُدخل | `disabled` | `boolean` | `false` |
+| مُخرج | `selectionChange` | القيمة المختارة | — |
+
+يضع على مضيفه `role="radiogroup"` وصنف السكّة (`app-radio-group--segmented`) أو صفّ الرقائق (`app-radio-group--chip`)، ويولّد اسمًا مشتركًا فريدًا، ويعمل مع `ngModel` و`formControlName`. والتصدير `#g="appRadioGroup"`.
 
 ### الوصف — `[radioDetail]`
 
@@ -288,7 +368,7 @@ last_verified: 2026-09-23
 
 المفتاح يرسم المسار والمقبض بحدّ `CanvasText` (و`GrayText` للمعطَّل)، والتركيز بـ `outline` بلون `Highlight`. والمقبض بلون `Canvas` والوجه عليه بـ `CanvasText` (`forced-color-adjust: none`، لأنه مرسوم بالخلفية)، فتُقرأ الحالة بفمه حتى حين تسقط الألوان.
 
-> Checkbox لم يُراجَع لهذا الوضع بعد.
+> Checkbox لم يُراجَع لهذا الوضع بعد. (قيس 2026-09-26: لا قاعدة `forced-colors` في `checkbox.component.scss`؛ وحلقة تركيزه ظلّ `box-shadow` يسقطه هذا الوضع.)
 
 ## 12. النصوص
 
@@ -334,10 +414,17 @@ last_verified: 2026-09-23
 * المربّع لم يُراجَع لوضع التباين القسري — [§11](#وضع-التباين-القسري).
 * ليس للمربّع منفذ وصف كـ `[radioDetail]` — [§7](#وصف-تحت-المربع--ariadescribedby).
 
+**مراجعة 2026-09-26 مقابل الكود:**
+
+* جدول «شكل الراديو» وتوكنز المظاهر الثلاثة مطابقة لـ`radio.component.scss` و`styles.scss`.
+* وُثّق 2026-09-26 من الكود: شكل المربّع وحالاته (§5)، وغياب Loading · Error · Success عن العناصر الثلاثة (§5)، وتوكنز المربّع (§6)، وجداول مدخلات المربّع والراديو والمجموعة وقيمة `plain` الافتراضية لـ`appearance` (§7)، وفجوة السكّة وحدّ البطاقة المعطَّلة (§6).
+* ⚠️ تعارض (2026-09-26): المواصفة §4 — المفتاح المقطّع «⛔ لا يوضع داخل نموذج له زرّ حفظ» (وبه صار «نوع الدورة» رقاقتين في 2026-09-23) · الكود — نافذة تذكير السلة المتروكة (`reminder-form-dialog.component.html`) تضع «نوع الخصم» و«مدة صلاحية الخصم» مفتاحين مقطّعين بـ`formControlName` يُحفظان مع زرّ النافذة، وتعليقها يقول «راديو بمظهر المفتاح المقطّع … تُحفظ قيمتهما مع النموذج».
+* ملاحظة (قيس 2026-09-26): حدّ المربّع غير المحدَّد `neutral-300` تباينه 1.71:1، دون 3:1 التي يطلبها WCAG 1.4.11 والتي رُفع لها حدّ الراديو — §5.
+
 ## 16. روابط
 
 - **يستخدم:** [`<ds-icon>`](./icon.md) — العلامة ✓ (`essential/tick`) في الرقاقة · [التلميح](./tooltip.md) — `appTooltip` على المربع المعطّل لسبب خارجه
-- **يُستخدم في:** نافذة «إضافة كوبون» — «نطاق الكوبون» (`chip`) · تبويب «البيانات» بصفحة الدورة — «نوع الدورة» (`chip`) وبلوك «الظهور والنشر» (مربع) · حوار «تغيير الصلاحية» في صفحة المستخدمين (`card`) · صفحة التطبيقات — فلتر حالة الربط (`segmented`) · محرّر الصفحات — «ضمان الحقوق»
+- **يُستخدم في:** نافذة «إضافة كوبون» — «نطاق الكوبون» (`chip`) · تبويب «البيانات» بصفحة الدورة — «نوع الدورة» (`chip`) وبلوك «الظهور والنشر» (مربع) · حوار «تغيير الصلاحية» في صفحة المستخدمين (`card`) · صفحة التطبيقات — فلتر حالة الربط (`segmented`) · محرّر الصفحات — «ضمان الحقوق» · (قيس 2026-09-26) «الإعدادات العامة» — حجم النص ومؤشر التركيز (`segmented`) · نافذة تذكير السلة المتروكة (`segmented`) · إنشاء مقال بالذكاء الاصطناعي و«رابط جديد» في روابط الموقع (`card`)
 - **ذو صلة:** [`switch.md`](./switch.md) · [`segmented.md`](../molecules/segmented.md) · [`setting-chip.md`](../molecules/setting-chip.md) · [`select.md`](../molecules/select.md) · [`tabs.md`](../molecules/tabs.md) · [`filtering.md`](../patterns/filtering.md) · [`connection-card.md`](../molecules/connection-card.md) · [`forms.md`](../patterns/forms.md)
 - **الكود:** [`shared/ui/checkbox/`](../../../src/app/shared/ui/checkbox/) · [`shared/ui/radio/`](../../../src/app/shared/ui/radio/) · [`shared/ui/toggle/`](../../../src/app/shared/ui/toggle/)
 - **الأصل:** `Design-System/components/checkbox-radio-switch.md` — نُقل إلى هذا الملف وحُذف الأصل (2026-09-26)
