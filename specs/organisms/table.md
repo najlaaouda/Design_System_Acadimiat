@@ -283,12 +283,14 @@ The one exception is a table inside a narrow container (a card that is half the 
 **لماذا لا مفتاح؟** المفتاح يقول «إعداد مستقل لكل صفّ»، ولا يلمّح إلى ندرة. و«مميزة» ليست إعدادًا بل **علامة على عدد محدود**: من يرى ثلاثة مفاتيح مضاءة وسبعة مطفأة لا يعرف أن الرابع ممنوع حتى يضغطه. و«المفتاح يسري الآن والمربّع يسري عند الحفظ» ([`checkbox-radio-switch.md`](../atoms/checkbox-radio-switch.md)) تحسم **المربّع أم المفتاح**، ولا تمنع علامةً ثالثة حين يكون المعنى علامةً لا إعدادًا.
 
 ```html
-<td class="products-table__featured">
+<!-- كما في صفحة الدورات (courses.component.html) — صُحّح 2026-09-27: كان المثال
+     products-star و[disabled]، والكود courses-star و[attr.aria-disabled]. -->
+<td class="courses-table__featured">
   <button
     type="button"
-    class="products-star"
-    [class.products-star--on]="row.featured"
-    [disabled]="!canFeature(row)"
+    class="courses-star"
+    [class.courses-star--on]="row.featured"
+    [attr.aria-disabled]="canFeature(row) ? null : 'true'"
     [attr.aria-pressed]="row.featured"
     [attr.aria-label]="'تمييز ' + row.name"
     [appTooltip]="featuredTooltip(row)"
@@ -302,7 +304,7 @@ The one exception is a table inside a narrow container (a card that is half the 
 |---|---|---|
 | الشكل | **ممتلئة** مميزة · **مفرغة** غير مميزة (`support-like-question/star-filled` ومقابلتها `star`) | الحالة في الشكل أولًا: تُقرأ بلا لون وعلى شاشة متباينة (WCAG 1.4.1) |
 | اللون | الممتلئة `--ds-warning-500` · المفرغة `--ds-color-text-muted` | البرتقالي فوق الشكل لا بدلًا منه |
-| بلوغ الحدّ | الصفوف الباقية **معطَّلة** بشفافية `--ds-opacity-disabled`، والتلميح يقول العدد وطريق الخروج: «تميز 3 دورات فقط. ألغ تمييز دورة أخرى أولا.» | المنع قبل الضغط أصدق من خطأ بعده (UX-13) |
+| بلوغ الحدّ | الصفوف الباقية **معطَّلة بـ`aria-disabled` لا `disabled`** (فيبقى التلميح قابلًا للوصول بالمؤشّر ولوحة المفاتيح) بشفافية `--ds-opacity-disabled`، والتلميح يقول العدد وطريق الخروج: «تميز 3 دورات فقط. ألغ تمييز دورة أخرى أولا.» — **ولا تنبيه عابر** للتمييز (قرار المستخدم 2026-09-26) | المنع قبل الضغط أصدق من خطأ بعده (UX-13) |
 | هدف اللمس | 44×44 من حجم الزرّ لا من حجم النجمة (20) | القاعدة نفسها في كل عنصر تفاعلي |
 | الوصول | `aria-pressed` يعلن الحالة، و`aria-label` يذكر اسم الصفّ | أيقونة وحدها تحتاج اسمًا، و«تمييز» وحدها لا تقول أيّ صفّ |
 | الحدّ | يأتي من الخادم لا يُكتب في الشاشة ([`BACKEND-REQUIREMENTS.md`](../../BACKEND-REQUIREMENTS.md) REQ-066) | الرقم `3` في الواجهة يتقادم في أوّل تغيير للباقات، والحدّ على المنتجات كلها لا على الدورات وحدها |
