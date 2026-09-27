@@ -295,6 +295,15 @@
      الفلترة: قائمة واحدة من أسماء أعمدة قصيرة بمقبض ومربّع — لا قياس جديد. */
   --ds-table-columns-panel-width:   var(--ds-filter-panel-options-width);
 
+  /* شارة الحالة (`<app-status>`) — specs/atoms/badge-status.md. شكل نظام التصميم
+     الأول كما اعتُمد (قرار المنتج 2026-09-27). القيمتان 6 خارج سلّم المسافات
+     **عمدًا** — استثناء هذه الشارة وحدها بقرار المنتج، لا درجة جديدة في السلّم. */
+  --ds-badge-status-padding-block-md: 6px;  /* استثناء: قرار 2026-09-27 */
+  --ds-badge-status-gap-sm:           6px;  /* استثناء: قرار 2026-09-27 */
+  --ds-badge-status-dot-sm:           4px;
+  --ds-badge-status-dot-md:           6px;
+  --ds-badge-status-halo:             2px;
+
   /* الشارة في خلية الحالة — **حدّ أدنى** لا عرضًا ثابتًا: «فعال» أضيق من
      «غير فعال»، وحافّة مسنَّنة في العمود تحوّل الطول إلى إشارة ثانية. */
   --ds-table-badge-min-width: 64px;  /* قياس */
